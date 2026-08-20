@@ -1,0 +1,33 @@
+{
+  "name": "kreobuddha-ui-docs",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Documentation site for @kreobuddha/ui",
+  "license": "MIT",
+  "author": "Rustam Ishmukhametov",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kreobuddha/kreobuddha-ui-docs.git"
+  },
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "serve": "npx --yes serve out",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@kreobuddha/ui": "^1.0.0",
+    "next": "^16.3.1",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "typescript": "^7.0.2"
+  }
+}

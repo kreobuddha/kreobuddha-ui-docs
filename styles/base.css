@@ -1,0 +1,22 @@
+@layer site {
+  body {
+    margin: 0;
+    background: var(--kreo-surface-page, #fff);
+    color: var(--kreo-text-primary, #16181d);
+    font: var(--kreo-type-body);
+  }
+
+  /*
+   * Stage 2 proof that the layer order above is in force, and nothing else.
+   *
+   * The library styles its button through a hashed CSS-Modules class — specificity (0,1,0). The
+   * selector below is a bare type selector wrapped in `:where()`, so its specificity is (0,0,1):
+   * strictly lower. If the square corner wins, it can only be because `site` comes after
+   * `library`, which is the thing being demonstrated.
+   *
+   * Deleted the moment the real shell styles land.
+   */
+  :where([data-layer-proof]) button {
+    border-radius: 0;
+  }
+}
