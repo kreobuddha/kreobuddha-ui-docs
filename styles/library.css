@@ -1,0 +1,12 @@
+/*
+ * The library, and nothing else.
+ *
+ * `@kreobuddha/ui/dist/styles.css` declares no layers of its own, and unlayered styles beat every
+ * layer. A plain JavaScript `import` would therefore let the library outrank every site rule, no
+ * matter what order `layers.css` declares. A CSS `@import` with `layer(library)` is what puts it
+ * inside a layer, and it is the reason this file exists at all.
+ *
+ * The specifier is the package's `exports` subpath. `@kreobuddha/ui/dist/styles.css` — the path
+ * the plan quotes — is not exported and does not resolve.
+ */
+@import '@kreobuddha/ui/styles.css' layer(library);
