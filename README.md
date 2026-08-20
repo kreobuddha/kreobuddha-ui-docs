@@ -3,9 +3,9 @@
 The public documentation site for [`@kreobuddha/ui`](https://github.com/kreobuddha/kreobuddha-ui):
 guides, a component reference with a live playground, design tokens and a theme editor.
 
-**Status: early. Nine guides are on the site in English, with navigation, a table of contents and
-a language switcher. The component reference, the theme editor, search and the mobile drawer are
-not built yet.**
+**Status: early. Nine guides are on the site in English, with navigation, a table of contents, a
+language switcher and a full narrow-screen layout. The component reference, the theme editor and
+search are not built yet.**
 
 ## Stack
 
@@ -66,6 +66,32 @@ index.
 
 Code is highlighted by Shiki at build time and token tables are read from the published stylesheet
 at build time, so neither ships a byte of JavaScript to the reader.
+
+### The narrow layout
+
+Below 900px the rail becomes a drawer built on `<dialog>` and `showModal()` — the platform's own
+focus trap, `Escape` handling and inert background, rather than a hand-rolled version of each. What
+is written by hand is what the platform does not do: dismissing on a click outside or a swipe,
+pinning the page behind it so opening the drawer does not throw the reader back to the top, and
+suppressing the click that a swipe would otherwise land on a link.
+
+Below 1200px the table of contents folds into a disclosure above the text. The header gets out of
+the way when the reader scrolls down and returns on the way up, and stays put whenever focus is
+inside it.
+
+### Checks
+
+```bash
+npm run typecheck
+npm test          # the rules that are awkward to observe in a browser
+npm run e2e       # builds the export and drives it at 1280 and at 320
+npm run check:css # the cascade layer order, read from the built stylesheets
+```
+
+`npm run e2e` serves `out/` through `scripts/serve-export.mjs`, which imitates GitHub Pages: the
+project sub-path, `/x` redirecting to `/x/`, and `/x/` resolving to `index.html`. The suite runs
+with `prefers-reduced-motion: reduce`, which is both what makes position assertions deterministic
+and the path least likely to be exercised otherwise.
 
 ### Cascade layers
 

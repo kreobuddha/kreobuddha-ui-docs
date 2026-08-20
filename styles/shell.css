@@ -66,6 +66,10 @@
     font: var(--kreo-type-label);
   }
 
+  .locale-switcher__short {
+    display: none;
+  }
+
   .locale-switcher a[aria-current='true'] {
     color: var(--kreo-text-body);
     text-decoration: none;
@@ -91,16 +95,16 @@
     border-inline-end: var(--kreo-border-w) solid var(--kreo-border-subtle);
   }
 
-  .sidebar__group + .sidebar__group {
+  .nav-tree__group + .nav-tree__group {
     margin-block-start: var(--kreo-space-6);
   }
 
-  .sidebar__group h2 {
+  .nav-tree__group h2 {
     margin: 0;
     font: var(--kreo-type-label);
   }
 
-  .sidebar__group h2 button {
+  .nav-tree__group h2 button {
     display: flex;
     gap: var(--kreo-space-2);
     align-items: center;
@@ -120,7 +124,7 @@
     }
   }
 
-  .sidebar__chevron {
+  .nav-tree__chevron {
     inline-size: 0;
     block-size: 0;
     border-block-start: 4px solid currentColor;
@@ -135,17 +139,17 @@
    * The chevron follows the button's own state rather than a class the component has to remember
    * to set. One source of truth — `aria-expanded` — and it is the one screen readers use.
    */
-  .sidebar__group h2 button[aria-expanded='false'] .sidebar__chevron {
+  .nav-tree__group h2 button[aria-expanded='false'] .nav-tree__chevron {
     rotate: -90deg;
   }
 
-  .sidebar ul {
+  .nav-tree ul {
     margin: var(--kreo-space-1) 0 0;
     padding: 0;
     list-style: none;
   }
 
-  .sidebar li a {
+  .nav-tree li a {
     display: block;
     padding: var(--kreo-space-2) var(--kreo-space-2);
     border-radius: var(--kreo-radius-sm);
@@ -158,7 +162,7 @@
     }
   }
 
-  .sidebar li a[aria-current='page'] {
+  .nav-tree li a[aria-current='page'] {
     background: var(--kreo-surface-active);
     color: var(--kreo-text-body);
     font-weight: var(--kreo-weight-medium);

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useId, useState } from 'react';
 
 import type { Heading } from '@/lib/mdx';
 import { activeHeading } from '@/lib/toc';
@@ -10,6 +10,15 @@ const HEADER_OFFSET = 60;
 
 export function Toc({ headings, label }: { headings: Heading[]; label: string }) {
   const [activeId, setActiveId] = useState<string | null>(headings[0]?.id ?? null);
+
+  /*
+   * Narrow screens have no room for a second rail, so the contents fold into a disclosure above the
+   * text. The state is kept whatever the width, and the stylesheet decides where it matters: on a
+   * wide screen the toggle is not rendered to the reader and the list is always shown, so a stale
+   * `false` here can never leave a desktop reader without contents.
+   */
+  const [isOpen, setIsOpen] = useState(false);
+  const panelId = useId();
 
   useEffect(() => {
     if (headings.length === 0) return;
@@ -73,20 +82,36 @@ export function Toc({ headings, label }: { headings: Heading[]; label: string })
   if (headings.length === 0) return null;
 
   return (
-    <nav className="toc" aria-label={label}>
-      <h2 className="toc__title">{label}</h2>
-      <ul>
-        {headings.map((heading) => (
-          <li key={heading.id} data-depth={heading.depth}>
-            <a
-              href={`#${heading.id}`}
-              aria-current={heading.id === activeId ? 'true' : undefined}
-            >
-              {heading.text}
-            </a>
-          </li>
-        ))}
-      </ul>
+    <nav className="toc" aria-label={label} data-open={isOpen ? 'true' : 'false'}>
+      <button
+        type="button"
+        className="toc__toggle"
+        aria-expanded={isOpen}
+        aria-controls={panelId}
+        onClick={() => setIsOpen((open) => !open)}
+      >
+        {label}
+      </button>
+
+      <h2 className="toc__title" aria-hidden="true">
+        {label}
+      </h2>
+
+      <div className="toc__panel" id={panelId}>
+        <ul>
+          {headings.map((heading) => (
+            <li key={heading.id} data-depth={heading.depth}>
+              <a
+                href={`#${heading.id}`}
+                aria-current={heading.id === activeId ? 'true' : undefined}
+                onClick={() => setIsOpen(false)}
+              >
+                {heading.text}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
     </nav>
   );
 }

@@ -14,6 +14,15 @@ export const localeNames: Record<Locale, string> = {
 };
 
 /*
+ * Shown instead of the full name where there is no room for it. Only ever the visible half: the
+ * accessible name stays the language's own name, because "EN" is not what anyone calls it.
+ */
+export const localeShortNames: Record<Locale, string> = {
+  en: 'EN',
+  ru: 'RU',
+};
+
+/*
  * UI strings, one record per locale, with the same keys in both. No fallback chain: a missing key
  * is a type error rather than an English word appearing mid-sentence in Russian.
  *
@@ -33,6 +42,8 @@ export interface Dictionary {
   next: string;
   readTheDocs: string;
   language: string;
+  openNavigation: string;
+  closeNavigation: string;
   fallbackTitle: string;
   fallbackBody: string;
   guidesIndexLead: string;
@@ -53,6 +64,8 @@ export const dictionary: Record<Locale, Dictionary> = {
     next: 'Next',
     readTheDocs: 'Read the documentation',
     language: 'Language',
+    openNavigation: 'Menu',
+    closeNavigation: 'Close',
     fallbackTitle: 'Not translated yet',
     fallbackBody: 'This page has no Russian translation yet and is shown in English.',
     guidesIndexLead: 'Guides to the library: what it is, how to install it, and what it is built on.',
@@ -75,6 +88,8 @@ export const dictionary: Record<Locale, Dictionary> = {
     next: 'Вперёд',
     readTheDocs: 'Открыть документацию',
     language: 'Язык',
+    openNavigation: 'Меню',
+    closeNavigation: 'Закрыть',
     fallbackTitle: 'Перевода пока нет',
     fallbackBody: 'Эта страница ещё не переведена на русский и показана на английском.',
     guidesIndexLead:

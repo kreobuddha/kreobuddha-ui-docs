@@ -42,9 +42,21 @@ jobs:
       # in a browser — the scroll-spy decision at the top, at the bottom, and across a jump.
       - run: npm test
 
-      # No `basePath` here. What this asks is whether the site compiles and exports at all; the
-      # prefixed build is what `pages.yml` runs on merge, against the sub-path Pages reports.
-      - run: npm run build
+      # The browser is keyed on the lockfile, because that is what pins the Playwright version: a
+      # stale browser against a newer Playwright is the mismatch this guards.
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            playwright-${{ runner.os }}-
+
+      - run: npx playwright install --with-deps chromium
+
+      # Builds the export under the deployed sub-path and drives it in a real browser, at 1280 and
+      # at 320. The build is part of the script, so there is no second unprefixed build here: the
+      # one that ships is the one that is tested.
+      - run: npm run e2e
 
       # Reads the built CSS, so it runs after the build. Guards the cascade layer order, which is
       # decided by the bundler rather than by the source.
