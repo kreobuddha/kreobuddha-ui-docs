@@ -1,0 +1,20 @@
+node_modules/
+
+# Next.js build output and the static export the Pages workflow uploads.
+.next/
+out/
+
+# Pagefind writes its index into the export after the build.
+public/pagefind/
+
+coverage/
+test-results/
+playwright-report/
+.lighthouseci/
+
+.env*.local
+.DS_Store
+*.log
+
+# Personal Claude Code settings — hooks and permissions are per-machine, not project policy.
+.claude/settings.local.json
