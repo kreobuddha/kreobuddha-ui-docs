@@ -1,0 +1,47 @@
+name: Pages
+
+# A push to `master` publishes the site, so this workflow is the release mechanism, not a build
+# step. `workflow_dispatch` is kept so the site can be republished without an empty commit.
+on:
+  workflow_dispatch:
+  push:
+    branches: [master]
+
+# Actions are pinned to a commit with the version beside it: a tag is a movable pointer and a
+# commit is not, so pinning by tag would let a compromised release run here without any change
+# landing in this repository.
+
+permissions:
+  contents: read
+  # What Pages needs and nothing more: `pages` to publish the artifact, `id-token` for the OIDC
+  # token `deploy-pages` exchanges for the deployment.
+  pages: write
+  id-token: write
+
+# The site has one live version, so overlapping runs would race to be it. A run already in flight
+# is not cancelled — cancelling mid-deployment leaves the site serving half of an upload.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      # There is no application yet: this run publishes the static placeholder in `site/` to prove
+      # the pipeline reaches the public URL. When the Next.js export lands, the build steps go here
+      # — Node 24.x, `npm ci`, `next build` with `basePath` taken from
+      # `actions/configure-pages`'s `base_path` output — and `path:` below becomes `out`.
+      - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
+        with:
+          path: site
+
+      - uses: actions/deploy-pages@cd2ce8fcbc39b97be8ca5fce6e763baed58fa128 # v5.0.0
+        id: deploy

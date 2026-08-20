@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@kreobuddha/ui — documentation site</title>
+    <meta name="description" content="The documentation site for @kreobuddha/ui. Under construction." />
+    <meta name="color-scheme" content="light dark" />
+    <style>
+      :root {
+        --bg: #ffffff;
+        --fg: #16181d;
+        --muted: #5c6370;
+        --line: #e3e5ea;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #101215;
+          --fg: #eceef2;
+          --muted: #979eab;
+          --line: #262a31;
+        }
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        min-height: 100dvh;
+        display: grid;
+        place-items: center;
+        padding: 32px;
+        background: var(--bg);
+        color: var(--fg);
+        font: 300 16px/1.65 ui-sans-serif, system-ui, sans-serif;
+        -webkit-text-size-adjust: 100%;
+      }
+      main { max-width: 45ch; }
+      .eyebrow {
+        margin: 0 0 12px;
+        font-size: 12px;
+        font-weight: 500;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+      h1 {
+        margin: 0 0 16px;
+        font-size: 36px;
+        font-weight: 600;
+        line-height: 1.15;
+        letter-spacing: -0.015em;
+      }
+      p { margin: 0 0 16px; }
+      .meta {
+        margin: 24px 0 0;
+        padding-top: 16px;
+        border-top: 1px solid var(--line);
+        font-size: 12px;
+        color: var(--muted);
+      }
+      a { color: inherit; }
+      a:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <p class="eyebrow">Under construction</p>
+      <h1>@kreobuddha/ui</h1>
+      <p>
+        The documentation site is being built. This placeholder exists to prove one thing: a push to
+        <code>master</code> reaches this address.
+      </p>
+      <p class="meta">
+        Source:
+        <a href="https://github.com/kreobuddha/kreobuddha-ui-docs">kreobuddha/kreobuddha-ui-docs</a>
+      </p>
+    </main>
+  </body>
+</html>
