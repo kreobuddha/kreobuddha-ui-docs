@@ -1,0 +1,47 @@
+name: CI
+
+on:
+  # Deliberately unfiltered: a pull request is checked wherever it is aimed, so a branch stacked on
+  # another unreviewed branch is verified too.
+  pull_request:
+
+# Actions are pinned to a commit with the version beside it. A tag is a movable pointer — whoever
+# can write to the action's repository can repoint `v7` at different code, and every workflow
+# trusting the tag runs it on the next push with nothing in this repository having changed.
+
+# Least privilege: this workflow only reads the repository.
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+# There is no push trigger. A push to `master` already runs `pages.yml`, which performs the same
+# build against the same commit and refuses to publish if it fails, so a second run would buy an
+# earlier red mark and nothing else.
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          # The version `pages.yml` deploys with. A build that passes here has to be the build that
+          # ships.
+          node-version: 24.x
+          cache: npm
+
+      - run: npm ci
+
+      - run: npm run typecheck
+
+      # No `basePath` here. What this asks is whether the site compiles and exports at all; the
+      # prefixed build is what `pages.yml` runs on merge, against the sub-path Pages reports.
+      - run: npm run build
+
+      # Reads the built CSS, so it runs after the build. Guards the cascade layer order, which is
+      # decided by the bundler rather than by the source.
+      - run: npm run check:css
