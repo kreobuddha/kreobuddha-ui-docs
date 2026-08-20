@@ -1,0 +1,74 @@
+---
+title: Introduction
+description: What @kreobuddha/ui is, what it deliberately is not, and what version 1.0.0 promises.
+group: getting-started
+order: 1
+---
+
+An accessible, themeable React component library for developer tools, technical products and
+data-dense frontend applications. This site is the reference, and it is built with the library it
+documents: every control on these pages is the component the page is about.
+
+## Status: stable — `1.0.0`
+
+Twenty components ship today: `Button`, `IconButton`, `TextField`, `Textarea`, `Select`,
+`Checkbox`, `Radio`, `Switch`, `FieldGroup`, `Tabs`, `Accordion`, `Tooltip`, `Toggletip`, `Dialog`,
+`Badge`, `Spinner`, `Skeleton`, `Progress`, `Toast` and `Alert`.
+
+**`1.0.0` means the public API is frozen.** An export, a prop, a `--kreo-*` custom property, the
+DOM a component renders and the keyboard behaviour it documents cannot be renamed or removed
+without a major version. The surface is recorded rather than remembered — 21 exports, 40 types, 3
+package subpaths, 135 custom properties — and a check compares the built package against that
+record on every pull request.
+
+Three things it still does not promise, stated plainly so nothing on these pages has to be read
+generously:
+
+- **No screen-reader conformance is claimed** for `Dialog`, `Tabs` and `Tooltip`. That pass is written
+  and has not been run — see [Accessibility](../accessibility/).
+- **The browser matrix is what a runner measured.** The behaviour suite runs in Chromium, Firefox
+  and WebKit; the story and visual checks stay Chromium-only. Two WebKit differences are recorded
+  rather than fixed, both in its macOS build: a modal dialog does not return focus to its trigger,
+  and Safari leaves buttons out of the tab order unless the reader turns that on. Nothing is claimed
+  about engines nothing runs on.
+- **The component set is small and grows only on evidence.** A component arrives when a real consumer
+  needs it, so a gap in the list is a gap on purpose, not a queue position. Additions are minor
+  versions; removals are not made.
+
+## What it is
+
+- **Frontend only.** React components, a token layer, one stylesheet. No backend, no data layer,
+  no application framework.
+- **ESM only**, with React `^19` as a peer dependency the host installs.
+- **Themed through CSS custom properties.** Every `--kreo-*` property in the published stylesheet
+  is public API under SemVer; CSS Module class names are not.
+- **Composed, not configured.** Components take the props they need and pass the rest through to
+  the element underneath.
+
+## What it is not
+
+- Not a layout system. Page gutters, grids and rails belong to the application.
+- Not a styling engine. There is no `css` prop, no `as` polymorphism and no theme object.
+- Not a stateful shell. The library stores no theme preference, reads no system preference and
+  owns no routing. It holds state in exactly one place — `ToastProvider` owns the queue of toasts
+  it renders, because a message raised from anywhere has to be rendered somewhere above it (see
+  ADR-0011). That is the one exception, and it is scoped to the toasts themselves.
+
+## How to read these pages
+
+Each component page opens with why the component exists, then a prop table beside examples you can
+drive.
+
+The prop tables here are written by hand. Generating them from the types was considered and
+dropped: it is a build problem rather than a documentation one, and what it produces is a list of
+every declared prop in declaration order, which is not the order anyone needs to read them in. The
+cost of writing them is that they can drift from the code, so they are kept to the components this
+site actually documents rather than spread thin across all of them.
+
+A table lists the props the component itself declares, and not the DOM attributes it inherits: a
+`Button` also accepts every attribute a `<button>` accepts, but spelling out two hundred inherited
+attributes per component would bury the ten that matter. An inherited attribute appears when the
+component makes a decision about it — `disabled` on `Button` has a default, so the table shows it.
+
+The token tables are read from the published stylesheet at build time, so they cannot list a token
+that was removed or miss one that was added.

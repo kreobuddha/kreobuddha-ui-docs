@@ -1,0 +1,89 @@
+---
+title: Theming
+description: How the token layer works, how a theme is applied, and how far a theme can be taken.
+group: foundations
+order: 1
+---
+
+## The DOM contract
+
+Dark mode is an attribute on any ancestor, normally `<html>`:
+
+```html
+<html data-kreo-theme="dark"></html>
+```
+
+Light is the default and needs no attribute at all. Because the attribute is read by CSS
+selectors, a subtree can carry its own theme: putting `data-kreo-theme="dark"` on a panel themes
+that panel and nothing else.
+
+## The library owns no theme state
+
+It never stores a preference, never reads `prefers-color-scheme`, and never writes to the DOM to
+change themes. That state belongs to the application, which knows where its settings live and
+when it is safe to write them. A host typically does something like this:
+
+```tsx
+const applyTheme = (theme: 'light' | 'dark') => {
+  const root = document.documentElement;
+
+  if (theme === 'dark') {
+    root.dataset['kreoTheme'] = 'dark';
+  } else {
+    delete root.dataset['kreoTheme'];
+  }
+
+  localStorage.setItem('theme', theme);
+};
+```
+
+Switching the theme is the host's job, and this site is a host like any other: whatever control it
+offers is an application setting the attribute, not a library feature.
+
+## Overriding
+
+Customisation happens through the semantic tokens, not through component classes. Every
+`--kreo-*` custom property in the published stylesheet is public API under SemVer; CSS Module
+class names are private implementation details and change without notice.
+
+```css
+:root {
+  --kreo-accent-500: #2f6f4f;
+  --kreo-accent-600: #275e43;
+}
+```
+
+Three conventions are worth knowing before overriding anything.
+
+**A status has two colours, not one.** `--kreo-text-success` and its siblings are readable text at
+4.5:1. `--kreo-icon-success` and its siblings are the brighter marks used for dots, icons and
+borders, which need only 3:1. Collapsing them into one value is what turns an amber into a brown.
+
+**The dark theme runs at lower saturation than the light one.** At equal contrast a colour reads
+louder on a dark surface, and green shows it first. A palette ported straight across from light
+will look neon.
+
+**A tinted surface needs its own label colour.** `--kreo-surface-success-soft` and its siblings are
+the tints message components sit on; `--kreo-text-on-success-soft` and its siblings are the labels
+measured against those tints. The ordinary status text is tuned against the page and does not
+survive being placed on its own tint in the light theme.
+
+`--kreo-shadow-overlay` is reserved for things that float — menus, dialogs, tooltips. Overlays keep
+a border as well, because forced-colors mode paints no shadow at all and a panel relying on one
+would lose its edge exactly where an edge matters most.
+
+## The cascade
+
+**The stylesheet is unlayered, and load order decides ties.** No rule here sits in an `@layer`, so
+a rule of yours with the same specificity wins by being loaded after `@kreobuddha/ui/styles.css`.
+That is deliberate and fixed for the `1.x` line —
+ADR-0019 — because introducing layers later would
+silently change which rules win. The supported way to change how the library looks is the tokens
+above, which resolve where they are used and do not depend on order at all.
+
+## Keep the pairs contrastable
+
+If you override the palette, measure the result. The repository's `npm run check:contrast` checks
+every pairing the components put on screen, in both themes, against the WCAG 2.2 targets: 4.5:1
+for text, 3:1 for control borders, marks and the focus ring. An override that is not measured is
+an override that is not verified.

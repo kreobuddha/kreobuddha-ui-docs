@@ -1,0 +1,44 @@
+---
+title: Spacing and shape
+description: The spacing scale, control heights, corner radii, border widths and the single shadow.
+group: foundations
+order: 4
+---
+
+## Spacing
+
+A 4px base. The number in the token name is the step, not the pixel value: `--kreo-space-4` is
+16px.
+
+**Page layout tokens are deliberately not published.** Gutters, page widths and rail widths belong
+to the application, which knows its own layout; a component library guessing them would be wrong
+everywhere at once.
+
+<TokenTable include={['--kreo-space-']} preview="bar" />
+
+## Control geometry
+
+The heights and horizontal padding every control shares, so a `Button` and a `TextField` of the
+same size line up without either knowing about the other.
+
+<TokenTable include={['--kreo-control-']} preview="bar" />
+
+## Radius
+
+<TokenTable include={['--kreo-radius-']} preview="radius" />
+
+## Borders and focus
+
+Separation is carried by borders, not by elevation: there is no shadow on cards or controls.
+Focus is a 2px accent border drawn **inside** the box, so gaining focus never reflows the layout.
+
+<TokenTable include={['--kreo-border-w', '--kreo-focus-ring']} />
+
+## Elevation
+
+One shadow, for things that float — menus, dialogs, tooltips. Nothing anchored to the page carries
+it. Overlays keep a border as well: forced-colors mode paints no shadow at all, and a panel
+relying on one would lose its edge exactly where an edge matters most. The dark theme uses a
+deeper shadow, because a charcoal surface swallows a light one.
+
+<TokenTable include={['--kreo-shadow-']} />

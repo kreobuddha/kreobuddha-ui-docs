@@ -1,22 +1,59 @@
 @layer site {
+  /*
+   * Page layout is the site's job. The library publishes no layout tokens on purpose — gutters,
+   * rails and column widths belong to the application — so the measurements from the design pass
+   * live here, in one place, named.
+   */
+  :root {
+    --shell-header-height: 60px;
+    --shell-sidebar-width: 264px;
+    --shell-prose-width: 720px;
+    --shell-toc-width: 232px;
+    --shell-column-gap: 48px;
+    --shell-page-padding: var(--kreo-space-8);
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
   body {
     margin: 0;
-    background: var(--kreo-surface-page, #fff);
-    color: var(--kreo-text-primary, #16181d);
+    background: var(--kreo-surface-page);
+    color: var(--kreo-text-body);
     font: var(--kreo-type-body);
   }
 
   /*
-   * Stage 2 proof that the layer order above is in force, and nothing else.
-   *
-   * The library styles its button through a hashed CSS-Modules class — specificity (0,1,0). The
-   * selector below is a bare type selector wrapped in `:where()`, so its specificity is (0,0,1):
-   * strictly lower. If the square corner wins, it can only be because `site` comes after
-   * `library`, which is the thing being demonstrated.
-   *
-   * Deleted the moment the real shell styles land.
+   * Reserved whether or not the page scrolls, so opening a dialog — or moving from a short page to
+   * a long one — does not shift the layout sideways by the width of a scrollbar.
    */
-  :where([data-layer-proof]) button {
-    border-radius: 0;
+  html {
+    scrollbar-gutter: stable;
+  }
+
+  a {
+    color: var(--kreo-text-link);
+  }
+
+  a:hover {
+    color: var(--kreo-text-link-hover);
+  }
+
+  :focus-visible {
+    outline: var(--kreo-border-w-focus) solid var(--kreo-border-focus);
+    outline-offset: 2px;
+  }
+
+  /* Anchor targets clear the sticky header instead of hiding behind it. */
+  :target,
+  [id] {
+    scroll-margin-block-start: calc(var(--shell-header-height) + var(--kreo-space-4));
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
   }
 }

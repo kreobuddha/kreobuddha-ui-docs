@@ -1,0 +1,40 @@
+---
+title: Motion
+description: Durations, easings and the transitions built from them, and how reduced motion is honoured.
+group: foundations
+order: 5
+---
+
+Motion here is minimal on purpose: colour transitions and fades only. Nothing slides, springs or
+scales. In a developer tool the interface is read far more often than it is watched, and movement
+costs attention that belongs to the data.
+
+## Durations and easing
+
+<TokenTable include={['--kreo-duration-', '--kreo-ease']} />
+
+## Composite transitions
+
+`--kreo-transition-color` is what interactive controls use for their hover, active and focus
+states; `--kreo-transition-fade` is what overlays use to appear and disappear.
+
+<TokenTable include={['--kreo-transition-']} />
+
+## Reduced motion
+
+Under `prefers-reduced-motion: reduce` every duration token is redefined to `0ms`. Because
+components reference the tokens rather than hard-coded times, that single block removes the
+animation from all of them at once, with no per-component opt-in to forget.
+
+```css
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --kreo-duration-instant: 0ms;
+    --kreo-duration-fast: 0ms;
+    --kreo-duration-base: 0ms;
+  }
+}
+```
+
+If you override a duration, override it inside the same media query as well, or you will have
+reintroduced motion for the users who asked not to have it.

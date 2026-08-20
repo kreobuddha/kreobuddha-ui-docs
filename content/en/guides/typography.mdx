@@ -1,0 +1,55 @@
+---
+title: Typography
+description: The four sizes, the weights that go with them, and the one bundled family.
+group: foundations
+order: 3
+---
+
+One family, Inter, bundled with the package. The fallbacks in `--kreo-font-sans` only matter while
+the font files are still loading.
+
+**There is no monospace family.** Figures that need to line up in columns use
+`--kreo-numeric-tabular`, which switches Inter to its tabular figures — the actual requirement
+behind reaching for a mono. It is a separate property from the `font` shorthand, so it has to be
+applied alongside a type role rather than inside one:
+
+```css
+font: var(--kreo-type-data);
+font-variant-numeric: var(--kreo-numeric-tabular);
+```
+
+## Roles
+
+Composite tokens that set weight, size, line height and family in one declaration. Prefer these
+over assembling a type style from the scales below — a role is the thing that stays consistent
+across components.
+
+<TokenTable include={['--kreo-type-']} preview="text" />
+
+## Family
+
+<TokenTable include={['--kreo-font-', '--kreo-numeric-']} />
+
+## Size scale
+
+Four sizes, named in pixels and declared in `rem`, so a host that scales its root font size scales
+the library with it.
+
+Four is the whole scale on purpose (ADR-0016). Twelve is everything smaller than body — captions,
+hints, field messages, eyebrows. Sixteen is body, and the size at which almost everything in the
+library is set. Twenty-four and thirty-six are section and page headings. There is deliberately no
+step between body and twenty-four, which is why a `lg` control is a roomier box around body text
+rather than larger text.
+
+<TokenTable include={['--kreo-text-12', '--kreo-text-16', '--kreo-text-24', '--kreo-text-36']} />
+
+## Weight, line height and tracking
+
+`regular` is 300. Inter is bundled as a variable font, so this is the real weight and not a
+synthesised one, and at body size it is what lets `semibold` read as a heading at the same size.
+Nothing below body size is set in `regular`: `--kreo-type-label` is `medium`, and every 12px use in
+the library goes through it or through a control that sets its own weight.
+
+<TokenTable
+    include={['--kreo-weight-', '--kreo-leading-', '--kreo-tracking-']}
+/>

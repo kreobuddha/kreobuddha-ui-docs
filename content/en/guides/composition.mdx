@@ -1,0 +1,169 @@
+---
+title: Composition
+description: How components are meant to be combined, and which decisions stay with the application.
+group: patterns
+order: 1
+---
+
+The component pages show each component on its own. This page shows the shapes they were actually
+built for — a settings form, an exclusive choice, a diagnostics view — and the decisions that come
+with them.
+
+## A settings form
+
+`FieldGroup` renders a real `<fieldset>` with a `<legend>`, so the group has a name a screen
+reader announces before the controls inside it. Group-level guidance and group-level errors belong
+on the group; a fault in one control belongs on that control.
+
+```tsx
+import { Button, Checkbox, FieldGroup, Select, Switch, TextField, useToast } from '@kreobuddha/ui';
+
+const Settings = () => {
+  const { toast } = useToast();
+
+  return (
+    <form
+      onSubmit={(event) => {
+        event.preventDefault();
+        save();
+        toast({ tone: 'success', children: 'Settings saved' });
+      }}
+    >
+      <FieldGroup legend="Workspace" hint="Applies to every project in this workspace.">
+        <TextField label="Display name" value={name} onChange={onName} />
+        <Select label="Default branch" value={branch} onChange={onBranch}>
+          <option value="main">main</option>
+          <option value="develop">develop</option>
+        </Select>
+      </FieldGroup>
+
+      <FieldGroup legend="Notifications">
+        <Switch label="Notify on failed builds" checked={notify} onChange={onNotify} />
+        <Checkbox label="Include warnings" checked={warnings} onChange={onWarnings} />
+      </FieldGroup>
+
+      <Button type="submit">Save changes</Button>
+    </form>
+  );
+};
+```
+
+Three things worth copying from this shape:
+
+- **`useToast` needs a `ToastProvider` above it** and throws without one, rather than returning a
+  no-op. A `toast()` that silently never appears is a bug that takes an afternoon to find.
+- **A toast confirms; it does not report.** Something the reader must act on belongs in an
+  `Alert` beside the control, where it stays.
+- **Explain a field with a `Toggletip`, not a `Tooltip`.** A tooltip opens on hover and focus and
+  is unreachable by touch on its own; a toggletip is a button the reader presses, which is what an
+  explanation needs to be.
+
+## An exclusive choice
+
+The one composition where neither half works alone. A `Radio` deliberately brings no question — it
+renders no `<legend>` and no `<fieldset>` — and a `FieldGroup` is the question with nothing to
+answer it. Together they are the shape a real consumer asked for first: picking one card deck for a
+room of people.
+
+```tsx
+<FieldGroup legend="Card deck" hint="Everyone in the room votes with this deck.">
+  <Radio name="deck" value="fibonacci" label="Fibonacci" hint="1 · 2 · 3 · 5 · 8 · 13 · 21" />
+  <Radio name="deck" value="tshirt" label="T-shirt sizes" hint="XS · S · M · L · XL" />
+</FieldGroup>
+```
+
+- **The shared `name` is what makes the options exclusive**, so it is required here where the native
+  attribute is optional. Radios without a name belong to no group, which means one can be turned on
+  and never off again.
+- **The legend is not decoration.** Without it a screen reader reaching the column hears the options
+  and never the question. This is the reason `Radio` refuses to grow its own.
+- **The keyboard belongs to the platform.** Arrow keys move through the group and select as they go,
+  and `Tab` treats the whole group as one stop — behaviour that comes from using real
+  `<input type="radio">` elements rather than from anything written here.
+- **A group-level fault goes on the group.** "Choose a deck" is about the set, so it belongs on
+  `FieldGroup`'s `error`; a fault in one option would belong on that option.
+
+Use radios when the reader should compare a handful of answers at a glance, and `Select` when the
+list is too long for that. The dividing line is whether seeing all the options at once is worth the
+vertical space.
+
+## Losing unsaved work
+
+The one case `dismissOnBackdrop={false}` exists for. A dialog holding something typed must not be
+thrown away by a stray click beside it:
+
+```tsx
+<Dialog
+  open={confirming}
+  onClose={() => setConfirming(false)}
+  title="Discard unsaved changes?"
+  description="The workspace name and two notification settings have not been saved."
+  dismissOnBackdrop={false}
+  footer={
+    <>
+      <Button variant="ghost" onClick={() => setConfirming(false)}>
+        Keep editing
+      </Button>
+      <Button danger onClick={discard}>
+        Discard
+      </Button>
+    </>
+  }
+/>
+```
+
+`open` and `onClose` are the host's state — the dialog never closes itself. `title` is required
+because it becomes the accessible name; a dialog without one announces nothing but "dialog".
+
+## A diagnostics view
+
+Status is read here, not clicked, so the components are non-interactive and the layout does the
+work.
+
+```tsx
+<ul>
+  {checks.map((check) => (
+    <li key={check.id}>
+      <Badge tone={check.tone} dot>
+        {check.state}
+      </Badge>
+      <span>{check.name}</span>
+      <span className="duration">{check.ms} ms</span>
+    </li>
+  ))}
+</ul>
+```
+
+```css
+.duration {
+  font: var(--kreo-type-data);
+  font-variant-numeric: var(--kreo-numeric-tabular);
+}
+```
+
+- **Colour never carries the meaning.** `Badge` renders a plain `<span>` with no ARIA role,
+  because it is text and the text is what says "degraded". The tone is a second signal, not the
+  only one.
+- **Figures that line up need `--kreo-numeric-tabular`.** That is the requirement behind reaching
+  for a monospace family, and it is why none is bundled.
+- **`Skeleton` belongs behind a real load**, not behind a timer. A placeholder that appears on a
+  schedule is a placeholder that lies.
+- **`Alert` for the one degraded check, `Accordion` for its detail.** The summary stays readable;
+  the reader opens what they came for.
+
+## Tabs as navigation
+
+`Tabs` is a single tab stop with arrow keys inside it, which is the WAI-ARIA model. `activation`
+is the decision to make: `automatic` selects as the arrow moves and is right when panels are
+cheap, `manual` moves focus only and waits for `Enter` or `Space` — for a panel expensive enough
+that arrowing past four of them would fire four requests.
+
+```tsx
+<Tabs
+  items={[
+    { id: 'settings', label: 'Settings', content: <Settings /> },
+    { id: 'diagnostics', label: 'Diagnostics', content: <Diagnostics /> },
+  ]}
+  defaultValue="settings"
+/>
+```

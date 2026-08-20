@@ -1,0 +1,180 @@
+@layer site {
+  .skip-link {
+    position: absolute;
+    inset-block-start: var(--kreo-space-2);
+    inset-inline-start: var(--kreo-space-2);
+    z-index: 10;
+    padding: var(--kreo-space-2) var(--kreo-space-4);
+    border: var(--kreo-border-w) solid var(--kreo-border-default);
+    border-radius: var(--kreo-radius-md);
+    background: var(--kreo-surface-raised);
+    color: var(--kreo-text-body);
+    font: var(--kreo-type-label);
+    text-decoration: none;
+
+    /*
+     * Moved out of sight rather than hidden: `display: none` or `visibility: hidden` would take it
+     * out of the tab order, which is the one thing a skip link must never lose.
+     *
+     * The condition is `:focus`, not `:focus-visible`. A skip link is reached by keyboard and by
+     * nothing else, so the two would agree in practice — and `:focus` is the one that is true
+     * whenever focus is on it, however it got there, which makes the behaviour observable.
+     */
+    &:not(:focus) {
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+  }
+
+  main:focus {
+    /* Focused only as a scroll target by the skip link. It is not an interactive control. */
+    outline: none;
+  }
+
+  .site-header {
+    position: sticky;
+    inset-block-start: 0;
+    z-index: 5;
+    display: flex;
+    gap: var(--kreo-space-6);
+    align-items: center;
+    block-size: var(--shell-header-height);
+    padding-inline: var(--shell-page-padding);
+    border-block-end: var(--kreo-border-w) solid var(--kreo-border-subtle);
+
+    /* Opaque: the page scrolls underneath it. */
+    background: var(--kreo-surface-page);
+  }
+
+  .site-header__brand {
+    font: var(--kreo-type-heading);
+    color: var(--kreo-text-body);
+    text-decoration: none;
+  }
+
+  .site-header__nav {
+    margin-inline-end: auto;
+    font: var(--kreo-type-label);
+  }
+
+  .locale-switcher ul {
+    display: flex;
+    gap: var(--kreo-space-3);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font: var(--kreo-type-label);
+  }
+
+  .locale-switcher a[aria-current='true'] {
+    color: var(--kreo-text-body);
+    text-decoration: none;
+    font-weight: var(--kreo-weight-semibold);
+  }
+
+  .docs-layout {
+    display: grid;
+    grid-template-columns: var(--shell-sidebar-width) minmax(0, 1fr);
+    align-items: start;
+  }
+
+  .sidebar {
+    position: sticky;
+    inset-block-start: var(--shell-header-height);
+    block-size: calc(100dvh - var(--shell-header-height));
+    overflow-y: auto;
+
+    /* The sidebar scrolls on its own; a flick inside it must not carry on into the page. */
+    overscroll-behavior: contain;
+
+    padding: var(--kreo-space-6) var(--kreo-space-4);
+    border-inline-end: var(--kreo-border-w) solid var(--kreo-border-subtle);
+  }
+
+  .sidebar__group + .sidebar__group {
+    margin-block-start: var(--kreo-space-6);
+  }
+
+  .sidebar__group h2 {
+    margin: 0;
+    font: var(--kreo-type-label);
+  }
+
+  .sidebar__group h2 button {
+    display: flex;
+    gap: var(--kreo-space-2);
+    align-items: center;
+    inline-size: 100%;
+    padding: var(--kreo-space-2);
+    border: 0;
+    border-radius: var(--kreo-radius-sm);
+    background: none;
+    color: var(--kreo-text-muted);
+    font: inherit;
+    letter-spacing: var(--kreo-tracking-label);
+    text-transform: uppercase;
+    cursor: pointer;
+
+    &:hover {
+      background: var(--kreo-surface-hover);
+    }
+  }
+
+  .sidebar__chevron {
+    inline-size: 0;
+    block-size: 0;
+    border-block-start: 4px solid currentColor;
+    border-inline: 4px solid transparent;
+
+    @media (prefers-reduced-motion: no-preference) {
+      transition: rotate var(--kreo-duration-fast) var(--kreo-ease);
+    }
+  }
+
+  /*
+   * The chevron follows the button's own state rather than a class the component has to remember
+   * to set. One source of truth — `aria-expanded` — and it is the one screen readers use.
+   */
+  .sidebar__group h2 button[aria-expanded='false'] .sidebar__chevron {
+    rotate: -90deg;
+  }
+
+  .sidebar ul {
+    margin: var(--kreo-space-1) 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .sidebar li a {
+    display: block;
+    padding: var(--kreo-space-2) var(--kreo-space-2);
+    border-radius: var(--kreo-radius-sm);
+    color: var(--kreo-text-muted);
+    text-decoration: none;
+
+    &:hover {
+      background: var(--kreo-surface-hover);
+      color: var(--kreo-text-body);
+    }
+  }
+
+  .sidebar li a[aria-current='page'] {
+    background: var(--kreo-surface-active);
+    color: var(--kreo-text-body);
+    font-weight: var(--kreo-weight-medium);
+  }
+
+  /*
+   * Below this width there is no room for a fixed rail. The drawer that replaces it is stage 4;
+   * until then the header's Documentation link leads to the index, which lists every guide.
+   */
+  @media (width < 900px) {
+    .docs-layout {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .sidebar {
+      display: none;
+    }
+  }
+}
