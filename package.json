@@ -16,7 +16,8 @@
     "dev": "next dev",
     "build": "next build",
     "serve": "npx --yes serve out",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "check:css": "node scripts/check-css-layers.mjs"
   },
   "dependencies": {
     "@kreobuddha/ui": "^1.0.0",
