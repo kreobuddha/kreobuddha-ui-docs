@@ -1,0 +1,70 @@
+---
+title: Accessibility
+description: What the library measures, what it claims, and what it does not claim yet.
+group: foundations
+order: 6
+---
+
+This page states what is verified, by what, and what is not. Accessibility is not an axe result,
+and a library that only reports the automated number is reporting the easy part.
+
+## The approach
+
+- **Native semantics first.** A button is a `<button>`, a dialog is a `<dialog>`, a checkbox is an
+  `<input type="checkbox">`. ARIA is added where the platform has no element for the pattern, not
+  as a substitute for the element that exists.
+- **Focus is visible and never reflows.** The focus ring is a 2px accent border drawn inside the
+  box, measured at 3:1 against the surface behind it.
+- **Contrast is measured, not judged by eye.** Text pairs at 4.5:1 or better; control borders,
+  status marks and the focus ring at 3:1.
+- **Motion respects `prefers-reduced-motion`**, through the duration tokens rather than per
+  component.
+- **Forced-colors mode keeps overlay edges.** Panels carry a border as well as a shadow, because
+  forced colors paints no shadow at all.
+
+## What is verified, and by what
+
+| Check                                                                                                   | How                                                                                                                                     |
+| ------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| No axe violation in any story                                                                           | `@storybook/addon-a11y` runs axe over every story as part of the test run, and a violation fails the build                              |
+| Contrast of every pairing the components put on screen, in both themes                                  | `npm run check:contrast`, against the WCAG 2.2 targets                                                                                  |
+| `Tabs` keyboard model — arrows, `Home`/`End`, a single tab stop                                         | its stories' `play` functions, executed in a real Chromium by the story runner — not `check:browser`, which is the cross-engine project |
+| `Dialog` — focus moves into the panel, `Tab` never leaves it, the page behind is inert, `Escape` closes | `npm run check:browser`                                                                                                                 |
+| `Tooltip` — focus opens it, `Escape` closes it without moving focus                                     | `npm run check:browser`                                                                                                                 |
+| Overlays keep a border under `forced-colors: active`                                                    | `npm run check:browser`, asserted on computed style rather than on a screenshot                                                         |
+| Component behaviour and accessible names                                                                | unit tests with Testing Library, queried by role and name                                                                               |
+
+## What is not verified
+
+Three things, all stated rather than worked around. The per-component version of this page —
+every claim beside the command that shows it — is `docs/ACCESSIBILITY_CHECKLIST.md` in the
+repository.
+
+**The screen-reader pass is parked.** `Dialog`, `Tabs` and `Tooltip` have a written VoiceOver
+script and it has not been run. It needs a real assistive technology driven by a person, and no
+automated check in this repository stands in for it. **Until it is run, this library claims no
+screen-reader conformance for those three components.**
+
+**On WebKit, closing a dialog does not return focus to the trigger.** Focus lands on `<body>`
+instead, whether the dialog is closed by `Escape` or by the close button. The dialog closes
+correctly and the focus trap holds; what is lost is the user's place in the page. Since Phase 8 the
+behaviour suite runs in Chromium, Firefox and WebKit on every pull request, and this difference is
+recorded there as an expected failure — so the suite fails on the day the engine changes. It is
+still Playwright's WebKit build rather than shipping Safari.
+
+**On WebKit's macOS build, `Tab` does not reach a toast's dismiss button.** Safari leaves buttons out of the tab
+order unless the reader turns on "Press Tab to highlight each item on a webpage". The button is a
+real `<button>` and `Enter` activates it everywhere; the difference belongs to the platform's
+keyboard model.
+
+It is a stated limitation and not patched over: overlay focus behaviour is the browser's, and a
+restoration path written here would be code that has to be right in every engine, maintained in
+agreement with the two engines that already do it correctly, to compensate for the one that does
+not. Two things would reopen the decision — a consumer reporting it in practice, or confirmation
+in shipping Safari.
+
+## What a host still owns
+
+The library ships accessible components, not an accessible application. Heading order, landmark
+structure, page titles, skip links, focus management across route changes and the meaning of the
+copy inside a component all remain the host's responsibility.

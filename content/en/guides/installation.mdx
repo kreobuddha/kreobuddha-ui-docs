@@ -1,0 +1,65 @@
+---
+title: Installation
+description: Installing the package, importing the one stylesheet, and the boundary of what is importable.
+group: getting-started
+order: 2
+---
+
+```bash
+npm install @kreobuddha/ui
+```
+
+## Requirements
+
+- Node.js `^20.19.0 || >=22.12.0`
+- React `^19.0.0` and `react-dom` `^19.0.0` as **peer** dependencies — install them yourself, the
+  package does not bundle React.
+- A bundler that understands ESM. The package is **ESM only**: there is no CommonJS build, and
+  Node 10 style resolution is not supported. A CommonJS consumer has to use a dynamic `import()`.
+
+## The one stylesheet
+
+Components carry no inline styles and inject nothing at runtime. Import the stylesheet once,
+somewhere near the entry point of the application:
+
+```tsx
+import { Button } from '@kreobuddha/ui';
+import '@kreobuddha/ui/styles.css';
+
+export const Example = () => (
+  <Button variant="filled" onClick={save}>
+    Finish setup
+  </Button>
+);
+```
+
+`@kreobuddha/ui/styles.css` is the complete supported stylesheet: the token layer plus the styles
+of every component. There is no per-component stylesheet to import, and no build step to
+configure.
+
+## The package boundary
+
+| Export           | Contents                                      |
+| ---------------- | --------------------------------------------- |
+| `.`              | named React components and their public types |
+| `./styles.css`   | the complete supported stylesheet             |
+| `./package.json` | the manifest                                  |
+
+Nothing else is importable. Deep paths into `dist` are not part of the API and will break.
+
+## Fonts
+
+The font is bundled and no external request is made. Importing the stylesheet is enough: Inter
+ships inside the package as a variable font, split into a Latin and a Cyrillic file behind a
+`unicode-range`, so a Latin-only page never downloads the Cyrillic subset. There is no CDN link to
+add and no network dependency to accept.
+
+There is no bundled monospace family. Figures that must line up in columns use
+`--kreo-numeric-tabular` — see [Typography](../typography/).
+
+## TypeScript
+
+Importing `@kreobuddha/ui/styles.css` from TypeScript requires that the project already declares
+types for CSS side-effect imports. In a Vite project that is `"types": ["vite/client"]` in
+`tsconfig.json`. Without it, TypeScript 6 reports `TS2882` for the stylesheet import. This is a
+property of the host's build setup, not of the package.

@@ -1,0 +1,287 @@
+@layer site {
+  .landing {
+    max-inline-size: var(--shell-prose-width);
+    margin-inline: auto;
+    padding: var(--kreo-space-16) var(--shell-page-padding);
+  }
+
+  .guide {
+    display: grid;
+    grid-template-columns: minmax(0, var(--shell-prose-width)) var(--shell-toc-width);
+    gap: var(--shell-column-gap);
+    align-items: start;
+    padding: var(--kreo-space-8) var(--shell-page-padding) var(--kreo-space-16);
+  }
+
+  /*
+   * A page whose contents are empty gets its column back instead of an empty rail. `:has` asks the
+   * layout a question about its own contents, which is otherwise a job for JavaScript and a second
+   * render.
+   */
+  .guide:not(:has(.toc)) {
+    grid-template-columns: minmax(0, var(--shell-prose-width));
+  }
+
+  .prose {
+    min-inline-size: 0;
+  }
+
+  .breadcrumbs ol {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--kreo-space-2);
+    margin: 0 0 var(--kreo-space-6);
+    padding: 0;
+    list-style: none;
+    font: var(--kreo-type-label);
+    color: var(--kreo-text-muted);
+  }
+
+  .breadcrumbs li + li::before {
+    content: '/';
+    margin-inline-end: var(--kreo-space-2);
+    color: var(--kreo-border-strong);
+  }
+
+  /*
+   * Three heading levels, because the type scale has exactly four sizes and the fourth is body.
+   * A fourth level would have to invent a size the system does not have.
+   */
+  .prose h1 {
+    margin: 0 0 var(--kreo-space-4);
+    font: var(--kreo-type-display);
+    letter-spacing: var(--kreo-tracking-tight);
+  }
+
+  .prose h2 {
+    margin: var(--kreo-space-10) 0 var(--kreo-space-3);
+    font: var(--kreo-type-title);
+    letter-spacing: var(--kreo-tracking-tight);
+  }
+
+  .prose h3 {
+    margin: var(--kreo-space-6) 0 var(--kreo-space-2);
+    font: var(--kreo-type-heading);
+  }
+
+  .prose p,
+  .prose li {
+    font: var(--kreo-type-body);
+  }
+
+  .prose .lead {
+    color: var(--kreo-text-muted);
+  }
+
+  .prose ul,
+  .prose ol {
+    padding-inline-start: var(--kreo-space-5);
+  }
+
+  .prose li + li {
+    margin-block-start: var(--kreo-space-2);
+  }
+
+  /* Visible on hover and on keyboard focus, and never announced — the heading already is. */
+  .heading-anchor {
+    margin-inline-start: var(--kreo-space-2);
+    color: var(--kreo-text-muted);
+    text-decoration: none;
+    opacity: 0;
+  }
+
+  :is(h2, h3):hover .heading-anchor,
+  .heading-anchor:focus-visible {
+    opacity: 1;
+  }
+
+  .prose :not(pre) > code {
+    padding: 0.1em 0.3em;
+    border-radius: var(--kreo-radius-xs);
+    background: var(--kreo-surface-sunken);
+    font-family: var(--site-font-mono);
+    font-size: 0.9em;
+  }
+
+  .prose pre {
+    margin-block: var(--kreo-space-5);
+    padding: var(--kreo-space-4);
+    border: var(--kreo-border-w) solid var(--kreo-border-subtle);
+    border-radius: var(--kreo-radius-md);
+
+    /* One of the two places a horizontal scrollbar is allowed. The page itself never scrolls. */
+    overflow-x: auto;
+
+    font-family: var(--site-font-mono);
+    font-size: var(--kreo-text-12);
+    line-height: var(--kreo-leading-relaxed);
+    tab-size: 2;
+  }
+
+  /* The other one. */
+  .table-scroll,
+  .prose :is(table) {
+    overflow-x: auto;
+  }
+
+  .prose table,
+  .token-table {
+    inline-size: 100%;
+    margin-block: var(--kreo-space-5);
+    border-collapse: collapse;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .prose :is(th, td),
+  .token-table :is(th, td) {
+    padding: var(--kreo-space-2) var(--kreo-space-3);
+    border-block-end: var(--kreo-border-w) solid var(--kreo-border-subtle);
+    text-align: start;
+    vertical-align: baseline;
+  }
+
+  .prose th,
+  .token-table th {
+    font: var(--kreo-type-label);
+    color: var(--kreo-text-muted);
+    text-transform: uppercase;
+    letter-spacing: var(--kreo-tracking-label);
+    white-space: nowrap;
+  }
+
+  .token-table tbody th {
+    text-transform: none;
+    letter-spacing: normal;
+    color: var(--kreo-text-body);
+    font: var(--kreo-type-body);
+  }
+
+  .token-sample {
+    display: inline-block;
+    vertical-align: middle;
+  }
+
+  .token-sample--swatch,
+  .token-sample--radius {
+    inline-size: 32px;
+    block-size: 20px;
+    border: var(--kreo-border-w) solid var(--kreo-border-subtle);
+  }
+
+  .token-sample--bar {
+    block-size: 12px;
+    min-inline-size: 1px;
+    background: var(--kreo-accent-500);
+  }
+
+  .fallback-notice {
+    margin-block: var(--kreo-space-5);
+    padding: var(--kreo-space-3) var(--kreo-space-4);
+    border: var(--kreo-border-w) solid var(--kreo-border-default);
+    border-radius: var(--kreo-radius-md);
+    background: var(--kreo-surface-info-soft);
+    color: var(--kreo-text-on-info-soft);
+    font: var(--kreo-type-body);
+  }
+
+  .guide-index {
+    padding: 0;
+    list-style: none;
+  }
+
+  .guide-index li + li {
+    margin-block-start: var(--kreo-space-4);
+  }
+
+  .guide-index p {
+    margin: var(--kreo-space-1) 0 0;
+    color: var(--kreo-text-muted);
+  }
+
+  .prev-next {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--kreo-space-4);
+    margin-block-start: var(--kreo-space-12);
+    padding-block-start: var(--kreo-space-6);
+    border-block-start: var(--kreo-border-w) solid var(--kreo-border-subtle);
+  }
+
+  .prev-next__link {
+    display: grid;
+    gap: var(--kreo-space-1);
+    padding: var(--kreo-space-3) var(--kreo-space-4);
+    border: var(--kreo-border-w) solid var(--kreo-border-subtle);
+    border-radius: var(--kreo-radius-md);
+    text-decoration: none;
+  }
+
+  .prev-next__link--next {
+    text-align: end;
+  }
+
+  .prev-next__label {
+    font: var(--kreo-type-label);
+    color: var(--kreo-text-muted);
+    text-transform: uppercase;
+    letter-spacing: var(--kreo-tracking-label);
+  }
+
+  .prev-next__title {
+    color: var(--kreo-text-body);
+  }
+
+  .toc {
+    position: sticky;
+    inset-block-start: calc(var(--shell-header-height) + var(--kreo-space-6));
+    max-block-size: calc(100dvh - var(--shell-header-height) - var(--kreo-space-12));
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  .toc__title {
+    margin: 0 0 var(--kreo-space-2);
+    font: var(--kreo-type-label);
+    color: var(--kreo-text-muted);
+    text-transform: uppercase;
+    letter-spacing: var(--kreo-tracking-label);
+  }
+
+  .toc ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border-inline-start: var(--kreo-border-w) solid var(--kreo-border-subtle);
+  }
+
+  .toc li[data-depth='3'] a {
+    padding-inline-start: var(--kreo-space-6);
+  }
+
+  .toc a {
+    display: block;
+    padding: var(--kreo-space-1) var(--kreo-space-3);
+    margin-inline-start: calc(var(--kreo-border-w) * -1);
+    border-inline-start: var(--kreo-border-w) solid transparent;
+    color: var(--kreo-text-muted);
+    font-size: var(--kreo-text-12);
+    line-height: var(--kreo-leading-normal);
+    text-decoration: none;
+  }
+
+  .toc a[aria-current='true'] {
+    border-inline-start-color: var(--kreo-accent-500);
+    color: var(--kreo-text-body);
+  }
+
+  /* No room for a second rail: the contents fold away and the prose takes the width. */
+  @media (width < 1200px) {
+    .guide {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .toc {
+      display: none;
+    }
+  }
+}

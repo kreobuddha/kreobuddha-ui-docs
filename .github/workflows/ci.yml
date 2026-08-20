@@ -38,6 +38,10 @@ jobs:
 
       - run: npm run typecheck
 
+      # Node runs these straight from TypeScript. They cover the rules that are awkward to observe
+      # in a browser — the scroll-spy decision at the top, at the bottom, and across a jump.
+      - run: npm test
+
       # No `basePath` here. What this asks is whether the site compiles and exports at all; the
       # prefixed build is what `pages.yml` runs on merge, against the sub-path Pages reports.
       - run: npm run build
