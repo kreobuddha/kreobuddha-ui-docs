@@ -83,6 +83,31 @@ Three steps, and the third is optional:
 Re-export whatever the page renders from `components/ui.ts`, which is the site's client boundary
 for the library.
 
+### The landing page
+
+Text leads and a working panel sits beside it: tabs, a form, a status and a progress bar built
+from the library, inside `.preview-scope` with a row of theme presets under it. One click repaints
+the panel and nothing else on the page — the theme editor demonstrating itself before anyone has
+read about it.
+
+The social preview images are drawn at build time by `scripts/og.mjs` — satori for the layout,
+resvg for the raster — because a static export has no runtime to draw one on request.
+
+### Search
+
+Pagefind indexes the exported HTML after the build — `npm run build` is `next build` followed by
+`pagefind --site out`. Only the article of each page is indexed (`data-pagefind-body`), and each
+page carries its locale as a filter, so a search in Russian cannot answer with an English page.
+
+The runtime and the index are fetched the first time the palette is opened and never at load: they
+are the largest thing on the site, and a reader who never searches should not pay for them. The
+import path is built rather than imported, because the file is written by the build after the
+bundler has finished.
+
+The palette is a `<dialog>` — the platform's focus trap and `Escape` again — driven as a combobox:
+the arrows move a highlight through the results while focus stays in the field, which is what
+`aria-activedescendant` is for. Whatever had focus when it was opened gets it back when it closes.
+
 ### Theming
 
 Two levels, and keeping them apart is the point.

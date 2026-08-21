@@ -13,8 +13,10 @@
  * it, so the client bundle stays the size of what is on screen.
  */
 export {
+  Badge,
   Button,
   Dialog,
+  Progress,
   Select,
   Switch,
   Tabs,

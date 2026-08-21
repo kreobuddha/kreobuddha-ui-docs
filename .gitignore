@@ -8,8 +8,7 @@ next-env.d.ts
 .next/
 out/
 
-# Pagefind writes its index into the export after the build.
-public/pagefind/
+# Pagefind writes its index into the export after the build, inside out/.
 
 coverage/
 test-results/

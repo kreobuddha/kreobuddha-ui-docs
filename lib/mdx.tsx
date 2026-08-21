@@ -111,7 +111,13 @@ export async function renderGuide(
             rehypeAutolinkHeadings,
             {
               behavior: 'append',
-              properties: { className: 'heading-anchor', ariaHidden: 'true', tabIndex: -1 },
+              properties: {
+                className: 'heading-anchor',
+                ariaHidden: 'true',
+                tabIndex: -1,
+                // Decorative, and it was turning up at the front of search excerpts as a stray `#`.
+                'data-pagefind-ignore': true,
+              },
               content: { type: 'text', value: '#' },
             },
           ],

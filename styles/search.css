@@ -1,0 +1,149 @@
+@layer site {
+  .palette-trigger {
+    display: inline-flex;
+    gap: var(--kreo-space-2);
+    align-items: center;
+    min-block-size: 32px;
+    padding-inline: var(--kreo-space-3);
+    border: var(--kreo-border-w) solid var(--kreo-border-default);
+    border-radius: var(--kreo-radius-md);
+    background: var(--kreo-surface-sunken);
+    color: var(--kreo-text-muted);
+    font: var(--kreo-type-label);
+    cursor: pointer;
+  }
+
+  .palette-trigger__glyph {
+    inline-size: 16px;
+    block-size: 16px;
+  }
+
+  .palette-trigger__glyph {
+    inline-size: 16px;
+    block-size: 16px;
+  }
+
+  .palette-trigger kbd {
+    padding-inline: var(--kreo-space-1);
+    border: var(--kreo-border-w) solid var(--kreo-border-subtle);
+    border-radius: var(--kreo-radius-xs);
+    font-family: var(--site-font-mono);
+    font-size: var(--kreo-text-12);
+  }
+
+  .palette {
+    inline-size: 100%;
+    max-inline-size: 100%;
+    block-size: 100%;
+    max-block-size: 100%;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+
+    &::backdrop {
+      background: rgb(0 0 0 / 45%);
+    }
+  }
+
+  .palette__panel {
+    display: flex;
+    flex-direction: column;
+    inline-size: min(560px, 92vw);
+    max-block-size: min(70vh, 520px);
+
+    /* Below the header rather than centred: the palette is a tool of the page, not a takeover. */
+    margin: max(10vh, var(--kreo-space-8)) auto 0;
+    border: var(--kreo-border-w) solid var(--kreo-border-default);
+    border-radius: var(--kreo-radius-lg);
+    background: var(--kreo-surface-raised);
+
+    /* Floating above the page, which is the one thing allowed a shadow. */
+    box-shadow: var(--kreo-shadow-overlay);
+  }
+
+  .palette__input {
+    padding: var(--kreo-space-4);
+    border: 0;
+    border-block-end: var(--kreo-border-w) solid var(--kreo-border-subtle);
+    border-radius: inherit;
+    background: none;
+    color: var(--kreo-text-body);
+    font: var(--kreo-type-body);
+
+    &:focus-visible {
+      outline: none;
+    }
+  }
+
+  .palette__results {
+    flex: 1;
+    margin: 0;
+    padding: var(--kreo-space-2);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    list-style: none;
+  }
+
+  .palette__results li a {
+    display: grid;
+    gap: var(--kreo-space-1);
+    padding: var(--kreo-space-2) var(--kreo-space-3);
+    border-radius: var(--kreo-radius-sm);
+    color: var(--kreo-text-body);
+    text-decoration: none;
+  }
+
+  /*
+   * The current row is marked through the option's own state rather than a class the component has
+   * to remember to set — and `aria-selected` is what a screen reader is reading anyway.
+   */
+  .palette__results li[aria-selected='true'] a {
+    background: var(--kreo-surface-active);
+  }
+
+  .palette__results span {
+    color: var(--kreo-text-muted);
+    font-size: var(--kreo-text-12);
+    line-height: var(--kreo-leading-normal);
+  }
+
+  .palette__results mark {
+    background: none;
+    color: var(--kreo-text-accent);
+    font-weight: var(--kreo-weight-medium);
+  }
+
+  .palette__status {
+    margin: 0;
+    padding: var(--kreo-space-2) var(--kreo-space-4);
+    border-block-start: var(--kreo-border-w) solid var(--kreo-border-subtle);
+    color: var(--kreo-text-muted);
+    font: var(--kreo-type-label);
+    min-block-size: 2.4em;
+  }
+
+  /* At 320 the label goes and the trigger becomes the icon it already looks like. */
+  @media (width < 900px) {
+    .palette-trigger {
+      min-block-size: var(--shell-touch-target);
+      min-inline-size: var(--shell-touch-target);
+      justify-content: center;
+      padding-inline: var(--kreo-space-2);
+    }
+
+    .palette-trigger kbd {
+      display: none;
+    }
+
+    /* Out of sight, still the accessible name — a magnifying glass on its own is a guess. */
+    .palette-trigger__label {
+      position: absolute;
+      inline-size: 1px;
+      block-size: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+  }
+}

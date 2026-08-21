@@ -8,7 +8,7 @@ import { Toc } from '@/components/docs/Toc';
 import { TokenTable } from '@/components/docs/TokenTable';
 import { allGuideParams, getDoc, getDocs } from '@/lib/content';
 import { dictionary, isLocale, type Locale } from '@/lib/i18n';
-import { route } from '@/lib/links';
+import { basePath, localeAlternates, route } from '@/lib/links';
 import { renderGuide } from '@/lib/mdx';
 import { getNeighbours } from '@/lib/nav';
 
@@ -36,12 +36,20 @@ export async function generateMetadata({
 
   const t = dictionary[locale];
   const single = slugOf(slug);
-  if (single === null) return { title: t.docsTitle, description: t.guidesIndexLead };
+  const path = single === null ? '/docs' : `/docs/${single}`;
+  const alternates = {
+    canonical: `${basePath}/${locale}${path}/`,
+    languages: localeAlternates(path),
+  };
+
+  if (single === null) {
+    return { title: t.docsTitle, description: t.guidesIndexLead, alternates };
+  }
 
   const guide = await getDoc('guides', locale, single);
   if (!guide) return {};
 
-  return { title: guide.title, description: guide.description };
+  return { title: guide.title, description: guide.description, alternates };
 }
 
 export default async function DocsPage({
@@ -59,7 +67,7 @@ export default async function DocsPage({
     const guides = await getDocs('guides', locale);
 
     return (
-      <article className="prose">
+      <article className="prose" data-pagefind-body data-pagefind-filter={`locale:${locale}`}>
         <Breadcrumbs locale={locale} trail={[{ label: t.docsTitle }]} />
         <h1>{t.docsTitle}</h1>
         <p className="lead">{t.guidesIndexLead}</p>
@@ -96,7 +104,7 @@ export default async function DocsPage({
 
   return (
     <div className="guide">
-      <article className="prose">
+      <article className="prose" data-pagefind-body data-pagefind-filter={`locale:${locale}`}>
         <Breadcrumbs
           locale={locale}
           trail={[

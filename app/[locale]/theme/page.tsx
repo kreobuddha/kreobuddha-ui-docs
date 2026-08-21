@@ -42,7 +42,7 @@ export default async function ThemePage({ params }: { params: Promise<{ locale: 
   );
 
   return (
-    <article className="prose">
+    <article className="prose" data-pagefind-body data-pagefind-filter={`locale:${locale}`}>
       <Breadcrumbs locale={locale} trail={[{ label: t.themeEditorTitle }]} />
       <h1>{t.themeEditorTitle}</h1>
       <p className="lead">{t.themeEditorLead}</p>

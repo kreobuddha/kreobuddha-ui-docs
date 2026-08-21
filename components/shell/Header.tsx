@@ -2,6 +2,7 @@ import Link from 'next/link';
 
 import { AutoHideHeader } from './AutoHideHeader';
 import { LocaleSwitcher } from './LocaleSwitcher';
+import { CommandPalette } from '@/components/search/CommandPalette';
 import { ThemeToggle } from '@/components/theme/ThemeToggle';
 import { NavDrawer } from './NavDrawer';
 import type { NavGroupData } from './NavTree';
@@ -31,6 +32,7 @@ export function Header({
         label={t.documentationNav}
         openLabel={t.openNavigation}
         closeLabel={t.closeNavigation}
+        language={<LocaleSwitcher label={t.language} />}
         theme={
           <ThemeToggle
             name="theme-mode-drawer"
@@ -50,6 +52,20 @@ export function Header({
         <Link href={route(locale, '/components')}>{t.componentsTitle}</Link>
       </nav>
 
+      <CommandPalette
+        locale={locale}
+        labels={{
+          open: t.searchOpen,
+          title: t.searchTitle,
+          placeholder: t.searchPlaceholder,
+          empty: t.searchEmpty,
+          searching: t.searching,
+          shortcutHint: t.searchShortcut,
+          close: t.searchClose,
+          results: t.searchResults,
+        }}
+      />
+
       <ThemeToggle
         name="theme-mode-header"
         className="theme-toggle--header"
@@ -58,7 +74,7 @@ export function Header({
         colours={colours}
       />
 
-      <LocaleSwitcher label={t.language} />
+      <LocaleSwitcher label={t.language} className="locale-switcher--header" />
     </AutoHideHeader>
   );
 }

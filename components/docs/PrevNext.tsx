@@ -16,7 +16,7 @@ export function PrevNext({
   if (previous === null && next === null) return null;
 
   return (
-    <nav className="prev-next" aria-label={`${t.previous} / ${t.next}`}>
+    <nav className="prev-next" data-pagefind-ignore aria-label={`${t.previous} / ${t.next}`}>
       {previous ? (
         <Link className="prev-next__link" href={previous.href} rel="prev">
           <span className="prev-next__label">{t.previous}</span>

@@ -36,7 +36,7 @@ export default async function ComponentsIndex({
   const components = (await getDocs('components', locale)).sort((a, b) => a.order - b.order);
 
   return (
-    <article className="prose">
+    <article className="prose" data-pagefind-body data-pagefind-filter={`locale:${locale}`}>
       <Breadcrumbs locale={locale} trail={[{ label: t.componentsTitle }]} />
       <h1>{t.componentsTitle}</h1>
       <p className="lead">{t.componentsIndexLead}</p>

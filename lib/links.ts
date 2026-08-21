@@ -17,3 +17,18 @@ export function route(locale: Locale = defaultLocale, path = ''): string {
   const normalised = path === '' ? '' : path.startsWith('/') ? path : `/${path}`;
   return `/${locale}${normalised}`;
 }
+
+/*
+ * Where the site lives, absolutely. Metadata needs it — an Open Graph image referenced by a
+ * relative path is ignored by every crawler — and it is the one thing `basePath` cannot supply,
+ * because a path is not an origin.
+ */
+export const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://kreobuddha.github.io';
+
+/** The same page in every locale, for `hreflang`. Paths are given without the locale segment. */
+export function localeAlternates(path = ''): Record<string, string> {
+  const normalised = path === '' ? '' : path.startsWith('/') ? path : `/${path}`;
+  return Object.fromEntries(
+    ['en', 'ru'].map((locale) => [locale, `${basePath}/${locale}${normalised}/`]),
+  );
+}

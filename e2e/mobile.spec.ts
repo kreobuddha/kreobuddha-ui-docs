@@ -82,10 +82,17 @@ test.describe('the narrow layout', () => {
      */
     await page.evaluate(() => window.scrollTo(0, 600));
     await page.evaluate(() => window.scrollTo(0, 400));
+
+    /*
+     * Both settled before anything is measured. The header follows the scroll on an animation
+     * frame, so on a loaded machine the attribute and the offset can each still be a frame behind
+     * when the next line runs — and a test that measures a page mid-move is a test that fails for
+     * reasons that have nothing to do with the drawer.
+     */
+    await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(400);
     await expect(page.locator('.site-header')).toHaveAttribute('data-hidden', 'false');
 
-    const before = await page.evaluate(() => window.scrollY);
-    expect(before).toBeGreaterThan(0);
+    const before = 400;
 
     const article = page.locator('.prose');
     const positionBefore = (await article.boundingBox())!.y;
@@ -93,11 +100,13 @@ test.describe('the narrow layout', () => {
     await page.locator('.nav-drawer__trigger').click();
 
     // The page is pinned, so its content has not moved on screen …
-    expect((await article.boundingBox())!.y).toBeCloseTo(positionBefore, 0);
+    await expect.poll(async () => Math.round((await article.boundingBox())!.y)).toBe(
+      Math.round(positionBefore),
+    );
 
     // … and cannot be scrolled from behind the drawer.
     await page.evaluate(() => window.scrollTo(0, 1200));
-    expect((await article.boundingBox())!.y).toBeCloseTo(positionBefore, 0);
+    expect(Math.round((await article.boundingBox())!.y)).toBe(Math.round(positionBefore));
 
     // Closing hands the position back rather than dropping the reader at the top.
     await page.keyboard.press('Escape');
@@ -171,5 +180,39 @@ test.describe('the narrow layout', () => {
     const row = page.locator('.token-table tbody tr').first();
     const display = await row.evaluate((element) => getComputedStyle(element).display);
     expect(display).toBe('block');
+  });
+});
+
+test.describe('what the narrow header keeps', () => {
+  test.skip(({ viewport }) => (viewport?.width ?? 0) >= 900, 'The header has room above 900.');
+
+  test('keeps navigation, the name of the site and search, and nothing else', async ({ page }) => {
+    await page.goto(GUIDE);
+
+    await expect(page.locator('.nav-drawer__trigger')).toBeVisible();
+    await expect(page.locator('.palette-trigger')).toBeVisible();
+
+    // The brand is the link home, and it is shown in full rather than truncated to fit a toggle.
+    const brand = page.locator('.site-header__brand');
+    await expect(brand).toBeVisible();
+    const truncated = await brand.evaluate(
+      (element) => element.scrollWidth > element.clientWidth + 1,
+    );
+    expect(truncated).toBe(false);
+
+    // Language and theme moved into the drawer, and are still reachable there.
+    await expect(page.locator('.locale-switcher--header')).toBeHidden();
+
+    await page.locator('.nav-drawer__trigger').click();
+    await expect(page.locator('dialog.nav-drawer .locale-switcher')).toBeVisible();
+    await expect(page.locator('dialog.nav-drawer .theme-toggle')).toBeVisible();
+  });
+
+  test('the icon-only buttons still say what they are', async ({ page }) => {
+    await page.goto(GUIDE);
+
+    // Both lost their label to the width, not to the accessibility tree.
+    await expect(page.getByRole('button', { name: 'Menu' })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Search' })).toBeVisible();
   });
 });

@@ -18,9 +18,17 @@ const OUT = 'out';
 const ORDER = /@layer\s+reset\s*,\s*library\s*,\s*site\s*,\s*overrides\s*;/;
 const LIBRARY_BLOCK = /@layer\s+library\s*\{/;
 
+/*
+ * The search index ships stylesheets of its own into the export. They are not the site's, they
+ * declare no layers, and counting them would only make the report say a bigger number.
+ */
+const NOT_OURS = new Set(['pagefind']);
+
 async function cssFiles(dir) {
   const found = [];
   for (const entry of await readdir(dir, { withFileTypes: true })) {
+    if (NOT_OURS.has(entry.name)) continue;
+
     const path = join(dir, entry.name);
     if (entry.isDirectory()) found.push(...(await cssFiles(path)));
     else if (entry.name.endsWith('.css')) found.push(path);

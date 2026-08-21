@@ -1,0 +1,212 @@
+@layer site {
+  .landing {
+    max-inline-size: 1120px;
+    margin-inline: auto;
+    padding: var(--kreo-space-12) var(--shell-page-padding) var(--kreo-space-16);
+  }
+
+  /*
+   * Text left at a readable measure, the panel right. One column below 900, and the text is first
+   * in the source, so the narrow order needs no reordering.
+   */
+  .hero {
+    display: grid;
+    gap: var(--shell-column-gap);
+    grid-template-columns: minmax(0, 520px) minmax(0, 1fr);
+    align-items: start;
+  }
+
+  @media (width < 900px) {
+    .hero {
+      grid-template-columns: minmax(0, 1fr);
+      gap: var(--kreo-space-8);
+    }
+  }
+
+  .hero__text h1 {
+    margin: 0 0 var(--kreo-space-4);
+    font: var(--kreo-type-display);
+    letter-spacing: var(--kreo-tracking-tight);
+    text-wrap: balance;
+  }
+
+  .hero__text .lead {
+    margin: 0 0 var(--kreo-space-6);
+    color: var(--kreo-text-muted);
+    font: var(--kreo-type-body);
+  }
+
+  .hero__install {
+    margin: 0 0 var(--kreo-space-4);
+    padding: var(--kreo-space-3) var(--kreo-space-4);
+    border: var(--kreo-border-w) solid var(--kreo-border-default);
+    border-radius: var(--kreo-radius-md);
+    background: var(--kreo-surface-sunken);
+    font-family: var(--site-font-mono);
+    font-size: var(--kreo-text-12);
+    overflow-x: auto;
+  }
+
+  .hero__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--kreo-space-4);
+    margin: 0;
+  }
+
+  .hero-panel {
+    display: grid;
+    gap: var(--kreo-space-3);
+  }
+
+  .hero-panel__frame {
+    border: var(--kreo-border-w) solid var(--kreo-border-default);
+    border-radius: var(--kreo-radius-lg);
+
+    /* The panel is the one thing on the page that floats. */
+    box-shadow: var(--kreo-shadow-overlay);
+    background: var(--kreo-surface-card);
+    overflow: hidden;
+
+    /* Repainting by preset is a colour change and nothing else; motion is not part of it. */
+    @media (prefers-reduced-motion: no-preference) {
+      transition: background-color var(--kreo-duration-base) var(--kreo-ease);
+    }
+  }
+
+  .hero-panel__bar {
+    display: flex;
+    gap: var(--kreo-space-3);
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--kreo-space-2) var(--kreo-space-4);
+    border-block-end: var(--kreo-border-w) solid var(--kreo-border-subtle);
+    background: var(--kreo-surface-sunken);
+  }
+
+  /* Three window dots, drawn rather than fetched. */
+  .hero-panel__dots {
+    inline-size: 8px;
+    block-size: 8px;
+    border-radius: var(--kreo-radius-full);
+    background: var(--kreo-border-strong);
+    box-shadow:
+      14px 0 0 var(--kreo-border-strong),
+      28px 0 0 var(--kreo-border-strong);
+  }
+
+  .hero-panel__frame > div:last-child {
+    padding: var(--kreo-space-4);
+  }
+
+  .hero-panel__form {
+    display: grid;
+    gap: var(--kreo-space-4);
+    padding-block-start: var(--kreo-space-4);
+  }
+
+  .hero-panel__actions {
+    display: flex;
+    gap: var(--kreo-space-2);
+  }
+
+  .hero-panel__logs {
+    margin: var(--kreo-space-4) 0 0;
+    padding: var(--kreo-space-3);
+    border-radius: var(--kreo-radius-sm);
+    background: var(--kreo-surface-sunken);
+    font-family: var(--site-font-mono);
+    font-size: var(--kreo-text-12);
+    line-height: var(--kreo-leading-relaxed);
+    overflow-x: auto;
+  }
+
+  .hero-panel__presets {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--kreo-space-2);
+    align-items: center;
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+
+  .hero-panel__presets legend {
+    float: inline-start;
+    margin-inline-end: var(--kreo-space-2);
+    padding: 0;
+    color: var(--kreo-text-muted);
+    font: var(--kreo-type-label);
+    text-transform: uppercase;
+    letter-spacing: var(--kreo-tracking-label);
+  }
+
+  .hero-panel__presets label {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    padding: var(--kreo-space-1) var(--kreo-space-3);
+    border: var(--kreo-border-w) solid var(--kreo-border-default);
+    border-radius: var(--kreo-radius-full);
+    color: var(--kreo-text-muted);
+    font: var(--kreo-type-label);
+    cursor: pointer;
+  }
+
+  .hero-panel__presets label:has(:checked) {
+    background: var(--kreo-surface-active);
+    color: var(--kreo-text-body);
+  }
+
+  .hero-panel__presets label:has(:focus-visible) {
+    outline: var(--kreo-border-w-focus) solid var(--kreo-border-focus);
+    outline-offset: 1px;
+  }
+
+  /* Covers its own label, so it is a real target as well as a real radio. */
+  .hero-panel__presets input {
+    position: absolute;
+    inset: 0;
+    margin: 0;
+    opacity: 0;
+    cursor: pointer;
+  }
+
+  .hero__panel {
+    display: grid;
+    gap: var(--kreo-space-3);
+  }
+
+  .hero__editor-link {
+    margin: 0;
+    font: var(--kreo-type-label);
+  }
+
+  .promises {
+    display: grid;
+    gap: var(--kreo-space-8);
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    margin-block-start: var(--kreo-space-16);
+    padding-block-start: var(--kreo-space-8);
+    border-block-start: var(--kreo-border-w) solid var(--kreo-border-subtle);
+  }
+
+  .promises h2 {
+    margin: 0 0 var(--kreo-space-2);
+    font: var(--kreo-type-heading);
+  }
+
+  .promises h2 a {
+    color: var(--kreo-text-body);
+    text-decoration: none;
+
+    &:hover {
+      color: var(--kreo-text-link);
+    }
+  }
+
+  .promises p {
+    margin: 0;
+    color: var(--kreo-text-muted);
+  }
+}

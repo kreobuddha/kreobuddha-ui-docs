@@ -46,7 +46,7 @@ export default async function TokensPage({ params }: { params: Promise<{ locale:
   ];
 
   return (
-    <article className="prose">
+    <article className="prose" data-pagefind-body data-pagefind-filter={`locale:${locale}`}>
       <Breadcrumbs locale={locale} trail={[{ label: t.tokensTitle }]} />
       <h1>{t.tokensTitle}</h1>
       <p className="lead">{t.tokensLead}</p>

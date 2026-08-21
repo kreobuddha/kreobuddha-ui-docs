@@ -23,6 +23,7 @@ const TYPES = new Map(
     '.json': 'application/json; charset=utf-8',
     '.woff2': 'font/woff2',
     '.svg': 'image/svg+xml',
+    '.png': 'image/png',
     '.txt': 'text/plain; charset=utf-8',
   }),
 );
@@ -69,8 +70,10 @@ const server = createServer(async (request, response) => {
     return;
   }
 
+  const { size } = await stat(file);
   response.writeHead(200, {
     'content-type': TYPES.get(extname(file)) ?? 'application/octet-stream',
+    'content-length': String(size),
   });
   createReadStream(file).pipe(response);
 });
