@@ -32,19 +32,22 @@ export interface Token {
 
 let cache: Token[] | null = null;
 
-export async function allTokens(): Promise<Token[]> {
-  if (cache) return cache;
-
-  let css: string;
+async function readStylesheet(): Promise<string> {
   try {
-    css = await readFile(STYLESHEET, 'utf8');
+    return await readFile(STYLESHEET, 'utf8');
   } catch (cause) {
     throw new Error(
-      `Could not read the library stylesheet at ${STYLESHEET}. The token tables are built from ` +
-        'it, so this is a broken install rather than an empty section.',
+      `Could not read the library stylesheet at ${STYLESHEET}. The token tables and the theme ` +
+        'editor are built from it, so this is a broken install rather than an empty section.',
       { cause },
     );
   }
+}
+
+export async function allTokens(): Promise<Token[]> {
+  if (cache) return cache;
+
+  const css = await readStylesheet();
 
   const tokens: Token[] = [];
   const seen = new Set<string>();
@@ -57,6 +60,45 @@ export async function allTokens(): Promise<Token[]> {
 
   cache = tokens;
   return tokens;
+}
+
+/*
+ * The same declarations, but split by theme.
+ *
+ * The dark theme is a block of overrides under `[data-kreo-theme=dark]`, so the dark map is the
+ * light one with those written over it. Merging rather than keeping them separate is what lets a
+ * reference resolve: a dark override often points at a token only the light block declares.
+ */
+export async function tokenMaps(): Promise<{ light: Map<string, string>; dark: Map<string, string> }> {
+  const css = await readStylesheet();
+
+  const light = new Map<string, string>();
+  for (const [, name, value] of css.matchAll(DECLARATION)) {
+    if (name !== undefined && value !== undefined && !light.has(name)) light.set(name, value.trim());
+  }
+
+  const dark = new Map(light);
+  for (const block of darkBlocks(css)) {
+    for (const [, name, value] of block.matchAll(DECLARATION)) {
+      if (name !== undefined && value !== undefined) dark.set(name, value.trim());
+    }
+  }
+
+  return { light, dark };
+}
+
+/** The bodies of every `[data-kreo-theme=dark]` rule, braces excluded. */
+function darkBlocks(css: string): string[] {
+  const blocks: string[] = [];
+  const selector = /\[data-kreo-theme=["']?dark["']?\][^{]*\{/g;
+
+  for (const match of css.matchAll(selector)) {
+    const start = (match.index ?? 0) + match[0].length;
+    const end = css.indexOf('}', start);
+    if (end !== -1) blocks.push(css.slice(start, end));
+  }
+
+  return blocks;
 }
 
 export async function selectTokens(include?: string[], exclude?: string[]): Promise<Token[]> {

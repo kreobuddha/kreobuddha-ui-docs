@@ -4,8 +4,8 @@ The public documentation site for [`@kreobuddha/ui`](https://github.com/kreobudd
 guides, a component reference with a live playground, design tokens and a theme editor.
 
 **Status: early. Nine guides and six component pages are on the site in English, with navigation, a
-table of contents, a language switcher and a full narrow-screen layout. The theme editor and search
-are not built yet.**
+table of contents, a language switcher, a full narrow-screen layout, light/dark/system themes and a
+theme editor. Search is not built yet.**
 
 ## Stack
 
@@ -82,6 +82,23 @@ Three steps, and the third is optional:
 
 Re-export whatever the page renders from `components/ui.ts`, which is the site's client boundary
 for the library.
+
+### Theming
+
+Two levels, and keeping them apart is the point.
+
+**The site's theme** — light, dark or system — is applied by a blocking script at the top of the
+document, before anything is painted. Reading the stored choice from React would mean applying it
+after the first paint, which is the flash. The script also sets `color-scheme` and the
+`theme-color` meta, and the two page colours it uses are read from the library's own stylesheet at
+build time rather than written down twice.
+
+**The theme editor** at `/theme` writes tokens onto `.preview-scope` and nowhere else. The library
+reads its tokens as inherited custom properties, so a value set on that element reaches every
+component inside it and nothing outside — a reader can build something unreadable and still have
+the page around it, including the controls to undo it. Contrast is checked against WCAG 2.1 as the
+values change (`lib/contrast.ts`), and a theme travels as a URL fragment, which a static site can
+do without a server.
 
 ### The narrow layout
 

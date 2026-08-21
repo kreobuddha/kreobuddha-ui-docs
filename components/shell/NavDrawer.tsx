@@ -22,11 +22,14 @@ export function NavDrawer({
   label,
   openLabel,
   closeLabel,
+  theme,
 }: {
   groups: NavGroupData[];
   label: string;
   openLabel: string;
   closeLabel: string;
+  /** The theme control, which the header has no room for at this width. */
+  theme?: React.ReactNode;
 }) {
   const dialog = useRef<HTMLDialogElement>(null);
   const trigger = useRef<HTMLButtonElement>(null);
@@ -167,6 +170,8 @@ export function NavDrawer({
           <nav aria-label={label}>
             <NavTree groups={groups} onNavigate={close} />
           </nav>
+
+          {theme === undefined ? null : <div className="nav-drawer__theme">{theme}</div>}
         </div>
       </dialog>
     </>

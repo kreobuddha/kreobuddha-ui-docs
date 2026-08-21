@@ -76,6 +76,18 @@
     box-shadow: var(--kreo-shadow-overlay);
   }
 
+  /* A finger, not a cursor: the whole chip is the target inside the drawer. */
+  .nav-drawer__theme .theme-toggle label {
+    min-block-size: var(--shell-touch-target);
+    padding-inline: var(--kreo-space-3);
+  }
+
+  .nav-drawer__theme {
+    margin-block-start: auto;
+    padding-block-start: var(--kreo-space-4);
+    border-block-start: var(--kreo-border-w) solid var(--kreo-border-subtle);
+  }
+
   .nav-drawer__close {
     align-self: flex-end;
     min-block-size: var(--shell-touch-target);
@@ -149,6 +161,15 @@
     .site-header {
       gap: var(--kreo-space-3);
       padding-inline: max(var(--kreo-space-3), env(safe-area-inset-left));
+    }
+
+    /*
+     * Three theme choices and a brand do not both fit at 320. The control moves into the drawer,
+     * which has the room, and the brand keeps its place — losing the link home to a preference
+     * toggle is the wrong trade.
+     */
+    .theme-toggle--header {
+      display: none;
     }
 
     /* The names cost more width than the header has; the codes say the same thing to the eye and
