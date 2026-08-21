@@ -98,7 +98,7 @@
    * The current row is marked through the option's own state rather than a class the component has
    * to remember to set — and `aria-selected` is what a screen reader is reading anyway.
    */
-  .palette__results li[aria-selected='true'] a {
+  .palette__results a[aria-selected='true'] {
     background: var(--kreo-surface-active);
   }
 

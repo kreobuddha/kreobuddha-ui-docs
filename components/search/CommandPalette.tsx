@@ -236,14 +236,25 @@ export function CommandPalette({ locale, labels }: { locale: Locale; labels: Pal
 
           <ul className="palette__results" id={listId} role="listbox" aria-label={labels.title}>
             {hits.map((hit, index) => (
-              <li
-                key={hit.id}
-                id={optionId(index)}
-                role="option"
-                aria-selected={index === active}
-                onMouseEnter={() => setActive(index)}
-              >
-                <a href={hit.url} tabIndex={-1}>
+              /*
+               * The option is the link, not a wrapper around one.
+               *
+               * An `<a>` nested inside `role="option"` is two interactive things where the pattern
+               * allows one, and axe flags it `nested-interactive`. Putting the role on the anchor
+               * keeps a real link — middle-click, open in a new tab, the status bar showing where
+               * it goes — while the listbox sees exactly one option per row.
+               *
+               * `tabIndex={-1}` stays: focus belongs in the field being typed into, and the arrows
+               * move `aria-activedescendant` rather than focus.
+               */
+              <li key={hit.id} role="presentation" onMouseEnter={() => setActive(index)}>
+                <a
+                  href={hit.url}
+                  id={optionId(index)}
+                  role="option"
+                  aria-selected={index === active}
+                  tabIndex={-1}
+                >
                   <strong>{hit.title}</strong>
                   {/* Pagefind marks the matched words; it is its own HTML, not the page's. */}
                   <span dangerouslySetInnerHTML={{ __html: hit.excerpt }} />

@@ -71,7 +71,7 @@ test('typing finds pages, and the arrows move through them without leaving the f
   const input = page.locator('.palette__input');
   await input.fill('installation');
 
-  const options = page.locator('.palette__results li');
+  const options = page.locator('.palette__results [role="option"]');
   await expect(options.first()).toBeVisible();
   await expect(page.locator('.palette__status')).toContainText('results');
 
@@ -93,7 +93,7 @@ test('Enter goes to the highlighted page', async ({ page }) => {
   await openPalette(page);
   await page.locator('.palette__input').fill('installation');
 
-  await expect(page.locator('.palette__results li').first()).toBeVisible();
+  await expect(page.locator('.palette__results [role="option"]').first()).toBeVisible();
   await page.keyboard.press('Enter');
 
   await expect(page).toHaveURL(/\/en\/docs\/installation\/$/);
@@ -104,7 +104,7 @@ test('a search in one language does not answer with the other', async ({ page })
   await openPalette(page);
   await page.locator('.palette__input').fill('installation');
 
-  const links = page.locator('.palette__results li a');
+  const links = page.locator('.palette__results a');
   await expect(links.first()).toBeVisible();
 
   for (const href of await links.evaluateAll((elements) =>
@@ -120,7 +120,7 @@ test('a search that matches nothing says so', async ({ page }) => {
   await page.locator('.palette__input').fill('zzzzqqqq');
 
   await expect(page.locator('.palette__status')).toContainText('Nothing matched');
-  await expect(page.locator('.palette__results li')).toHaveCount(0);
+  await expect(page.locator('.palette__results [role="option"]')).toHaveCount(0);
 });
 
 test('the index is not fetched until someone searches', async ({ page }) => {
@@ -132,7 +132,7 @@ test('the index is not fetched until someone searches', async ({ page }) => {
 
   await openPalette(page);
   await page.locator('.palette__input').fill('theming');
-  await expect(page.locator('.palette__results li').first()).toBeVisible();
+  await expect(page.locator('.palette__results [role="option"]').first()).toBeVisible();
 
   expect(requests.some((url) => url.includes('/pagefind/pagefind.js'))).toBe(true);
 });

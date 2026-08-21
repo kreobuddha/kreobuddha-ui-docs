@@ -53,11 +53,40 @@ jobs:
 
       - run: npx playwright install --with-deps chromium
 
+      # Where that browser landed, for Lighthouse further down.
+      - id: chromium
+        run: |
+          echo "path=$(node -e "console.log(require('playwright-core').chromium.executablePath())")" >> "$GITHUB_OUTPUT"
+
       # Builds the export under the deployed sub-path and drives it in a real browser, at 1280 and
       # at 320. The build is part of the script, so there is no second unprefixed build here: the
-      # one that ships is the one that is tested.
+      # one that ships is the one that is tested. `e2e/axe.spec.ts` rides along: every scan runs in
+      # both projects, so the accessibility gate is checked at 1280 and at 320 as well.
       - run: npm run e2e
 
       # Reads the built CSS, so it runs after the build. Guards the cascade layer order, which is
       # decided by the bundler rather than by the source.
       - run: npm run check:css
+
+      # Reads the built HTML, so it runs after the build too. Every internal href has to resolve to
+      # a file the export actually wrote, every `#fragment` to an element that exists, and no
+      # absolute link may escape `basePath` — the last of which only shows up in a build made under
+      # the sub-path, which is exactly what `npm run e2e` left behind.
+      - run: npm run check:links
+
+      # Lighthouse drives Chrome, and the one already on disk is the browser the suite above was
+      # pinned to. Letting `chrome-launcher` find whatever the runner image happens to ship would
+      # mean the budget is measured against a browser nothing else in this workflow used.
+      - name: Measure performance and accessibility
+        run: npm run lighthouse
+        env:
+          CHROME_PATH: ${{ steps.chromium.outputs.path }}
+
+      # Kept whether the budget passed or failed — a failed budget is the case where someone needs
+      # to read the report.
+      - if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: lighthouse-reports
+          path: .lighthouseci/
+          retention-days: 7
