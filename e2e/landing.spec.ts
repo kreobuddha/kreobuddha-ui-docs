@@ -63,28 +63,16 @@ test('the promises lead somewhere', async ({ page }) => {
   await expect(page).toHaveURL(/\/en\/docs\/accessibility\/$/);
 });
 
-test('the page says what it is to a crawler, and the picture exists', async ({ page, request }) => {
+test('the page says what it is to a crawler', async ({ page }) => {
   await page.goto('en/');
 
   const content = (selector: string) => page.locator(selector).getAttribute('content');
 
-  expect(await content('meta[property="og:image"]')).toBe(
-    'https://kreobuddha.github.io/kreobuddha-ui-docs/og/en.png',
-  );
-  expect(await content('meta[name="twitter:card"]')).toBe('summary_large_image');
+  expect(await content('meta[property="og:title"]')).toBe('@kreobuddha/ui');
+  expect(await content('meta[name="twitter:card"]')).toBe('summary');
 
-  // The same page in the other language, named as such.
   await expect(page.locator('link[rel="alternate"][hreflang="ru"]')).toHaveAttribute(
     'href',
     'https://kreobuddha.github.io/kreobuddha-ui-docs/ru/',
   );
-
-  /*
-   * And the image is really there. It is drawn after the bundler has finished, by a script that
-   * nothing else imports, which is exactly the kind of step that quietly stops running.
-   */
-  const image = await request.get('og/en.png');
-  expect(image.status()).toBe(200);
-  expect(image.headers()['content-type']).toContain('image');
-  expect(Number(image.headers()['content-length'] ?? '0')).toBeGreaterThan(5000);
 });

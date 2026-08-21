@@ -45,10 +45,6 @@ export default async function LandingPage({ params }: { params: Promise<{ locale
               presetDefault: t.heroPresetDefault,
             }}
           />
-
-          <p className="hero__editor-link">
-            <Link href={route(locale, '/theme')}>{t.heroEditorLink}</Link>
-          </p>
         </div>
       </section>
 

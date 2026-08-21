@@ -30,7 +30,6 @@ function designItems(locale: Locale): NavItem[] {
   const t = dictionary[locale];
   return [
     { slug: 'tokens', title: t.tokensTitle, href: `/${locale}/tokens` },
-    { slug: 'theme', title: t.themeEditorTitle, href: `/${locale}/theme` },
   ];
 }
 

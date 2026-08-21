@@ -69,9 +69,8 @@ export async function generateMetadata({
       locale,
       title: t.siteTitle,
       description: t.siteTagline,
-      images: [{ url: asset(`/og/${locale}.png`), width: 1200, height: 630, alt: t.siteTitle }],
     },
-    twitter: { card: 'summary_large_image' },
+    twitter: { card: 'summary' },
   };
 }
 
