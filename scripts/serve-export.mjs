@@ -10,6 +10,7 @@ import { createReadStream } from 'node:fs';
 import { stat } from 'node:fs/promises';
 import { createServer } from 'node:http';
 import { extname, join, normalize } from 'node:path';
+import { createBrotliCompress, createGzip } from 'node:zlib';
 
 const ROOT = new URL('../out/', import.meta.url).pathname;
 const PORT = Number(process.env.PORT ?? 4173);
@@ -27,6 +28,17 @@ const TYPES = new Map(
     '.txt': 'text/plain; charset=utf-8',
   }),
 );
+
+// What is worth compressing. `woff2` and `png` are already compressed; running them through gzip
+// costs CPU to make them very slightly larger.
+const COMPRESSIBLE = new Set([
+  'text/html',
+  'text/css',
+  'text/javascript',
+  'application/json',
+  'image/svg+xml',
+  'text/plain',
+]);
 
 const send = (response, status, body = '') => {
   response.writeHead(status, { 'content-type': 'text/plain; charset=utf-8' });
@@ -71,11 +83,45 @@ const server = createServer(async (request, response) => {
   }
 
   const { size } = await stat(file);
-  response.writeHead(200, {
-    'content-type': TYPES.get(extname(file)) ?? 'application/octet-stream',
-    'content-length': String(size),
-  });
-  createReadStream(file).pipe(response);
+  const type = TYPES.get(extname(file)) ?? 'application/octet-stream';
+
+  /*
+   * Compression and caching, because Pages does both and Lighthouse measures both.
+   *
+   * Without them this server does not imitate the deployment, it imitates a worse one: the same
+   * export scores tens of points lower purely because 425 KiB of text arrives uncompressed and
+   * every hashed asset is re-fetched. Neither is a property of the site, so measuring them as if
+   * they were would produce a number that says nothing about what a reader gets.
+   */
+  const headers = {
+    'content-type': type,
+    // Next puts a content hash in the name of everything under `_next/static`, so the file at a
+    // given URL never changes. Everything else is a page, which does.
+    'cache-control': pathname.startsWith('/_next/static/')
+      ? 'public, max-age=31536000, immutable'
+      : 'public, max-age=0, must-revalidate',
+  };
+
+  const accepted = String(request.headers['accept-encoding'] ?? '');
+  const encoding = COMPRESSIBLE.has(type.split(';')[0])
+    ? accepted.includes('br')
+      ? 'br'
+      : accepted.includes('gzip')
+        ? 'gzip'
+        : null
+    : null;
+
+  if (encoding === null) {
+    response.writeHead(200, { ...headers, 'content-length': String(size) });
+    createReadStream(file).pipe(response);
+    return;
+  }
+
+  // No `content-length`: the compressed size is not known until the stream has finished.
+  response.writeHead(200, { ...headers, 'content-encoding': encoding, vary: 'accept-encoding' });
+  createReadStream(file)
+    .pipe(encoding === 'br' ? createBrotliCompress() : createGzip())
+    .pipe(response);
 });
 
 server.listen(PORT, () => {

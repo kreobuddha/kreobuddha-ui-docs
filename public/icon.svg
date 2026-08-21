@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="Kreobuddha UI">
+  <!--
+    An SVG favicon rather than an .ico: one file, any size, and a tenth of the bytes. The mark is a
+    lower-case k drawn as three strokes, which is what survives being 16 pixels wide in a tab.
+
+    The two accent values are the library's own, light and dark. A `prefers-color-scheme` query
+    inside the file is the only way a favicon can follow the theme — the document's own theme
+    attribute does not reach in here.
+  -->
+  <style>
+    .plate { fill: #93357f; }
+    .mark { stroke: #ffffff; }
+    @media (prefers-color-scheme: dark) {
+      .plate { fill: #dd8fcb; }
+      .mark { stroke: #1a1119; }
+    }
+  </style>
+  <rect class="plate" width="32" height="32" rx="7" />
+  <g class="mark" fill="none" stroke-width="3" stroke-linecap="round">
+    <path d="M11 7v18" />
+    <path d="M22 11l-9 8" />
+    <path d="M16.5 16l5.5 9" />
+  </g>
+</svg>

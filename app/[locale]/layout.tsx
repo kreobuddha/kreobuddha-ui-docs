@@ -88,6 +88,14 @@ export async function generateMetadata({
     title: { default: t.siteTitle, template: `%s — ${t.siteTitle}` },
     description: t.siteTagline,
     alternates: { canonical: `${basePath}/${locale}/`, languages: localeAlternates() },
+    /*
+     * Declared rather than left to the browser's default. Without a declaration every browser asks
+     * the origin for `/favicon.ico` — the origin, not the sub-path — which under `basePath` is a
+     * guaranteed 404 on every page load. Lighthouse counts it as a console error, and it is one.
+     *
+     * Through `asset()`, because this is written by hand and Next prefixes nothing it did not write.
+     */
+    icons: { icon: [{ url: asset('/icon.svg'), type: 'image/svg+xml' }] },
     openGraph: {
       type: 'website',
       siteName: t.siteTitle,

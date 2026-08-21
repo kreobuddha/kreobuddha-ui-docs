@@ -1,4 +1,45 @@
+/*
+ * A stand-in for Inter carrying Inter's metrics, so the page does not move when the real face
+ * arrives.
+ *
+ * The library ships Inter with `font-display: swap` and no metric-matched fallback, so the first
+ * paint uses whatever the next family in the stack is and every line re-sets when the woff2 lands.
+ * Lighthouse measured the result as a 0.206 cumulative layout shift on the landing page — the hero
+ * panel dropping down the screen as the text above it re-flowed.
+ *
+ * The numbers were measured rather than copied: Inter and Helvetica were rendered at 1000px in the
+ * browser and read back. Inter sits 0.969em above the baseline and 0.241em below it with no line
+ * gap, and its average advance over a full alphabet is 1.0432× Helvetica's. So the fallback is
+ * scaled by that ratio and the overrides are Inter's metrics divided by it — 0.969 / 1.0432 and
+ * 0.241 / 1.0432 — because the overrides are applied after `size-adjust`.
+ *
+ * The three `local()` names are one metric-compatible family under three names: Helvetica on macOS,
+ * Arial on Windows, Liberation Sans on the Linux CI runs. Naming only one would leave the other two
+ * platforms unmatched, which is the original defect again.
+ *
+ * Outside a layer on purpose: `@font-face` takes part in no cascade, so wrapping it in one would
+ * imply something about it that is not true.
+ */
+@font-face {
+  font-family: 'Inter fallback';
+  src: local('Helvetica'), local('Arial'), local('Liberation Sans');
+  size-adjust: 104.32%;
+  ascent-override: 92.89%;
+  descent-override: 23.1%;
+  line-gap-override: 0%;
+}
+
 @layer site {
+  /*
+   * The library's own sans stack with the metric-matched stand-in slotted in behind Inter. The
+   * token is the library's, and this is the site overriding it rather than the library being
+   * edited — the fallback is the site's file, so naming it is the site's business.
+   */
+  :root {
+    --kreo-font-sans:
+      Inter, 'Inter fallback', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, sans-serif;
+  }
+
   /*
    * Page layout is the site's job. The library publishes no layout tokens on purpose — gutters,
    * rails and column widths belong to the application — so the measurements from the design pass

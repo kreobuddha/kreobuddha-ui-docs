@@ -127,7 +127,17 @@ export async function renderGuide(
           [
             rehypeShiki,
             {
-              themes: { light: 'github-light', dark: 'github-dark' },
+              /*
+               * The high-contrast pair, not the plain one. `github-light` paints constants in
+               * `#E36209`, which is 3.48:1 on white — axe found it on the guide pages, and at
+               * 12px it is text, not decoration, so 4.5:1 is the bar it has to clear. GitHub
+               * publishes these two exactly for that, so the fix is a theme name rather than a
+               * list of token colours this repository would then own.
+               */
+              themes: {
+                light: 'github-light-high-contrast',
+                dark: 'github-dark-high-contrast',
+              },
               defaultColor: 'light',
             },
           ],
