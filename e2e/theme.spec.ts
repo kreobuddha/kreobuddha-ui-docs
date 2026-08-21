@@ -31,20 +31,33 @@ test('a stored dark theme is already applied at the first paint', async ({ page 
   /*
    * The no-flash claim, measured rather than asserted.
    *
-   * The callback is scheduled from the earliest script the page runs, and an animation frame runs
-   * before the next paint — so what it records is the state of the document at the moment the
-   * reader first sees it. If the theme were applied from React, this would read `null` and the
-   * reader would see one light frame.
+   * The measurement is taken at first *contentful* paint, not at the first animation frame. Those
+   * are not the same moment: a browser can paint an empty document while the body is still
+   * arriving, and on a cold load it does — the earlier version of this test read the attribute in
+   * the first frame and failed roughly one cold load in four, on a blank frame nobody could see.
+   * A blank frame is not a flash. What the reader must never see is *content* in the wrong theme,
+   * and that is what this records.
+   *
+   * The check still has teeth: the inline theme script sits above everything renderable in the
+   * document, so any painted content implies the script has already run. If the theme were applied
+   * from React instead, first contentful paint would land before it and this would read `null`.
    */
   await page.addInitScript(() => {
     localStorage.setItem('kb-docs-theme', 'dark');
-    requestAnimationFrame(() => {
-      window.__firstPaintTheme = document.documentElement.getAttribute('data-kreo-theme');
-    });
+    new PerformanceObserver((list, observer) => {
+      for (const entry of list.getEntries()) {
+        if (entry.name !== 'first-contentful-paint') continue;
+        window.__firstPaintTheme = document.documentElement.getAttribute('data-kreo-theme');
+        observer.disconnect();
+      }
+    }).observe({ type: 'paint', buffered: true });
   });
 
   await page.goto(GUIDE);
-  expect(await page.evaluate(() => window.__firstPaintTheme)).toBe('dark');
+
+  // `goto` resolves on `load`, which can precede the paint entry; wait for the moment being asked
+  // about rather than for the scheduler. If it never comes, this fails.
+  await expect.poll(async () => page.evaluate(() => window.__firstPaintTheme)).toBe('dark');
 });
 
 test('the dark theme actually repaints the page, not just an attribute', async ({ page }) => {

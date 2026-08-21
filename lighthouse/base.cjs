@@ -43,10 +43,14 @@ module.exports = function config(profile) {
          * with "No usable sandbox" before Lighthouse ever navigates. The browser here only ever
          * loads this repository's own static export from localhost, so dropping the sandbox costs
          * nothing that matters and is the only way the measurement runs at all on CI.
+         *
+         * The flags belong to `settings`, as a space-separated string: lhci reads
+         * `collect.settings.chromeFlags` and ignores a `chromeFlags` sitting next to it.
          */
-        chromeFlags: ['--no-sandbox', '--disable-dev-shm-usage'],
-
-        settings: profile.settings,
+        settings: {
+          ...profile.settings,
+          chromeFlags: '--no-sandbox --disable-dev-shm-usage',
+        },
       },
 
       assert: {
