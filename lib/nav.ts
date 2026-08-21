@@ -1,5 +1,5 @@
 import { docHref, getDocs, type DocMeta } from './content';
-import type { Locale } from './i18n';
+import { dictionary, type Locale } from './i18n';
 
 /*
  * Group order is declared, not derived. Sorting groups alphabetically would put "Foundations"
@@ -9,7 +9,13 @@ import type { Locale } from './i18n';
  * `components` is last and is not a guide group: it is the reference, and it comes after the prose
  * that explains what to reference.
  */
-export const groupOrder = ['getting-started', 'foundations', 'patterns', 'components'] as const;
+export const groupOrder = [
+  'getting-started',
+  'foundations',
+  'patterns',
+  'components',
+  'design',
+] as const;
 
 export type GroupId = (typeof groupOrder)[number];
 
@@ -28,6 +34,19 @@ export interface NavGroup {
   items: NavItem[];
 }
 
+/*
+ * Two pages that are not content: the token list and the theme editor are applications, not files
+ * in `content/`. They are declared here so they appear in the rail and the drawer beside everything
+ * else — a reader has no reason to care which of the two a page happens to be.
+ */
+function designItems(locale: Locale): NavItem[] {
+  const t = dictionary[locale];
+  return [
+    { slug: 'tokens', title: t.tokensTitle, href: `/${locale}/tokens` },
+    { slug: 'theme', title: t.themeEditorTitle, href: `/${locale}/theme` },
+  ];
+}
+
 function toItem(locale: Locale, doc: DocMeta): NavItem {
   return { slug: doc.slug, title: doc.title, href: docHref(doc.collection, locale, doc.slug) };
 }
@@ -40,10 +59,10 @@ export async function getNavTree(locale: Locale): Promise<NavGroup[]> {
   ]);
 
   for (const guide of guides) {
-    if (!isGroupId(guide.group) || guide.group === 'components') {
+    if (!isGroupId(guide.group) || guide.group === 'components' || guide.group === 'design') {
       throw new Error(
         `Guide '${guide.slug}' declares group '${guide.group}', which is not a guide group ` +
-          `(${groupOrder.slice(0, -1).join(', ')}). Add the group to groupOrder or fix the ` +
+          `(${groupOrder.slice(0, -2).join(', ')}). Add the group to groupOrder or fix the ` +
           'frontmatter.',
       );
     }
@@ -54,10 +73,13 @@ export async function getNavTree(locale: Locale): Promise<NavGroup[]> {
   return groupOrder
     .map((id) => ({
       id,
-      items: (id === 'components'
-        ? [...components].sort(byOrder)
-        : guides.filter((guide) => guide.group === id).sort(byOrder)
-      ).map((doc) => toItem(locale, doc)),
+      items:
+        id === 'design'
+          ? designItems(locale)
+          : (id === 'components'
+              ? [...components].sort(byOrder)
+              : guides.filter((guide) => guide.group === id).sort(byOrder)
+            ).map((doc) => toItem(locale, doc)),
     }))
     .filter((group) => group.items.length > 0);
 }

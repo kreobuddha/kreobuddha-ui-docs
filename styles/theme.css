@@ -1,0 +1,178 @@
+@layer site {
+  /*
+   * The three-way theme control. A radio group, because that is what choosing one of three is —
+   * the segmented look is a matter of drawing it, not of what it is.
+   */
+  .theme-toggle {
+    display: flex;
+    gap: 0;
+    margin: 0;
+    padding: 0;
+    border: var(--kreo-border-w) solid var(--kreo-border-default);
+    border-radius: var(--kreo-radius-md);
+  }
+
+  .theme-toggle legend {
+    /* Names the group for a screen reader without taking a line of the header. */
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .theme-toggle label {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    padding: var(--kreo-space-1) var(--kreo-space-2);
+    font: var(--kreo-type-label);
+    color: var(--kreo-text-muted);
+    cursor: pointer;
+  }
+
+  .theme-toggle label:has(:checked) {
+    background: var(--kreo-surface-active);
+    color: var(--kreo-text-body);
+  }
+
+  /*
+   * The radio is not drawn, but it is not moved out of the way either: it covers its own label
+   * exactly. That keeps it a real radio — focusable, arrow-key navigable, and the thing a pointer
+   * actually lands on — instead of a 1px target parked off screen that only a click on the label
+   * can ever reach.
+   */
+  .theme-toggle input {
+    position: absolute;
+    inset: 0;
+    margin: 0;
+    opacity: 0;
+    cursor: pointer;
+  }
+
+  .theme-toggle label:has(:focus-visible) {
+    outline: var(--kreo-border-w-focus) solid var(--kreo-border-focus);
+    outline-offset: 1px;
+  }
+
+  /*
+   * Shiki writes both themes into every token: the light colour as the value, the dark one as a
+   * custom property beside it. Switching is then a stylesheet's job rather than a rebuild's, which
+   * is the only reason the highlighting can follow a theme the reader chooses at runtime.
+   */
+  [data-kreo-theme='dark'] .shiki,
+  [data-kreo-theme='dark'] .shiki span {
+    color: var(--shiki-dark) !important;
+    background-color: var(--shiki-dark-bg) !important;
+  }
+
+  /* The editor's own surfaces. */
+  .theme-editor {
+    display: grid;
+    gap: var(--kreo-space-6);
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  @media (width >= 900px) {
+    .theme-editor {
+      grid-template-columns: 260px minmax(0, 1fr);
+      align-items: start;
+    }
+  }
+
+  .theme-editor__controls {
+    display: grid;
+    gap: var(--kreo-space-4);
+  }
+
+  .theme-editor__token {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: var(--kreo-space-3);
+    align-items: center;
+  }
+
+  .theme-editor__token input[type='color'] {
+    inline-size: 44px;
+    block-size: 44px;
+    padding: 0;
+    border: var(--kreo-border-w) solid var(--kreo-border-default);
+    border-radius: var(--kreo-radius-sm);
+    background: none;
+    cursor: pointer;
+  }
+
+  .theme-editor__token span {
+    display: block;
+    color: var(--kreo-text-muted);
+    font: var(--kreo-type-label);
+  }
+
+  .theme-editor__token strong {
+    display: block;
+    font: var(--kreo-type-body);
+    color: var(--kreo-text-body);
+  }
+
+  .theme-editor__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--kreo-space-2);
+  }
+
+  .theme-preview {
+    display: grid;
+    gap: var(--kreo-space-4);
+    padding: var(--kreo-space-6);
+    border: var(--kreo-border-w) solid var(--kreo-border-default);
+    border-radius: var(--kreo-radius-lg);
+
+    /*
+     * The editor writes its tokens onto this element and nowhere else. An unreadable theme costs
+     * the reader this panel and not their navigation — including the controls they would need to
+     * undo it.
+     */
+    background: var(--kreo-surface-page);
+    color: var(--kreo-text-body);
+  }
+
+  .theme-preview__card {
+    display: grid;
+    gap: var(--kreo-space-3);
+    padding: var(--kreo-space-4);
+    border: var(--kreo-border-w) solid var(--kreo-border-default);
+    border-radius: var(--kreo-radius-md);
+    background: var(--kreo-surface-card);
+  }
+
+  .contrast-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .contrast-list li {
+    display: flex;
+    gap: var(--kreo-space-3);
+    align-items: baseline;
+    justify-content: space-between;
+    padding-block: var(--kreo-space-2);
+    border-block-end: var(--kreo-border-w) solid var(--kreo-border-subtle);
+    font: var(--kreo-type-body);
+  }
+
+  .contrast-list__verdict {
+    font: var(--kreo-type-label);
+    text-transform: uppercase;
+    letter-spacing: var(--kreo-tracking-label);
+  }
+
+  .contrast-list__verdict[data-level='fail'] {
+    color: var(--kreo-text-danger);
+  }
+
+  .contrast-list__verdict[data-level='AA Large'] {
+    color: var(--kreo-text-warning, var(--kreo-text-muted));
+  }
+}
