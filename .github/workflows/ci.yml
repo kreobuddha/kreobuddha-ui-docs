@@ -20,6 +20,11 @@ concurrency:
 # There is no push trigger. A push to `master` already runs `pages.yml`, which performs the same
 # build against the same commit and refuses to publish if it fails, so a second run would buy an
 # earlier red mark and nothing else.
+
+# Performance lives in `perf.yml`, not here. Lighthouse takes two profiles times four pages times
+# three runs and dominated the wait on every pull request, while the numbers it produces move with
+# the runner rather than with the change under review. This workflow answers "is it correct"; that
+# one answers "is it still fast", on master and on demand.
 jobs:
   verify:
     runs-on: ubuntu-latest
@@ -53,11 +58,6 @@ jobs:
 
       - run: npx playwright install --with-deps chromium
 
-      # Where that browser landed, for Lighthouse further down.
-      - id: chromium
-        run: |
-          echo "path=$(node -e "console.log(require('playwright-core').chromium.executablePath())")" >> "$GITHUB_OUTPUT"
-
       # Builds the export under the deployed sub-path and drives it in a real browser, at 1280 and
       # at 320. The build is part of the script, so there is no second unprefixed build here: the
       # one that ships is the one that is tested. `e2e/axe.spec.ts` rides along: every scan runs in
@@ -73,20 +73,3 @@ jobs:
       # absolute link may escape `basePath` — the last of which only shows up in a build made under
       # the sub-path, which is exactly what `npm run e2e` left behind.
       - run: npm run check:links
-
-      # Lighthouse drives Chrome, and the one already on disk is the browser the suite above was
-      # pinned to. Letting `chrome-launcher` find whatever the runner image happens to ship would
-      # mean the budget is measured against a browser nothing else in this workflow used.
-      - name: Measure performance and accessibility
-        run: npm run lighthouse
-        env:
-          CHROME_PATH: ${{ steps.chromium.outputs.path }}
-
-      # Kept whether the budget passed or failed — a failed budget is the case where someone needs
-      # to read the report.
-      - if: always()
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-        with:
-          name: lighthouse-reports
-          path: .lighthouseci/
-          retention-days: 7

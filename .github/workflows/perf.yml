@@ -1,0 +1,68 @@
+name: Performance
+
+# Not on pull requests. Lighthouse is the slowest thing this repository runs — two profiles, four
+# pages, three runs each — and its numbers move with whatever else the runner is doing, so gating
+# every review on them buys noise and a long wait. It runs where a regression matters: on what has
+# actually landed, and whenever someone asks.
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# A newer master supersedes an older measurement; there is nothing to learn from finishing the
+# previous one.
+concurrency:
+  group: perf
+  cancel-in-progress: true
+
+jobs:
+  measure:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          # The version `pages.yml` deploys with, so the build measured here is the build that ships.
+          node-version: 24.x
+          cache: npm
+
+      - run: npm ci
+
+      # Keyed on the lockfile, because that is what pins the Playwright version whose browser this
+      # reuses.
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            playwright-${{ runner.os }}-
+
+      - run: npx playwright install --with-deps chromium
+
+      - id: chromium
+        run: |
+          echo "path=$(node -e "console.log(require('playwright-core').chromium.executablePath())")" >> "$GITHUB_OUTPUT"
+
+      # Lighthouse measures the static export under the deployed sub-path, so it has to exist first.
+      - run: npm run build:e2e
+
+      # Pinned to the browser installed above. Letting `chrome-launcher` pick whatever the runner
+      # image ships would measure the budget against a browser nothing else here uses.
+      - name: Measure performance and accessibility
+        run: npm run lighthouse
+        env:
+          CHROME_PATH: ${{ steps.chromium.outputs.path }}
+
+      # Kept whether the budget passed or failed — a failed budget is exactly when someone needs the
+      # report.
+      - if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: lighthouse-reports
+          path: .lighthouseci/
+          retention-days: 7

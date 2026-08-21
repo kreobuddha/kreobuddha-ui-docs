@@ -173,13 +173,28 @@ inside it.
 ### Checks
 
 ```bash
+npm run verify    # everything below except Lighthouse — what CI runs on a pull request
+```
+
+```bash
 npm run typecheck
 npm test          # the rules that are awkward to observe in a browser
 npm run e2e       # builds the export and drives it at 1280 and at 320
 npm run check:css   # the cascade layer order, read from the built stylesheets
 npm run check:links # every internal href, fragment and basePath, read from the built HTML
+```
+
+Performance is measured separately, on purpose:
+
+```bash
 npm run lighthouse  # performance and accessibility budgets, mobile and desktop
 ```
+
+It is not part of `verify` and does not run on pull requests. Two profiles over four pages, three
+runs each, is the slowest thing here by a wide margin, and the numbers move with whatever else the
+machine is doing rather than with the change being reviewed. `.github/workflows/perf.yml` runs it on
+what lands on `master` and on demand (`gh workflow run Performance`), which is where a regression is
+worth a five-minute wait.
 
 `npm run e2e` serves `out/` through `scripts/serve-export.mjs`, which imitates GitHub Pages: the
 project sub-path, `/x` redirecting to `/x/`, `/x/` resolving to `index.html`, gzip or brotli on
