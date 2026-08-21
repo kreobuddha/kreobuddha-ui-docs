@@ -17,16 +17,10 @@ as the content.
 - Two locales, `en` and `ru`, both fully translated.
 - Static output only. GitHub Pages serves files.
 
-## Direction
-
-The site is migrating off Next.js to Vite with `vite-react-ssg`, React Router and i18next; content
-stays in MDX. Until that lands the repository is still a Next.js App Router project — read the code
-rather than this section for what is true today.
-
 ## Guardrails
 
 - The library's stylesheet is imported through a CSS `@import` with `layer(library)`, never from
-  JavaScript. Layer order: `reset, library, site, overrides`.
+  JavaScript. Layer order: `reset, library, site, overrides` — nothing checks this any more.
 - Internal links written by hand go through the `basePath` helper in `lib/links.ts`.
 - No styling engine, no CSS-in-JS, no component library besides `@kreobuddha/ui`.
 - The library is an npm dependency, never a local path or a link. It is never edited from here.
@@ -50,5 +44,7 @@ source. General knowledge applies only through an original implementation.
 
 ## Verification
 
-Claim only what was run and observed. Accessibility is semantics, names, keyboard, focus, visible
-state, contrast and reduced motion — not an axe result. Check 320 px before calling a layout done.
+There is no test suite. `npm run build` is the only automatic check, and it catches types and
+broken imports, nothing else. Everything past that is looked at in a browser: claim only what was
+run and observed. Accessibility is semantics, names, keyboard, focus, visible state, contrast and
+reduced motion. Check 320 px before calling a layout done.
