@@ -97,6 +97,29 @@ test('Enter goes to the highlighted page', async ({ page }) => {
   await page.keyboard.press('Enter');
 
   await expect(page).toHaveURL(/\/en\/docs\/installation\/$/);
+
+  /*
+   * And the page has to be there. The address alone proved nothing: a doubled base path shipped
+   * for weeks because `/kreobuddha-ui-docs/kreobuddha-ui-docs/en/docs/installation/` ends with the
+   * same characters this regex was looking for, and the 404 underneath it went unread.
+   */
+  await expect(page.locator('h1')).toHaveText('Installation');
+});
+
+test('a result links to the page and not to a doubled base path', async ({ page }) => {
+  await page.goto(GUIDE);
+  await openPalette(page);
+  await page.locator('.palette__input').fill('installation');
+
+  const href = await page.locator('.palette__results a').first().getAttribute('href');
+  const base = new URL(page.url()).pathname.split('/')[1];
+
+  // The path may carry the base once, and only once. `startsWith` is not enough: the defect being
+  // guarded against reads as a correct prefix followed by a second copy of itself.
+  expect(href?.split('/').filter((segment) => segment === base)).toHaveLength(1);
+
+  const response = await page.request.get(new URL(href ?? '', page.url()).toString());
+  expect(response.status(), `following the result gave ${response.status()}`).toBe(200);
 });
 
 test('a search in one language does not answer with the other', async ({ page }) => {
