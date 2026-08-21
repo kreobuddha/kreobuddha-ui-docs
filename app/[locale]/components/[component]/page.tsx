@@ -8,7 +8,7 @@ import { PropsTable, type PropRow } from '@/components/docs/PropsTable';
 import { Toc } from '@/components/docs/Toc';
 import { allComponentParams, docHref, getDoc } from '@/lib/content';
 import { dictionary, isLocale, type Locale } from '@/lib/i18n';
-import { route } from '@/lib/links';
+import { basePath, localeAlternates, route } from '@/lib/links';
 import { renderGuide } from '@/lib/mdx';
 import { getNeighbours } from '@/lib/nav';
 
@@ -29,7 +29,15 @@ export async function generateMetadata({
   const doc = await getDoc('components', locale, component);
   if (!doc) return {};
 
-  return { title: doc.title, description: doc.description };
+  const path = `/components/${component}`;
+  return {
+    title: doc.title,
+    description: doc.description,
+    alternates: {
+      canonical: `${basePath}/${locale}${path}/`,
+      languages: localeAlternates(path),
+    },
+  };
 }
 
 export default async function ComponentPage({

@@ -64,6 +64,22 @@ export interface Dictionary {
   tokensSpace: string;
   tokensShape: string;
   tokensMotion: string;
+  heroLead: string;
+  heroBody: string;
+  heroInstall: string;
+  heroDocs: string;
+  heroGithub: string;
+  heroPanelLabel: string;
+  heroPanelTabs: [string, string, string];
+  heroPresetsLabel: string;
+  heroPresetDefault: string;
+  heroEditorLink: string;
+  landingAccessibilityTitle: string;
+  landingAccessibilityBody: string;
+  landingTokensTitle: string;
+  landingTokensBody: string;
+  landingCompositionTitle: string;
+  landingCompositionBody: string;
   searchOpen: string;
   searchTitle: string;
   searchPlaceholder: string;
@@ -134,6 +150,26 @@ export const dictionary: Record<Locale, Dictionary> = {
     tokensSpace: 'Spacing',
     tokensShape: 'Shape',
     tokensMotion: 'Motion',
+    heroLead: 'Components for tools people work in',
+    heroBody:
+      'An accessible, themeable React component library for developer tools, technical products and data-dense interfaces. Twenty components, one stylesheet, no styling engine.',
+    heroInstall: 'npm install @kreobuddha/ui',
+    heroDocs: 'Read the documentation',
+    heroGithub: 'Source on GitHub',
+    heroPanelLabel: 'Deployment settings, built with the library',
+    heroPanelTabs: ['Deploy', 'Logs', 'Access'],
+    heroPresetsLabel: 'Theme',
+    heroPresetDefault: 'Default',
+    heroEditorLink: 'Open the theme editor',
+    landingAccessibilityTitle: 'Accessibility is measured, not claimed',
+    landingAccessibilityBody:
+      'Keyboard behaviour, focus, contrast and reduced motion are asserted in a real browser. What is not covered is written down rather than implied.',
+    landingTokensTitle: 'Themed through custom properties',
+    landingTokensBody:
+      'Every --kreo-* property in the published stylesheet is public API. A theme is a set of values, not a build step or a provider.',
+    landingCompositionTitle: 'Composed, not configured',
+    landingCompositionBody:
+      'Components take the props they need and pass the rest through to the element underneath. No css prop, no as polymorphism, no theme object.',
     searchOpen: 'Search',
     searchTitle: 'Search the documentation',
     searchPlaceholder: 'Search guides and components…',
@@ -206,6 +242,26 @@ export const dictionary: Record<Locale, Dictionary> = {
     tokensSpace: 'Отступы',
     tokensShape: 'Форма',
     tokensMotion: 'Движение',
+    heroLead: 'Компоненты для инструментов, в которых работают',
+    heroBody:
+      'Доступная и темизируемая библиотека React-компонентов для инструментов разработчика, технических продуктов и плотных интерфейсов. Двадцать компонентов, один файл стилей, никакого стилевого движка.',
+    heroInstall: 'npm install @kreobuddha/ui',
+    heroDocs: 'Открыть документацию',
+    heroGithub: 'Исходники на GitHub',
+    heroPanelLabel: 'Настройки деплоя, собранные на библиотеке',
+    heroPanelTabs: ['Деплой', 'Логи', 'Доступ'],
+    heroPresetsLabel: 'Тема',
+    heroPresetDefault: 'По умолчанию',
+    heroEditorLink: 'Открыть редактор тем',
+    landingAccessibilityTitle: 'Доступность измерена, а не заявлена',
+    landingAccessibilityBody:
+      'Поведение с клавиатуры, фокус, контраст и уважение к reduced motion проверяются в настоящем браузере. То, что не покрыто, записано прямо, а не подразумевается.',
+    landingTokensTitle: 'Темизация через кастомные свойства',
+    landingTokensBody:
+      'Каждое свойство --kreo-* в опубликованных стилях — часть публичного API. Тема — это набор значений, а не шаг сборки и не провайдер.',
+    landingCompositionTitle: 'Композиция вместо конфигурации',
+    landingCompositionBody:
+      'Компоненты принимают нужные им пропсы и передают остальное элементу под ними. Ни css-пропса, ни as-полиморфизма, ни объекта темы.',
     searchOpen: 'Поиск',
     searchTitle: 'Поиск по документации',
     searchPlaceholder: 'Искать по гайдам и компонентам…',

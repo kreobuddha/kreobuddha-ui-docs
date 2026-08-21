@@ -83,6 +83,16 @@ Three steps, and the third is optional:
 Re-export whatever the page renders from `components/ui.ts`, which is the site's client boundary
 for the library.
 
+### The landing page
+
+Text leads and a working panel sits beside it: tabs, a form, a status and a progress bar built
+from the library, inside `.preview-scope` with a row of theme presets under it. One click repaints
+the panel and nothing else on the page — the theme editor demonstrating itself before anyone has
+read about it.
+
+The social preview images are drawn at build time by `scripts/og.mjs` — satori for the layout,
+resvg for the raster — because a static export has no runtime to draw one on request.
+
 ### Search
 
 Pagefind indexes the exported HTML after the build — `npm run build` is `next build` followed by

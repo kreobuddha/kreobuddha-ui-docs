@@ -1,22 +1,73 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
+import { HeroPanel } from '@/components/landing/HeroPanel';
 import { dictionary, isLocale } from '@/lib/i18n';
 import { route } from '@/lib/links';
 
-export default async function LocalePage({ params }: { params: Promise<{ locale: string }> }) {
+const REPOSITORY = 'https://github.com/kreobuddha/kreobuddha-ui';
+
+export default async function LandingPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   if (!isLocale(locale)) notFound();
 
   const t = dictionary[locale];
 
+  const promises = [
+    { title: t.landingAccessibilityTitle, body: t.landingAccessibilityBody, href: route(locale, '/docs/accessibility') },
+    { title: t.landingTokensTitle, body: t.landingTokensBody, href: route(locale, '/tokens') },
+    { title: t.landingCompositionTitle, body: t.landingCompositionBody, href: route(locale, '/docs/composition') },
+  ];
+
   return (
     <div className="landing">
-      <h1>{t.siteTitle}</h1>
-      <p className="lead">{t.siteTagline}</p>
-      <p>
-        <Link href={route(locale, '/docs')}>{t.readTheDocs}</Link>
-      </p>
+      {/*
+        Text leads and the panel sits beside it. On a documentation site the job of the hero is to
+        explain rather than to impress, so the reading column comes first in the source as well as
+        on the screen — which is also what a narrow screen gets.
+      */}
+      <section className="hero">
+        <div className="hero__text">
+          <h1>{t.heroLead}</h1>
+          <p className="lead">{t.heroBody}</p>
+
+          <pre className="hero__install">
+            <code>{t.heroInstall}</code>
+          </pre>
+
+          <p className="hero__links">
+            <Link href={route(locale, '/docs')}>{t.heroDocs}</Link>
+            <a href={REPOSITORY}>{t.heroGithub}</a>
+          </p>
+        </div>
+
+        <div className="hero__panel">
+          <HeroPanel
+            labels={{
+              panel: t.heroPanelLabel,
+              tabs: t.heroPanelTabs,
+              presets: t.heroPresetsLabel,
+              presetDefault: t.heroPresetDefault,
+            }}
+          />
+
+          {/* The presets are a taste of the editor, so the way to the whole of it belongs here. */}
+          <p className="hero__editor-link">
+            <Link href={route(locale, '/theme')}>{t.heroEditorLink}</Link>
+          </p>
+        </div>
+      </section>
+
+      <section className="promises">
+        {promises.map((promise) => (
+          <article key={promise.title}>
+            <h2>
+              <Link href={promise.href}>{promise.title}</Link>
+            </h2>
+            <p>{promise.body}</p>
+          </article>
+        ))}
+      </section>
     </div>
   );
 }

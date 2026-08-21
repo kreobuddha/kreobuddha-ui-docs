@@ -82,10 +82,17 @@ test.describe('the narrow layout', () => {
      */
     await page.evaluate(() => window.scrollTo(0, 600));
     await page.evaluate(() => window.scrollTo(0, 400));
+
+    /*
+     * Both settled before anything is measured. The header follows the scroll on an animation
+     * frame, so on a loaded machine the attribute and the offset can each still be a frame behind
+     * when the next line runs — and a test that measures a page mid-move is a test that fails for
+     * reasons that have nothing to do with the drawer.
+     */
+    await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(400);
     await expect(page.locator('.site-header')).toHaveAttribute('data-hidden', 'false');
 
-    const before = await page.evaluate(() => window.scrollY);
-    expect(before).toBeGreaterThan(0);
+    const before = 400;
 
     const article = page.locator('.prose');
     const positionBefore = (await article.boundingBox())!.y;
@@ -93,11 +100,13 @@ test.describe('the narrow layout', () => {
     await page.locator('.nav-drawer__trigger').click();
 
     // The page is pinned, so its content has not moved on screen …
-    expect((await article.boundingBox())!.y).toBeCloseTo(positionBefore, 0);
+    await expect.poll(async () => Math.round((await article.boundingBox())!.y)).toBe(
+      Math.round(positionBefore),
+    );
 
     // … and cannot be scrolled from behind the drawer.
     await page.evaluate(() => window.scrollTo(0, 1200));
-    expect((await article.boundingBox())!.y).toBeCloseTo(positionBefore, 0);
+    expect(Math.round((await article.boundingBox())!.y)).toBe(Math.round(positionBefore));
 
     // Closing hands the position back rather than dropping the reader at the top.
     await page.keyboard.press('Escape');

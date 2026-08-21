@@ -13,12 +13,14 @@ import '@/styles/docs.css';
 import '@/styles/components-page.css';
 import '@/styles/theme.css';
 import '@/styles/search.css';
+import '@/styles/landing.css';
 import '@/styles/mobile.css';
 
 import { ThemeScript } from '@/components/theme/ThemeScript';
 import { Header } from '@/components/shell/Header';
 import type { NavGroupData } from '@/components/shell/NavTree';
 import { getNavTree } from '@/lib/nav';
+import { asset, basePath, localeAlternates, siteUrl } from '@/lib/links';
 import { resolveTokenValue } from '@/lib/theme';
 import { tokenMaps } from '@/lib/tokens';
 import { dictionary, isLocale, locales, type Locale } from '@/lib/i18n';
@@ -78,9 +80,25 @@ export async function generateMetadata({
   if (!isLocale(locale)) return {};
 
   const t = dictionary[locale];
+
   return {
+    // Everything relative below is resolved against this. Without it, an Open Graph image is a
+    // path, and a crawler has no idea which host it belongs to.
+    metadataBase: new URL(siteUrl),
     title: { default: t.siteTitle, template: `%s — ${t.siteTitle}` },
     description: t.siteTagline,
+    alternates: { canonical: `${basePath}/${locale}/`, languages: localeAlternates() },
+    openGraph: {
+      type: 'website',
+      siteName: t.siteTitle,
+      locale,
+      title: t.siteTitle,
+      description: t.siteTagline,
+      // Drawn at build time by `scripts/og.mjs`; a static export has no runtime to draw one on
+      // request.
+      images: [{ url: asset(`/og/${locale}.png`), width: 1200, height: 630, alt: t.siteTitle }],
+    },
+    twitter: { card: 'summary_large_image' },
   };
 }
 
