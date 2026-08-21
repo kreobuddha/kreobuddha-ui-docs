@@ -1,12 +1,10 @@
-'use client';
-
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { Link } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 
 import { isLocale, locales, localeNames, localeShortNames, type Locale } from '@/lib/i18n';
 
 export function LocaleSwitcher({ label, className }: { label: string; className?: string }) {
-  const pathname = usePathname();
+  const pathname = useLocation().pathname;
 
   const swap = (target: Locale): string => {
     const segments = pathname.split('/').filter(Boolean);
@@ -28,7 +26,7 @@ export function LocaleSwitcher({ label, className }: { label: string; className?
           return (
             <li key={locale}>
               <Link
-                href={swap(locale)}
+                to={swap(locale)}
                 hrefLang={locale}
                 lang={locale}
                 aria-current={isCurrent ? 'true' : undefined}

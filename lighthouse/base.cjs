@@ -28,7 +28,7 @@ module.exports = function config(profile) {
       collect: {
         // A second port, so a Playwright run left serving on 4173 does not get measured instead.
         startServerCommand: `NEXT_PUBLIC_BASE_PATH=${BASE_PATH} PORT=${PORT} node scripts/serve-export.mjs`,
-        startServerReadyPattern: 'Serving out/',
+        startServerReadyPattern: 'Serving dist/',
         url: paths.map((path) => `http://localhost:${PORT}${BASE_PATH}${path}`),
 
         /*

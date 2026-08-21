@@ -1,6 +1,4 @@
-'use client';
-
-import { usePathname } from 'next/navigation';
+import { useLocation } from 'react-router-dom';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { NavTree, type NavGroupData } from './NavTree';
@@ -28,7 +26,7 @@ export function NavDrawer({
   const scrollAtOpen = useRef(0);
   const swiped = useRef(false);
   const [isOpen, setIsOpen] = useState(false);
-  const pathname = usePathname();
+  const pathname = useLocation().pathname;
 
   const close = useCallback(() => {
     dialog.current?.close();

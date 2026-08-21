@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="%THEME_LIGHT%" />
+    <link rel="icon" type="image/svg+xml" href="/icon.svg" />
+    <script>
+      (function () {
+        try {
+          var m = localStorage.getItem('kb-docs-theme');
+          if (m !== 'light' && m !== 'dark' && m !== 'system') m = 'system';
+          var d = m === 'dark' || (m === 'system' && matchMedia('(prefers-color-scheme: dark)').matches);
+          var r = document.documentElement;
+          if (d) r.setAttribute('data-kreo-theme', 'dark');
+          else r.removeAttribute('data-kreo-theme');
+          r.style.colorScheme = d ? 'dark' : 'light';
+          r.setAttribute('data-theme-mode', m);
+          var t = document.querySelector('meta[name="theme-color"]');
+          if (t) t.setAttribute('content', d ? '%THEME_DARK%' : '%THEME_LIGHT%');
+        } catch (e) {}
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"><!--app-html--></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

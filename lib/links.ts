@@ -1,6 +1,6 @@
 import { defaultLocale, type Locale } from './i18n';
 
-export const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? '';
+export const basePath = import.meta.env.BASE_URL.replace(/\/$/, '');
 
 export function asset(path: string): string {
   const normalised = path.startsWith('/') ? path : `/${path}`;
@@ -9,14 +9,19 @@ export function asset(path: string): string {
 
 export function route(locale: Locale = defaultLocale, path = ''): string {
   const normalised = path === '' ? '' : path.startsWith('/') ? path : `/${path}`;
-  return `/${locale}${normalised}`;
+  return `/${locale}${normalised}/`;
 }
 
-export const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://kreobuddha.github.io';
+export const siteUrl = import.meta.env.VITE_SITE_URL ?? 'https://kreobuddha.github.io';
 
 export function localeAlternates(path = ''): Record<string, string> {
   const normalised = path === '' ? '' : path.startsWith('/') ? path : `/${path}`;
   return Object.fromEntries(
-    ['en', 'ru'].map((locale) => [locale, `${basePath}/${locale}${normalised}/`]),
+    ['en', 'ru'].map((locale) => [locale, `${siteUrl}${basePath}/${locale}${normalised}/`]),
   );
+}
+
+export function samePath(a: string, b: string): boolean {
+  const trim = (path: string) => path.replace(/\/+$/, '');
+  return trim(a) === trim(b);
 }

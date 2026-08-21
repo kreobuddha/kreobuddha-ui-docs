@@ -1,4 +1,6 @@
-import { dictionary, type Locale } from '@/lib/i18n';
+import { useTranslation } from 'react-i18next';
+
+import type { Locale } from '@/lib/i18n';
 
 export interface PropRow {
   name: string;
@@ -9,17 +11,17 @@ export interface PropRow {
 }
 
 export function PropsTable({ rows, locale = 'en' }: { rows: PropRow[]; locale?: Locale }) {
-  const t = dictionary[locale];
+  const { t } = useTranslation();
 
   return (
     <div className="table-scroll">
       <table className="props-table">
         <thead data-pagefind-ignore>
           <tr>
-            <th scope="col">{t.propName}</th>
-            <th scope="col">{t.propType}</th>
-            <th scope="col">{t.propDefault}</th>
-            <th scope="col">{t.propDescription}</th>
+            <th scope="col">{t('propName')}</th>
+            <th scope="col">{t('propType')}</th>
+            <th scope="col">{t('propDefault')}</th>
+            <th scope="col">{t('propDescription')}</th>
           </tr>
         </thead>
         <tbody>
@@ -28,16 +30,16 @@ export function PropsTable({ rows, locale = 'en' }: { rows: PropRow[]; locale?: 
               <th scope="row">
                 <code>{row.name}</code>
                 {row.required ? (
-                  <span className="props-table__required"> {t.required}</span>
+                  <span className="props-table__required"> {t('required')}</span>
                 ) : null}
               </th>
-              <td data-label={t.propType}>
+              <td data-label={t('propType')}>
                 <code>{row.type}</code>
               </td>
-              <td data-label={t.propDefault}>
+              <td data-label={t('propDefault')}>
                 {row.default === undefined ? <span aria-hidden="true">—</span> : <code>{row.default}</code>}
               </td>
-              <td data-label={t.propDescription}>{row.description}</td>
+              <td data-label={t('propDescription')}>{row.description}</td>
             </tr>
           ))}
         </tbody>

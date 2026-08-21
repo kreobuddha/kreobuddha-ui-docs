@@ -1,5 +1,5 @@
 import { docHref, getDocs, type DocMeta } from './content';
-import { dictionary, type Locale } from './i18n';
+import type { Locale } from './i18n';
 
 export const groupOrder = [
   'getting-started',
@@ -26,22 +26,13 @@ export interface NavGroup {
   items: NavItem[];
 }
 
-function designItems(locale: Locale): NavItem[] {
-  const t = dictionary[locale];
-  return [
-    { slug: 'tokens', title: t.tokensTitle, href: `/${locale}/tokens` },
-  ];
-}
-
 function toItem(locale: Locale, doc: DocMeta): NavItem {
   return { slug: doc.slug, title: doc.title, href: docHref(doc.collection, locale, doc.slug) };
 }
 
-export async function getNavTree(locale: Locale): Promise<NavGroup[]> {
-  const [guides, components] = await Promise.all([
-    getDocs('guides', locale),
-    getDocs('components', locale),
-  ]);
+export function getNavTree(locale: Locale, tokensTitle: string): NavGroup[] {
+  const guides = getDocs('guides', locale);
+  const components = getDocs('components', locale);
 
   for (const guide of guides) {
     if (!isGroupId(guide.group) || guide.group === 'components' || guide.group === 'design') {
@@ -53,25 +44,21 @@ export async function getNavTree(locale: Locale): Promise<NavGroup[]> {
     }
   }
 
-  const byOrder = (a: DocMeta, b: DocMeta) => a.order - b.order || a.title.localeCompare(b.title);
-
   return groupOrder
     .map((id) => ({
       id,
       items:
         id === 'design'
-          ? designItems(locale)
-          : (id === 'components'
-              ? [...components].sort(byOrder)
-              : guides.filter((guide) => guide.group === id).sort(byOrder)
-            ).map((doc) => toItem(locale, doc)),
+          ? [{ slug: 'tokens', title: tokensTitle, href: `/${locale}/tokens/` }]
+          : (id === 'components' ? components : guides.filter((guide) => guide.group === id)).map(
+              (doc) => toItem(locale, doc),
+            ),
     }))
     .filter((group) => group.items.length > 0);
 }
 
-export async function getReadingOrder(locale: Locale): Promise<NavItem[]> {
-  const tree = await getNavTree(locale);
-  return tree.flatMap((group) => group.items);
+export function getReadingOrder(locale: Locale, tokensTitle: string): NavItem[] {
+  return getNavTree(locale, tokensTitle).flatMap((group) => group.items);
 }
 
 export interface Neighbours {
@@ -79,8 +66,8 @@ export interface Neighbours {
   next: NavItem | null;
 }
 
-export async function getNeighbours(locale: Locale, href: string): Promise<Neighbours> {
-  const order = await getReadingOrder(locale);
+export function getNeighbours(locale: Locale, tokensTitle: string, href: string): Neighbours {
+  const order = getReadingOrder(locale, tokensTitle);
   const index = order.findIndex((item) => item.href === href);
   if (index === -1) return { previous: null, next: null };
 

@@ -1,11 +1,8 @@
-import { readdir, readFile } from 'node:fs/promises';
-import { join } from 'node:path';
+import type { ComponentType } from 'react';
 
-import matter from 'gray-matter';
+import { entries } from 'virtual:content';
 
-import { defaultLocale, locales, type Locale } from './i18n';
-
-const CONTENT_ROOT = join(process.cwd(), 'content');
+import { defaultLocale, isLocale, type Locale } from './i18n';
 
 export const collections = ['guides', 'components'] as const;
 
@@ -17,7 +14,13 @@ const ROUTE_PREFIX: Record<Collection, string> = {
 };
 
 export function docHref(collection: Collection, locale: Locale, slug: string): string {
-  return `/${locale}${ROUTE_PREFIX[collection]}/${slug}`;
+  return `/${locale}${ROUTE_PREFIX[collection]}/${slug}/`;
+}
+
+export interface Heading {
+  id: string;
+  text: string;
+  depth: 2 | 3;
 }
 
 export interface DocMeta {
@@ -31,124 +34,64 @@ export interface DocMeta {
   isFallback: boolean;
 }
 
-export interface Doc extends DocMeta {
-  source: string;
+export interface DocModule {
+  default: ComponentType<{ components?: Record<string, ComponentType<never>> }>;
+  headings: Heading[];
 }
 
-function collectionDir(collection: Collection, locale: Locale): string {
-  return join(CONTENT_ROOT, locale, collection);
-}
+const catalogue = new Map<string, DocMeta>();
 
-function parseFrontmatter(
-  raw: unknown,
-  file: string,
-  collection: Collection,
-  slug: string,
-  locale: Locale,
-): DocMeta {
-  const data = raw as Record<string, unknown>;
-  const problems: string[] = [];
+for (const entry of entries) {
+  if (!isLocale(entry.locale)) continue;
+  if (!(collections as readonly string[]).includes(entry.collection)) continue;
 
-  const title = data.title;
-  if (typeof title !== 'string' || title.trim() === '') problems.push('title must be a non-empty string');
-
-  const description = data.description;
-  if (typeof description !== 'string' || description.trim() === '') {
-    problems.push('description must be a non-empty string');
-  }
-
-  const group = collection === 'components' ? 'components' : data.group;
-  if (typeof group !== 'string' || group.trim() === '') {
-    problems.push('group must be a non-empty string');
-  }
-
-  const order = data.order;
-  if (typeof order !== 'number' || !Number.isFinite(order)) problems.push('order must be a number');
-
-  if (problems.length > 0) {
-    throw new Error(`Invalid frontmatter in ${file}:\n  - ${problems.join('\n  - ')}`);
-  }
-
-  return {
+  const collection = entry.collection as Collection;
+  catalogue.set(`/content/${entry.locale}/${entry.collection}/${entry.slug}.mdx`, {
     collection,
-    slug,
-    title: title as string,
-    description: description as string,
-    group: group as string,
-    order: order as number,
-    locale,
+    slug: entry.slug,
+    title: entry.title,
+    description: entry.description,
+    group: entry.group,
+    order: entry.order,
+    locale: entry.locale,
     isFallback: false,
-  };
+  });
 }
 
-async function readDocFile(
-  collection: Collection,
-  locale: Locale,
-  slug: string,
-): Promise<Doc | null> {
-  const file = join(collectionDir(collection, locale), `${slug}.mdx`);
-  let raw: string;
-  try {
-    raw = await readFile(file, 'utf8');
-  } catch {
-    return null;
+const loaders = import.meta.glob<DocModule>('/content/*/*/*.mdx');
+
+function pathOf(collection: Collection, locale: Locale, slug: string): string {
+  return `/content/${locale}/${collection}/${slug}.mdx`;
+}
+
+export function getDocs(collection: Collection, locale: Locale): DocMeta[] {
+  const own = new Map<string, DocMeta>();
+
+  for (const [path, meta] of catalogue) {
+    if (meta.collection !== collection) continue;
+    if (meta.locale === locale) own.set(meta.slug, meta);
   }
 
-  const { content, data } = matter(raw);
-  return { ...parseFrontmatter(data, file, collection, slug, locale), source: content };
-}
-
-async function slugsIn(collection: Collection, locale: Locale): Promise<string[]> {
-  try {
-    const entries = await readdir(collectionDir(collection, locale));
-    return entries.filter((name) => name.endsWith('.mdx')).map((name) => name.replace(/\.mdx$/, ''));
-  } catch {
-    return [];
+  for (const [path, meta] of catalogue) {
+    if (meta.collection !== collection || meta.locale !== defaultLocale) continue;
+    if (!own.has(meta.slug)) own.set(meta.slug, { ...meta, isFallback: true });
   }
+
+  return [...own.values()].sort((a, b) => a.order - b.order || a.title.localeCompare(b.title));
 }
 
-export async function docSlugs(collection: Collection, locale: Locale): Promise<string[]> {
-  const own = await slugsIn(collection, locale);
-  const fallback = locale === defaultLocale ? [] : await slugsIn(collection, defaultLocale);
-  return [...new Set([...own, ...fallback])].sort();
-}
-
-export async function getDoc(
-  collection: Collection,
-  locale: Locale,
-  slug: string,
-): Promise<Doc | null> {
-  const own = await readDocFile(collection, locale, slug);
+export function getDoc(collection: Collection, locale: Locale, slug: string): DocMeta | null {
+  const own = catalogue.get(pathOf(collection, locale, slug));
   if (own) return own;
 
-  if (locale === defaultLocale) return null;
-
-  const fallback = await readDocFile(collection, defaultLocale, slug);
+  const fallback = catalogue.get(pathOf(collection, defaultLocale, slug));
   return fallback ? { ...fallback, isFallback: true } : null;
 }
 
-export async function getDocs(collection: Collection, locale: Locale): Promise<DocMeta[]> {
-  const slugs = await docSlugs(collection, locale);
-  const docs = await Promise.all(slugs.map((slug) => getDoc(collection, locale, slug)));
+export function loadDoc(meta: DocMeta): Promise<DocModule> {
+  const path = pathOf(meta.collection, meta.locale, meta.slug);
+  const loader = loaders[path];
+  if (!loader) throw new Error(`No MDX module for ${path}.`);
 
-  return docs
-    .filter((doc): doc is Doc => doc !== null)
-    .map(({ source: _source, ...meta }) => meta);
-}
-
-export async function allGuideParams(): Promise<{ locale: Locale; slug: string[] }[]> {
-  const params: { locale: Locale; slug: string[] }[] = [];
-  for (const locale of locales) {
-    params.push({ locale, slug: [] });
-    for (const slug of await docSlugs('guides', locale)) params.push({ locale, slug: [slug] });
-  }
-  return params;
-}
-
-export async function allComponentParams(): Promise<{ locale: Locale; component: string }[]> {
-  const params: { locale: Locale; component: string }[] = [];
-  for (const locale of locales) {
-    for (const component of await docSlugs('components', locale)) params.push({ locale, component });
-  }
-  return params;
+  return loader();
 }

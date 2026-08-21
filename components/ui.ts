@@ -1,5 +1,3 @@
-'use client';
-
 export {
   Badge,
   Button,

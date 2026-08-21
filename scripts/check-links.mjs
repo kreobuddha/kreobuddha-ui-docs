@@ -1,7 +1,7 @@
 import { readdir, readFile } from 'node:fs/promises';
 import { join, posix, relative, resolve } from 'node:path';
 
-const ROOT = resolve(import.meta.dirname, '..', 'out');
+const ROOT = resolve(import.meta.dirname, '..', 'dist');
 
 const SKIPPED_DIRECTORIES = new Set(['pagefind', '_next']);
 
@@ -58,8 +58,8 @@ const problems = [];
 const files = new Set(await collect());
 
 function detectBasePath(html) {
-  const match = /\shref\s*=\s*"([^"]*)\/_next\/static\//.exec(html);
-  return match === null ? (process.env.NEXT_PUBLIC_BASE_PATH ?? '') : match[1];
+  const match = /\s(?:href|src)\s*=\s*"([^"]*)\/assets\//.exec(html);
+  return match === null ? (process.env.VITE_BASE_PATH ?? '').replace(/\/$/, '') : match[1];
 }
 
 const BASE_PATH = detectBasePath(await readFile(join(ROOT, 'en', 'index.html'), 'utf8'));
