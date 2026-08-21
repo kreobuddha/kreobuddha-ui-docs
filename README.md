@@ -21,8 +21,8 @@ npm run dev
 ## Build
 
 ```bash
-npm run build   # static site into dist/, then the search index
-npm run serve   # serve dist/ the way Pages serves it
+npm run build     # static site into dist/, then the search index
+npm run preview   # serve dist/
 ```
 
 The site is served from a sub-path today and from a bare domain later, so the prefix lives in
