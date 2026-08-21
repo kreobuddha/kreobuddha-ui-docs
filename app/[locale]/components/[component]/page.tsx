@@ -61,7 +61,7 @@ export default async function ComponentPage({
 
   return (
     <div className="guide">
-      <article className="prose">
+      <article className="prose" data-pagefind-body data-pagefind-filter={`locale:${locale}`}>
         <Breadcrumbs
           locale={locale}
           trail={[

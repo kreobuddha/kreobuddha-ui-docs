@@ -16,7 +16,7 @@ export function Breadcrumbs({ locale, trail }: { locale: Locale; trail: Crumb[] 
   const t = dictionary[locale];
 
   return (
-    <nav className="breadcrumbs" aria-label={t.documentationNav}>
+    <nav className="breadcrumbs" data-pagefind-ignore aria-label={t.documentationNav}>
       <ol>
         <li>
           <Link href={route(locale)}>{t.home}</Link>

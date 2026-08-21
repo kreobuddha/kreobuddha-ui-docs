@@ -23,13 +23,15 @@ export function NavDrawer({
   openLabel,
   closeLabel,
   theme,
+  language,
 }: {
   groups: NavGroupData[];
   label: string;
   openLabel: string;
   closeLabel: string;
-  /** The theme control, which the header has no room for at this width. */
+  /** The theme control and the language switch, which the header has no room for at this width. */
   theme?: React.ReactNode;
+  language?: React.ReactNode;
 }) {
   const dialog = useRef<HTMLDialogElement>(null);
   const trigger = useRef<HTMLButtonElement>(null);
@@ -149,7 +151,9 @@ export function NavDrawer({
         onClick={open}
       >
         <span className="nav-drawer__bars" aria-hidden="true" />
-        {openLabel}
+        {/* Hidden by the stylesheet where the header has no room, never removed: it is the
+            button's accessible name. */}
+        <span className="nav-drawer__trigger-label">{openLabel}</span>
       </button>
 
       <dialog
@@ -171,7 +175,12 @@ export function NavDrawer({
             <NavTree groups={groups} onNavigate={close} />
           </nav>
 
-          {theme === undefined ? null : <div className="nav-drawer__theme">{theme}</div>}
+          {theme === undefined && language === undefined ? null : (
+            <div className="nav-drawer__settings">
+              {language}
+              {theme}
+            </div>
+          )}
         </div>
       </dialog>
     </>

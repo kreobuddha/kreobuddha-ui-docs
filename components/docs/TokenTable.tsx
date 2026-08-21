@@ -44,7 +44,7 @@ export async function TokenTable({ include, exclude, preview = 'none' }: TokenTa
   return (
     <div className="table-scroll">
       <table className="token-table">
-        <thead>
+        <thead data-pagefind-ignore>
           <tr>
             <th scope="col">Token</th>
             <th scope="col">Value</th>
@@ -61,7 +61,7 @@ export async function TokenTable({ include, exclude, preview = 'none' }: TokenTa
                 <code>{value}</code>
               </td>
               {showSample ? (
-                <td data-label="Sample">
+                <td data-label="Sample" data-pagefind-ignore>
                   {/* Decorative: the value is already in the previous cell. */}
                   <Sample name={name} preview={preview} />
                 </td>

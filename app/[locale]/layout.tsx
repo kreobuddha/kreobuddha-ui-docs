@@ -12,6 +12,7 @@ import '@/styles/shell.css';
 import '@/styles/docs.css';
 import '@/styles/components-page.css';
 import '@/styles/theme.css';
+import '@/styles/search.css';
 import '@/styles/mobile.css';
 
 import { ThemeScript } from '@/components/theme/ThemeScript';

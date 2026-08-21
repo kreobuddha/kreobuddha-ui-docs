@@ -83,6 +83,21 @@ Three steps, and the third is optional:
 Re-export whatever the page renders from `components/ui.ts`, which is the site's client boundary
 for the library.
 
+### Search
+
+Pagefind indexes the exported HTML after the build — `npm run build` is `next build` followed by
+`pagefind --site out`. Only the article of each page is indexed (`data-pagefind-body`), and each
+page carries its locale as a filter, so a search in Russian cannot answer with an English page.
+
+The runtime and the index are fetched the first time the palette is opened and never at load: they
+are the largest thing on the site, and a reader who never searches should not pay for them. The
+import path is built rather than imported, because the file is written by the build after the
+bundler has finished.
+
+The palette is a `<dialog>` — the platform's focus trap and `Escape` again — driven as a combobox:
+the arrows move a highlight through the results while focus stays in the field, which is what
+`aria-activedescendant` is for. Whatever had focus when it was opened gets it back when it closes.
+
 ### Theming
 
 Two levels, and keeping them apart is the point.

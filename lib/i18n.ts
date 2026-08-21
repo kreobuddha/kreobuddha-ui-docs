@@ -64,6 +64,14 @@ export interface Dictionary {
   tokensSpace: string;
   tokensShape: string;
   tokensMotion: string;
+  searchOpen: string;
+  searchTitle: string;
+  searchPlaceholder: string;
+  searchEmpty: string;
+  searching: string;
+  searchShortcut: string;
+  searchClose: string;
+  searchResults: string;
   theme: string;
   themeLight: string;
   themeDark: string;
@@ -126,6 +134,14 @@ export const dictionary: Record<Locale, Dictionary> = {
     tokensSpace: 'Spacing',
     tokensShape: 'Shape',
     tokensMotion: 'Motion',
+    searchOpen: 'Search',
+    searchTitle: 'Search the documentation',
+    searchPlaceholder: 'Search guides and components…',
+    searchEmpty: 'Nothing matched.',
+    searching: 'Searching…',
+    searchShortcut: '⌘K',
+    searchClose: 'Close',
+    searchResults: '{count} results',
     theme: 'Theme',
     themeLight: 'Light',
     themeDark: 'Dark',
@@ -190,6 +206,14 @@ export const dictionary: Record<Locale, Dictionary> = {
     tokensSpace: 'Отступы',
     tokensShape: 'Форма',
     tokensMotion: 'Движение',
+    searchOpen: 'Поиск',
+    searchTitle: 'Поиск по документации',
+    searchPlaceholder: 'Искать по гайдам и компонентам…',
+    searchEmpty: 'Ничего не нашлось.',
+    searching: 'Ищем…',
+    searchShortcut: '⌘K',
+    searchClose: 'Закрыть',
+    searchResults: 'Найдено: {count}',
     theme: 'Тема',
     themeLight: 'Светлая',
     themeDark: 'Тёмная',

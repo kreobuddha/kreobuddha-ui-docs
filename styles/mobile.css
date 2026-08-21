@@ -77,12 +77,17 @@
   }
 
   /* A finger, not a cursor: the whole chip is the target inside the drawer. */
-  .nav-drawer__theme .theme-toggle label {
+  .nav-drawer__settings :is(.theme-toggle label, .locale-switcher a) {
+    display: inline-flex;
+    align-items: center;
     min-block-size: var(--shell-touch-target);
     padding-inline: var(--kreo-space-3);
   }
 
-  .nav-drawer__theme {
+  .nav-drawer__settings {
+    display: grid;
+    gap: var(--kreo-space-4);
+    justify-items: start;
     margin-block-start: auto;
     padding-block-start: var(--kreo-space-4);
     border-block-start: var(--kreo-border-w) solid var(--kreo-border-subtle);
@@ -161,6 +166,33 @@
     .site-header {
       gap: var(--kreo-space-3);
       padding-inline: max(var(--kreo-space-3), env(safe-area-inset-left));
+    }
+
+    /*
+     * Three bars are a menu button everywhere, and the word beside them costs the brand its last
+     * few characters at 320. The name stays for anything not looking at the screen.
+     */
+    .nav-drawer__trigger-label {
+      position: absolute;
+      inline-size: 1px;
+      block-size: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+
+    .nav-drawer__trigger {
+      justify-content: center;
+      min-inline-size: var(--shell-touch-target);
+    }
+
+    /*
+     * The language switch goes the same way as the theme control, and for the same reason: at 320
+     * the header has room for navigation, the name of the site, and search. Changing language is a
+     * thing done once, not a thing kept within reach.
+     */
+    .locale-switcher--header {
+      display: none;
     }
 
     /*

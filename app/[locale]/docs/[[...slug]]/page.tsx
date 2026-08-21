@@ -59,7 +59,7 @@ export default async function DocsPage({
     const guides = await getDocs('guides', locale);
 
     return (
-      <article className="prose">
+      <article className="prose" data-pagefind-body data-pagefind-filter={`locale:${locale}`}>
         <Breadcrumbs locale={locale} trail={[{ label: t.docsTitle }]} />
         <h1>{t.docsTitle}</h1>
         <p className="lead">{t.guidesIndexLead}</p>
@@ -96,7 +96,7 @@ export default async function DocsPage({
 
   return (
     <div className="guide">
-      <article className="prose">
+      <article className="prose" data-pagefind-body data-pagefind-filter={`locale:${locale}`}>
         <Breadcrumbs
           locale={locale}
           trail={[

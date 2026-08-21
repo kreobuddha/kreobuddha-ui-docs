@@ -13,7 +13,7 @@ import { isLocale, locales, localeNames, localeShortNames, type Locale } from '@
  * `usePathname` reports the path without `basePath`, and `<Link>` puts it back, so nothing here
  * has to know where the site is mounted.
  */
-export function LocaleSwitcher({ label }: { label: string }) {
+export function LocaleSwitcher({ label, className }: { label: string; className?: string }) {
   const pathname = usePathname();
 
   const swap = (target: Locale): string => {
@@ -26,7 +26,10 @@ export function LocaleSwitcher({ label }: { label: string }) {
   };
 
   return (
-    <nav className="locale-switcher" aria-label={label}>
+    <nav
+      className={className === undefined ? 'locale-switcher' : `locale-switcher ${className}`}
+      aria-label={label}
+    >
       <ul>
         {locales.map((locale) => {
           const isCurrent = pathname.split('/').filter(Boolean)[0] === locale;

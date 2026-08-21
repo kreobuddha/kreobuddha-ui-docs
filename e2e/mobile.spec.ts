@@ -173,3 +173,37 @@ test.describe('the narrow layout', () => {
     expect(display).toBe('block');
   });
 });
+
+test.describe('what the narrow header keeps', () => {
+  test.skip(({ viewport }) => (viewport?.width ?? 0) >= 900, 'The header has room above 900.');
+
+  test('keeps navigation, the name of the site and search, and nothing else', async ({ page }) => {
+    await page.goto(GUIDE);
+
+    await expect(page.locator('.nav-drawer__trigger')).toBeVisible();
+    await expect(page.locator('.palette-trigger')).toBeVisible();
+
+    // The brand is the link home, and it is shown in full rather than truncated to fit a toggle.
+    const brand = page.locator('.site-header__brand');
+    await expect(brand).toBeVisible();
+    const truncated = await brand.evaluate(
+      (element) => element.scrollWidth > element.clientWidth + 1,
+    );
+    expect(truncated).toBe(false);
+
+    // Language and theme moved into the drawer, and are still reachable there.
+    await expect(page.locator('.locale-switcher--header')).toBeHidden();
+
+    await page.locator('.nav-drawer__trigger').click();
+    await expect(page.locator('dialog.nav-drawer .locale-switcher')).toBeVisible();
+    await expect(page.locator('dialog.nav-drawer .theme-toggle')).toBeVisible();
+  });
+
+  test('the icon-only buttons still say what they are', async ({ page }) => {
+    await page.goto(GUIDE);
+
+    // Both lost their label to the width, not to the accessibility tree.
+    await expect(page.getByRole('button', { name: 'Menu' })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Search' })).toBeVisible();
+  });
+});

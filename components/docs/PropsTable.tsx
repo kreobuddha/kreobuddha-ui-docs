@@ -27,7 +27,7 @@ export function PropsTable({ rows, locale = 'en' }: { rows: PropRow[]; locale?: 
   return (
     <div className="table-scroll">
       <table className="props-table">
-        <thead>
+        <thead data-pagefind-ignore>
           <tr>
             <th scope="col">{t.propName}</th>
             <th scope="col">{t.propType}</th>
