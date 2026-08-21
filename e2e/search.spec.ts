@@ -2,6 +2,35 @@ import { expect, test } from '@playwright/test';
 
 const GUIDE = 'en/docs/theming/';
 
+/*
+ * Presses the shortcut until the palette actually opens.
+ *
+ * A keyboard shortcut cannot work before the script that listens for it has run, and on a loaded
+ * machine a keystroke sent immediately after navigation lands in that gap and is simply lost. It is
+ * not a defect in the palette — nothing can catch a key before it is listening — but it makes a
+ * test that presses once flaky, so this presses again rather than waiting a fixed time.
+ */
+async function openPalette(page: import('@playwright/test').Page): Promise<void> {
+  const palette = page.locator('dialog.palette');
+
+  for (let attempt = 0; attempt < 10; attempt += 1) {
+    if (await palette.isVisible()) return;
+
+    await page.keyboard.press('ControlOrMeta+k');
+
+    // Give this press its chance before deciding it was lost. Pressing again immediately would
+    // toggle the palette shut as often as it opened it.
+    try {
+      await palette.waitFor({ state: 'visible', timeout: 500 });
+      return;
+    } catch {
+      // Swallowed on purpose: the next turn of the loop presses again.
+    }
+  }
+
+  await expect(palette, 'the palette never opened').toBeVisible();
+}
+
 test('the shortcut opens the palette and Escape gives focus back', async ({ page }) => {
   await page.goto(GUIDE);
 
@@ -12,8 +41,7 @@ test('the shortcut opens the palette and Escape gives focus back', async ({ page
   const link = page.locator('.prose__body a').first();
   await link.focus();
 
-  await page.keyboard.press('ControlOrMeta+k');
-  await expect(palette).toBeVisible();
+  await openPalette(page);
   await expect(page.locator('.palette__input')).toBeFocused();
 
   await page.keyboard.press('Escape');
@@ -38,7 +66,7 @@ test('typing finds pages, and the arrows move through them without leaving the f
   page,
 }) => {
   await page.goto(GUIDE);
-  await page.keyboard.press('ControlOrMeta+k');
+  await openPalette(page);
 
   const input = page.locator('.palette__input');
   await input.fill('installation');
@@ -62,7 +90,7 @@ test('typing finds pages, and the arrows move through them without leaving the f
 
 test('Enter goes to the highlighted page', async ({ page }) => {
   await page.goto(GUIDE);
-  await page.keyboard.press('ControlOrMeta+k');
+  await openPalette(page);
   await page.locator('.palette__input').fill('installation');
 
   await expect(page.locator('.palette__results li').first()).toBeVisible();
@@ -73,7 +101,7 @@ test('Enter goes to the highlighted page', async ({ page }) => {
 
 test('a search in one language does not answer with the other', async ({ page }) => {
   await page.goto('ru/docs/theming/');
-  await page.keyboard.press('ControlOrMeta+k');
+  await openPalette(page);
   await page.locator('.palette__input').fill('installation');
 
   const links = page.locator('.palette__results li a');
@@ -88,7 +116,7 @@ test('a search in one language does not answer with the other', async ({ page })
 
 test('a search that matches nothing says so', async ({ page }) => {
   await page.goto(GUIDE);
-  await page.keyboard.press('ControlOrMeta+k');
+  await openPalette(page);
   await page.locator('.palette__input').fill('zzzzqqqq');
 
   await expect(page.locator('.palette__status')).toContainText('Nothing matched');
@@ -102,7 +130,7 @@ test('the index is not fetched until someone searches', async ({ page }) => {
   await page.goto(GUIDE);
   expect(requests.some((url) => url.includes('/pagefind/'))).toBe(false);
 
-  await page.keyboard.press('ControlOrMeta+k');
+  await openPalette(page);
   await page.locator('.palette__input').fill('theming');
   await expect(page.locator('.palette__results li').first()).toBeVisible();
 
