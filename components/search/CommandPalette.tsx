@@ -134,9 +134,15 @@ export function CommandPalette({ locale, labels }: { locale: Locale; labels: Pal
           const data = await result.data();
           return {
             id: result.id,
-            // Pagefind indexes the exported directory, so its urls start at the site root and know
-            // nothing about the sub-path the site is served from.
-            url: asset(data.url),
+            /*
+             * Used as it comes. Pagefind indexes the exported directory, so what it stores is a
+             * path from the site root — but `data.url` is not that stored path: the runtime has
+             * already prefixed it with the sub-path it was loaded from, which is this site's
+             * `basePath`. Prefixing it again produced `/kreobuddha-ui-docs/kreobuddha-ui-docs/…`
+             * and a 404 on every result. The raw path lives on `data.raw_url` for anyone who
+             * wants to prefix it themselves.
+             */
+            url: data.url,
             title: data.meta?.title ?? data.url,
             excerpt: data.excerpt,
           };
