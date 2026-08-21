@@ -1,7 +1,7 @@
-import { Link } from 'react-router-dom';
-import { useLocation } from 'react-router-dom';
 import { useCallback, useEffect, useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 
+import { samePath } from '@/lib/links';
 import type { GroupId, NavItem } from '@/lib/nav';
 
 export interface NavGroupData {
@@ -66,7 +66,7 @@ export function NavTree({ groups, onNavigate }: { groups: NavGroupData[]; onNavi
 
             <ul id={listId} hidden={isCollapsed}>
               {group.items.map((item) => {
-                const isCurrent = pathname === item.href || pathname === `${item.href}/`;
+                const isCurrent = samePath(pathname, item.href);
 
                 return (
                   <li key={item.slug}>
