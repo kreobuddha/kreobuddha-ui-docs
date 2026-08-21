@@ -3,12 +3,12 @@
 The public documentation site for [`@kreobuddha/ui`](https://github.com/kreobuddha/kreobuddha-ui):
 guides, a component reference with a live playground, design tokens and a theme editor.
 
-**Status: not deployed. Nine guides and six component pages are written in English, with navigation,
-a table of contents, a language switcher, a full narrow-screen layout, light/dark/system themes, a
-theme editor, full-text search behind a ⌘K palette and a landing page. The Russian translation of
-the content is in progress: `/ru/` routes exist for every page and serve English behind a notice
-where the translation has not landed. The numbers under [Verification](#verification) were measured
-on a local machine against the production export, not against a deployment.**
+**Status: live at <https://kreobuddha.github.io/kreobuddha-ui-docs/>, published from `master` by
+`.github/workflows/pages.yml`. Nine guides and six component pages, translated in full into both
+English and Russian — no page falls back to English any more. Navigation, a table of contents, a
+language switcher, a full narrow-screen layout, light/dark/system themes, a theme editor, full-text
+search behind a ⌘K palette and a landing page. The numbers under [Verification](#verification) were
+measured on a local machine against the production export, not against the deployment.**
 
 ## Deliberate constraints
 
@@ -92,10 +92,11 @@ with a hole in it.
 `lib/nav.ts` builds one tree from that frontmatter, and the sidebar, the breadcrumbs and the
 prev/next links are all read from it, so the three cannot disagree about where a page sits.
 
-A locale routes to every guide English has. Until a translation exists the page serves English
+A locale routes to every guide English has. Where a translation is missing the page serves English
 behind a notice in the reader's own language, which keeps the URLs identical in both locales — that
 is what lets the language switcher stay on the current page instead of dropping the reader at an
-index.
+index. Every page is translated today, so nothing takes that path; the rule stays because it is what
+makes adding a page in one locale a safe thing to do.
 
 Code is highlighted by Shiki at build time and token tables are read from the published stylesheet
 at build time, so neither ships a byte of JavaScript to the reader.
@@ -241,7 +242,9 @@ at the top of the file that imports it, which would lift the library above the o
 ## Verification
 
 Every number below was produced by running the command beside it and reading its output. Nothing
-here is an estimate, and nothing describes a deployment — there isn't one yet.
+here is an estimate. Nothing here was measured against the deployment either: the site is live, but
+these numbers come from the production export served locally, which is why the machine and the
+server are named below.
 
 Measured on 2026-08-21, macOS 15 on Apple silicon, Node 24, against the export built by
 `npm run build:e2e` and served by `scripts/serve-export.mjs` under `/kreobuddha-ui-docs`.
