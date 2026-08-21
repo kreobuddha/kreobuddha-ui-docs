@@ -81,7 +81,6 @@ const PAGES = [
   { name: 'a guide page', path: 'en/docs/theming/' },
   { name: 'a component page', path: 'en/components/button/' },
   { name: 'the tokens page', path: 'en/tokens/' },
-  { name: 'the theme editor', path: 'en/theme/' },
   /*
    * The Russian half is scanned too, and not as a formality: `lang`, the longer words that decide
    * where a line wraps, and the translated accessible names are all different data than the
@@ -132,23 +131,4 @@ test('the drawer has no serious or critical violations while open', async ({ pag
   await expect(page.locator('dialog.nav-drawer')).toBeVisible();
 
   await scan(page);
-});
-
-/*
- * The theme editor is the one place on the site where a reader can deliberately build something
- * unreadable, and the editor's whole promise is that doing so costs them the preview and not the
- * page. axe on the default theme cannot see that promise being kept, so this scans the shell after
- * the preview has been ruined: whatever the preview now says, the navigation around it must still
- * pass.
- */
-test('a ruined preview theme leaves the shell passing', async ({ page }) => {
-  await page.goto('en/theme/');
-
-  const inputs = page.locator('input[type="color"]');
-  // Page surface and body text, both set to the same colour: nothing inside the preview can be
-  // read any more.
-  await inputs.first().fill('#7f7f7f');
-  await inputs.nth(2).fill('#7f7f7f');
-
-  await scan(page, { include: '.site-header' });
 });

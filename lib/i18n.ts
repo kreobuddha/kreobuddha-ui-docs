@@ -30,18 +30,6 @@ export interface Dictionary {
   next: string;
   readTheDocs: string;
   language: string;
-  themeEditorTitle: string;
-  themeEditorLead: string;
-  themePresets: string;
-  themeReset: string;
-  themeCopyCss: string;
-  themeCopyLink: string;
-  themeCopied: string;
-  themeContrast: string;
-  themePreview: string;
-  themeExport: string;
-  themePreviewHeading: string;
-  themePreviewBody: string;
   tokensTitle: string;
   tokensLead: string;
   tokensColour: string;
@@ -61,7 +49,6 @@ export interface Dictionary {
   heroPanelTabs: [string, string, string];
   heroPresetsLabel: string;
   heroPresetDefault: string;
-  heroEditorLink: string;
   landingAccessibilityTitle: string;
   landingAccessibilityBody: string;
   landingTokensTitle: string;
@@ -115,19 +102,6 @@ export const dictionary: Record<Locale, Dictionary> = {
     next: 'Next',
     readTheDocs: 'Read the documentation',
     language: 'Language',
-    themeEditorTitle: 'Theme editor',
-    themeEditorLead:
-      'Change the tokens and watch the components follow. Everything here is scoped to the preview: an unreadable theme never costs you the page around it.',
-    themePresets: 'Presets',
-    themeReset: 'Reset',
-    themeCopyCss: 'Copy CSS',
-    themeCopyLink: 'Copy link',
-    themeCopied: 'Copied',
-    themeContrast: 'Contrast',
-    themePreview: 'Preview',
-    themeExport: 'CSS',
-    themePreviewHeading: 'Deployment settings',
-    themePreviewBody: 'Every control below is the library, reading the tokens set on this panel.',
     tokensTitle: 'Design tokens',
     tokensLead: 'Every custom property the package publishes, read from its stylesheet when this site is built.',
     tokensColour: 'Ramps',
@@ -148,7 +122,6 @@ export const dictionary: Record<Locale, Dictionary> = {
     heroPanelTabs: ['Deploy', 'Logs', 'Access'],
     heroPresetsLabel: 'Theme',
     heroPresetDefault: 'Default',
-    heroEditorLink: 'Open the theme editor',
     landingAccessibilityTitle: 'Accessibility is measured, not claimed',
     landingAccessibilityBody:
       'Keyboard behaviour, focus, contrast and reduced motion are asserted in a real browser. What is not covered is written down rather than implied.',
@@ -207,19 +180,6 @@ export const dictionary: Record<Locale, Dictionary> = {
     next: 'Далее',
     readTheDocs: 'Открыть документацию',
     language: 'Язык',
-    themeEditorTitle: 'Редактор тем',
-    themeEditorLead:
-      'Меняйте токены и смотрите, как за ними идут компоненты. Всё здесь ограничено превью: нечитаемая тема никогда не отнимет у вас страницу вокруг неё.',
-    themePresets: 'Пресеты',
-    themeReset: 'Сбросить',
-    themeCopyCss: 'Скопировать CSS',
-    themeCopyLink: 'Скопировать ссылку',
-    themeCopied: 'Скопировано',
-    themeContrast: 'Контраст',
-    themePreview: 'Превью',
-    themeExport: 'CSS',
-    themePreviewHeading: 'Настройки деплоя',
-    themePreviewBody: 'Каждый контрол ниже — это библиотека, читающая токены, заданные на этой панели.',
     tokensTitle: 'Дизайн-токены',
     tokensLead: 'Все кастомные свойства, которые публикует пакет, прочитанные из его стилей при сборке сайта.',
     tokensColour: 'Шкалы',
@@ -240,7 +200,6 @@ export const dictionary: Record<Locale, Dictionary> = {
     heroPanelTabs: ['Деплой', 'Логи', 'Доступ'],
     heroPresetsLabel: 'Тема',
     heroPresetDefault: 'По умолчанию',
-    heroEditorLink: 'Открыть редактор тем',
     landingAccessibilityTitle: 'Доступность измерена, а не заявлена',
     landingAccessibilityBody:
       'Поведение с клавиатуры, фокус, контраст и уважение к reduced motion проверяются в настоящем браузере. То, что не покрыто, записано прямо, а не подразумевается.',
