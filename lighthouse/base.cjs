@@ -38,6 +38,14 @@ module.exports = function config(profile) {
          */
         numberOfRuns: 3,
 
+        /*
+         * The GitHub runner disallows unprivileged user namespaces, so Chrome aborts at startup
+         * with "No usable sandbox" before Lighthouse ever navigates. The browser here only ever
+         * loads this repository's own static export from localhost, so dropping the sandbox costs
+         * nothing that matters and is the only way the measurement runs at all on CI.
+         */
+        chromeFlags: ['--no-sandbox', '--disable-dev-shm-usage'],
+
         settings: profile.settings,
       },
 
