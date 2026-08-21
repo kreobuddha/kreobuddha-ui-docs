@@ -15,7 +15,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build && npm run index",
-    "build:e2e": "NEXT_PUBLIC_BASE_PATH=/kreobuddha-ui-docs next build",
+    "build:e2e": "NEXT_PUBLIC_BASE_PATH=/kreobuddha-ui-docs npm run build",
     "serve": "node scripts/serve-export.mjs",
     "typecheck": "tsc --noEmit",
     "test": "node --test 'tests/*.test.ts'",
