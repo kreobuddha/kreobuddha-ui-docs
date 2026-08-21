@@ -4,7 +4,7 @@ import { createServer } from 'node:http';
 import { extname, join, normalize } from 'node:path';
 import { createBrotliCompress, createGzip } from 'node:zlib';
 
-const ROOT = new URL('../out/', import.meta.url).pathname;
+const ROOT = new URL('../dist/', import.meta.url).pathname;
 const PORT = Number(process.env.PORT ?? 4173);
 const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? '';
 
@@ -102,5 +102,5 @@ const server = createServer(async (request, response) => {
 });
 
 server.listen(PORT, () => {
-  console.log(`Serving out/ at http://localhost:${PORT}${BASE_PATH}/`);
+  console.log(`Serving dist/ at http://localhost:${PORT}${BASE_PATH}/`);
 });

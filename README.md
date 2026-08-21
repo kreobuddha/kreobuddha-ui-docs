@@ -7,8 +7,9 @@ Live at <https://kreobuddha.github.io/kreobuddha-ui-docs/>.
 
 ## Stack
 
-Next.js with `output: 'export'`, MDX content, plain CSS in cascade layers, Pagefind for search,
-GitHub Pages for hosting. The site is built with the library it documents, installed from npm.
+Vite with `vite-react-ssg`, React Router and i18next. MDX content compiled at build time, plain
+CSS in cascade layers, Pagefind for search, GitHub Pages for hosting. The site is built with the
+library it documents, installed from npm.
 
 ## Development
 
@@ -20,15 +21,15 @@ npm run dev
 ## Build
 
 ```bash
-npm run build   # static export into out/, then the search index
-npm run serve   # serve out/ the way Pages serves it
+npm run build   # static site into dist/, then the search index
+npm run serve   # serve dist/ the way Pages serves it
 ```
 
 The site is served from a sub-path today and from a bare domain later, so the prefix lives in
-`NEXT_PUBLIC_BASE_PATH`. Links written by hand go through `lib/links.ts`; Next prefixes the rest.
+`VITE_BASE_PATH`. Links written by hand go through `lib/links.ts`; Vite prefixes its own assets.
 
 ```bash
-NEXT_PUBLIC_BASE_PATH=/kreobuddha-ui-docs npm run build
+VITE_BASE_PATH=/kreobuddha-ui-docs npm run build
 ```
 
 ## Deployment

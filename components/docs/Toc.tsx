@@ -1,8 +1,6 @@
-'use client';
-
 import { useEffect, useId, useState } from 'react';
 
-import type { Heading } from '@/lib/mdx';
+import type { Heading } from '@/lib/content';
 import { activeHeading } from '@/lib/toc';
 
 const HEADER_OFFSET = 60;

@@ -1,9 +1,9 @@
 import { readdir, readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 
-const OUT = 'out';
-const ORDER = /@layer\s+reset\s*,\s*library\s*,\s*site\s*,\s*overrides\s*;/;
-const LIBRARY_BLOCK = /@layer\s+library\s*\{/;
+const OUT = 'dist';
+const EXPECTED = ['reset', 'library', 'site', 'overrides'];
+const DECLARATION = /@layer\s+([\w\s,]+?)\s*[;{]/g;
 
 const NOT_OURS = new Set(['pagefind']);
 
@@ -26,31 +26,35 @@ if (files.length === 0) {
 }
 
 const problems = [];
-let sawOrder = false;
-let sawLibrary = false;
+let checked = 0;
 
 for (const file of files) {
   const css = await readFile(file, 'utf8');
-  const order = css.match(ORDER);
-  const library = css.match(LIBRARY_BLOCK);
 
-  if (order) sawOrder = true;
-  if (library) sawLibrary = true;
+  const appearances = [];
+  for (const [, names] of css.matchAll(DECLARATION)) {
+    for (const name of names.split(',').map((part) => part.trim())) {
+      if (name !== '' && !appearances.includes(name)) appearances.push(name);
+    }
+  }
 
-  if (library && !order) {
-    problems.push(`${file}: the library layer is here but the layer order is not.`);
-  } else if (order && library && order.index > library.index) {
+  if (appearances.length === 0) continue;
+  checked += 1;
+
+  const ours = appearances.filter((name) => EXPECTED.includes(name));
+  if (ours.join(',') !== EXPECTED.join(',')) {
     problems.push(
-      `${file}: '@layer library' at ${library.index} comes before the order statement at ` +
-        `${order.index}. 'library' registers itself first and 'reset' lands behind it.`,
+      `${file}: layers first appear as [${ours.join(', ')}], not [${EXPECTED.join(', ')}]. ` +
+        'Order is decided by first appearance, so this is the cascade, not cosmetics.',
     );
+  }
+
+  if (!/@layer\s+library\s*\{/.test(css)) {
+    problems.push(`${file}: no '@layer library' block - the library stylesheet is unlayered.`);
   }
 }
 
-if (!sawOrder) problems.push('The layer order statement is in no built stylesheet.');
-if (!sawLibrary) {
-  problems.push("No '@layer library' block: the library stylesheet is unlayered or absent.");
-}
+if (checked === 0) problems.push('No built stylesheet declares any layer.');
 
 if (problems.length > 0) {
   console.error('Cascade layer check failed:');
@@ -58,4 +62,4 @@ if (problems.length > 0) {
   process.exit(1);
 }
 
-console.log(`Cascade layer order verified in ${files.length} built stylesheet(s).`);
+console.log(`Cascade layer order verified in ${checked} built stylesheet(s).`);

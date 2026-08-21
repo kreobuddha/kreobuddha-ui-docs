@@ -1,10 +1,9 @@
-'use client';
-
+import { pageColours } from '@/lib/tokens';
 import { useEffect, useState } from 'react';
 
 import { isThemeMode, THEME_STORAGE_KEY, themeModes, type ThemeMode } from '@/lib/theme';
 
-function applyMode(mode: ThemeMode, colours: { light: string; dark: string }): void {
+function applyMode(mode: ThemeMode): void {
   const dark =
     mode === 'dark' ||
     (mode === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
@@ -18,7 +17,7 @@ function applyMode(mode: ThemeMode, colours: { light: string; dark: string }): v
 
   document
     .querySelector('meta[name="theme-color"]')
-    ?.setAttribute('content', dark ? colours.dark : colours.light);
+    ?.setAttribute('content', dark ? pageColours.dark : pageColours.light);
 
   window.dispatchEvent(new CustomEvent(THEME_EVENT));
 }
@@ -30,13 +29,11 @@ export function ThemeToggle({
   className,
   label,
   labels,
-  colours,
 }: {
   name: string;
   className?: string;
   label: string;
   labels: Record<ThemeMode, string>;
-  colours: { light: string; dark: string };
 }) {
   const [mode, setMode] = useState<ThemeMode>('system');
 
@@ -55,14 +52,14 @@ export function ThemeToggle({
     if (mode !== 'system') return;
 
     const query = window.matchMedia('(prefers-color-scheme: dark)');
-    const onChange = () => applyMode('system', colours);
+    const onChange = () => applyMode('system');
     query.addEventListener('change', onChange);
     return () => query.removeEventListener('change', onChange);
-  }, [mode, colours]);
+  }, [mode]);
 
   const choose = (next: ThemeMode) => {
     setMode(next);
-    applyMode(next, colours);
+    applyMode(next);
     try {
       localStorage.setItem(THEME_STORAGE_KEY, next);
     } catch {

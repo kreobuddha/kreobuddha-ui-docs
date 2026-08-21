@@ -1,7 +1,5 @@
-'use client';
-
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { Link } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { useCallback, useEffect, useState } from 'react';
 
 import type { GroupId, NavItem } from '@/lib/nav';
@@ -25,7 +23,7 @@ function readCollapsed(): string[] {
 }
 
 export function NavTree({ groups, onNavigate }: { groups: NavGroupData[]; onNavigate?: () => void }) {
-  const pathname = usePathname();
+  const pathname = useLocation().pathname;
 
   const [collapsed, setCollapsed] = useState<string[]>([]);
 
@@ -73,7 +71,7 @@ export function NavTree({ groups, onNavigate }: { groups: NavGroupData[]; onNavi
                 return (
                   <li key={item.slug}>
                     <Link
-                      href={item.href}
+                      to={item.href}
                       aria-current={isCurrent ? 'page' : undefined}
                       onClick={onNavigate}
                       draggable={false}

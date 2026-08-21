@@ -1,6 +1,8 @@
-import Link from 'next/link';
+import { Link } from 'react-router-dom';
 
-import { dictionary, type Locale } from '@/lib/i18n';
+import { useTranslation } from 'react-i18next';
+
+import type { Locale } from '@/lib/i18n';
 import { route } from '@/lib/links';
 
 export interface Crumb {
@@ -9,20 +11,20 @@ export interface Crumb {
 }
 
 export function Breadcrumbs({ locale, trail }: { locale: Locale; trail: Crumb[] }) {
-  const t = dictionary[locale];
+  const { t } = useTranslation();
 
   return (
-    <nav className="breadcrumbs" data-pagefind-ignore aria-label={t.documentationNav}>
+    <nav className="breadcrumbs" data-pagefind-ignore aria-label={t('documentationNav')}>
       <ol>
         <li>
-          <Link href={route(locale)}>{t.home}</Link>
+          <Link to={route(locale)}>{t('home')}</Link>
         </li>
         {trail.map((crumb, index) => (
           <li key={`${crumb.label}-${index}`}>
             {crumb.href === undefined ? (
               <span aria-current="page">{crumb.label}</span>
             ) : (
-              <Link href={crumb.href}>{crumb.label}</Link>
+              <Link to={crumb.href}>{crumb.label}</Link>
             )}
           </li>
         ))}
