@@ -82,6 +82,13 @@ const PAGES = [
   { name: 'a component page', path: 'en/components/button/' },
   { name: 'the tokens page', path: 'en/tokens/' },
   { name: 'the theme editor', path: 'en/theme/' },
+  /*
+   * The Russian half is scanned too, and not as a formality: `lang`, the longer words that decide
+   * where a line wraps, and the translated accessible names are all different data than the
+   * English pages give axe.
+   */
+  { name: 'the Russian landing page', path: 'ru/' },
+  { name: 'a Russian guide page', path: 'ru/docs/theming/' },
 ];
 
 for (const { name, path } of PAGES) {

@@ -1,0 +1,168 @@
+---
+title: Композиция
+description: Как компоненты задуманы собираться вместе и какие решения остаются за приложением.
+group: patterns
+order: 1
+---
+
+Страницы компонентов показывают каждый компонент по отдельности. Эта страница показывает формы, ради
+которых их и делали, — форму настроек, взаимоисключающий выбор, экран диагностики — и решения,
+которые к ним прилагаются.
+
+## Форма настроек
+
+`FieldGroup` рендерит настоящий `<fieldset>` с `<legend>`, поэтому у группы есть имя, которое
+скринридер произносит до контролов внутри неё. Пояснение и ошибка уровня группы принадлежат группе;
+неполадка в одном контроле принадлежит этому контролу.
+
+```tsx
+import { Button, Checkbox, FieldGroup, Select, Switch, TextField, useToast } from '@kreobuddha/ui';
+
+const Settings = () => {
+  const { toast } = useToast();
+
+  return (
+    <form
+      onSubmit={(event) => {
+        event.preventDefault();
+        save();
+        toast({ tone: 'success', children: 'Settings saved' });
+      }}
+    >
+      <FieldGroup legend="Workspace" hint="Applies to every project in this workspace.">
+        <TextField label="Display name" value={name} onChange={onName} />
+        <Select label="Default branch" value={branch} onChange={onBranch}>
+          <option value="main">main</option>
+          <option value="develop">develop</option>
+        </Select>
+      </FieldGroup>
+
+      <FieldGroup legend="Notifications">
+        <Switch label="Notify on failed builds" checked={notify} onChange={onNotify} />
+        <Checkbox label="Include warnings" checked={warnings} onChange={onWarnings} />
+      </FieldGroup>
+
+      <Button type="submit">Save changes</Button>
+    </form>
+  );
+};
+```
+
+Из этой формы стоит унести три вещи:
+
+- **`useToast` требует `ToastProvider` над собой** и без него бросает исключение, а не возвращает
+  пустышку. `toast()`, который молча никогда не появляется, — это баг, на поиск которого уходит
+  полдня.
+- **Тост подтверждает, а не докладывает.** То, на что читателю нужно отреагировать, живёт в `Alert`
+  рядом с контролом, где и остаётся.
+- **Поясняйте поле через `Toggletip`, а не через `Tooltip`.** Тултип открывается по наведению
+  и фокусу и сам по себе недостижим с тач-экрана; тоглтип — это кнопка, которую читатель нажимает,
+  а пояснение должно быть именно такой кнопкой.
+
+## Взаимоисключающий выбор
+
+Единственная композиция, где ни одна половина не работает в одиночку. `Radio` намеренно не приносит
+с собой вопроса — он не рендерит ни `<legend>`, ни `<fieldset>`, — а `FieldGroup` и есть вопрос,
+которому нечем ответить. Вместе они дают ту форму, которую первым попросил реальный потребитель:
+выбор одной колоды карт на комнату людей.
+
+```tsx
+<FieldGroup legend="Card deck" hint="Everyone in the room votes with this deck.">
+  <Radio name="deck" value="fibonacci" label="Fibonacci" hint="1 · 2 · 3 · 5 · 8 · 13 · 21" />
+  <Radio name="deck" value="tshirt" label="T-shirt sizes" hint="XS · S · M · L · XL" />
+</FieldGroup>
+```
+
+- **Взаимоисключающими варианты делает общий `name`**, поэтому здесь он обязателен, хотя нативный
+  атрибут — нет. Радиокнопки без имени не принадлежат никакой группе, а значит, одну из них можно
+  включить и уже никогда не выключить.
+- **Легенда — не украшение.** Без неё скринридер, дошедший до колонки, слышит варианты и никогда не
+  слышит вопроса. Ровно поэтому `Radio` отказывается отращивать легенду себе.
+- **Клавиатура принадлежит платформе.** Стрелки ходят по группе и выбирают по дороге, а `Tab`
+  считает всю группу одной остановкой — это поведение берётся из настоящих
+  `<input type="radio">`, а не из чего-либо написанного здесь.
+- **Неполадка уровня группы идёт на группу.** «Выберите колоду» — про весь набор, поэтому это
+  `error` у `FieldGroup`; неполадка в одном варианте принадлежала бы этому варианту.
+
+Берите радиокнопки, когда читателю нужно сравнить несколько ответов одним взглядом, и `Select`,
+когда список для этого слишком длинный. Граница проходит по тому, стоит ли возможность видеть все
+варианты сразу той вертикали, которую она съедает.
+
+## Потеря несохранённого
+
+Единственный случай, ради которого существует `dismissOnBackdrop={false}`. Диалог, в котором лежит
+набранный текст, не должен выбрасываться случайным щелчком мимо него:
+
+```tsx
+<Dialog
+  open={confirming}
+  onClose={() => setConfirming(false)}
+  title="Discard unsaved changes?"
+  description="The workspace name and two notification settings have not been saved."
+  dismissOnBackdrop={false}
+  footer={
+    <>
+      <Button variant="ghost" onClick={() => setConfirming(false)}>
+        Keep editing
+      </Button>
+      <Button danger onClick={discard}>
+        Discard
+      </Button>
+    </>
+  }
+/>
+```
+
+`open` и `onClose` — это состояние хоста: диалог никогда не закрывает себя сам. `title` обязателен,
+потому что становится доступным именем; диалог без него не сообщает ничего, кроме «диалог».
+
+## Экран диагностики
+
+Статус здесь читают, а не нажимают, поэтому компоненты неинтерактивны, а работу делает раскладка.
+
+```tsx
+<ul>
+  {checks.map((check) => (
+    <li key={check.id}>
+      <Badge tone={check.tone} dot>
+        {check.state}
+      </Badge>
+      <span>{check.name}</span>
+      <span className="duration">{check.ms} ms</span>
+    </li>
+  ))}
+</ul>
+```
+
+```css
+.duration {
+  font: var(--kreo-type-data);
+  font-variant-numeric: var(--kreo-numeric-tabular);
+}
+```
+
+- **Смысл никогда не несёт цвет.** `Badge` рендерит обычный `<span>` без ARIA-роли, потому что это
+  текст, и «деградировано» говорит именно текст. Тон — второй сигнал, а не единственный.
+- **Цифрам, которые выстраиваются в колонку, нужен `--kreo-numeric-tabular`.** Это и есть требование,
+  стоящее за желанием взять моноширинный шрифт, и поэтому ни одного такого шрифта в пакете нет.
+- **`Skeleton` ставится за настоящей загрузкой**, а не за таймером. Заглушка, появляющаяся по
+  расписанию, — это заглушка, которая врёт.
+- **`Alert` — для одной деградировавшей проверки, `Accordion` — для её подробностей.** Сводка
+  остаётся читаемой; читатель раскрывает то, за чем пришёл.
+
+## Табы как навигация
+
+`Tabs` — это одна остановка табуляции со стрелками внутри, то есть модель WAI-ARIA. Решать нужно
+про `activation`: `automatic` выбирает по ходу стрелки и верен, когда панели дешёвые; `manual`
+только двигает фокус и ждёт `Enter` или `Space` — для панели настолько дорогой, что пробег стрелкой
+мимо четырёх штук выпустил бы четыре запроса.
+
+```tsx
+<Tabs
+  items={[
+    { id: 'settings', label: 'Settings', content: <Settings /> },
+    { id: 'diagnostics', label: 'Diagnostics', content: <Diagnostics /> },
+  ]}
+  defaultValue="settings"
+/>
+```

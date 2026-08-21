@@ -29,6 +29,28 @@
   line-gap-override: 0%;
 }
 
+/*
+ * The same stand-in for Cyrillic, with its own scale.
+ *
+ * Inter ships Latin and Cyrillic as two files with two `unicode-range`s, and the two scripts do
+ * not sit at the same width against Helvetica: measured against the loaded faces, one `size-adjust`
+ * tuned on the alphabet leaves Cyrillic text 4.4% too wide, and Lighthouse read that back as a
+ * layout shift on the Russian pages that the English ones did not have.
+ *
+ * The range is the library's own Cyrillic subset range, copied so the stand-in covers exactly the
+ * characters the real face will later cover — a wider range here would take glyphs away from the
+ * Latin face that it, not this, is metric-matched to.
+ */
+@font-face {
+  font-family: 'Inter fallback';
+  src: local('Helvetica'), local('Arial'), local('Liberation Sans');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+  size-adjust: 99.89%;
+  ascent-override: 97.01%;
+  descent-override: 24.13%;
+  line-gap-override: 0%;
+}
+
 @layer site {
   /*
    * The library's own sans stack with the metric-matched stand-in slotted in behind Inter. The

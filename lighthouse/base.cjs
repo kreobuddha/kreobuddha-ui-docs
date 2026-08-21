@@ -13,7 +13,11 @@
 const BASE_PATH = '/kreobuddha-ui-docs';
 const PORT = 4174;
 
-const paths = ['/en/', '/en/docs/theming/', '/en/components/button/'];
+/*
+ * A Russian guide page joins them because the Cyrillic subset is a separate font file: the locale
+ * that loads different bytes is the one that can miss the budget while English keeps it.
+ */
+const paths = ['/en/', '/en/docs/theming/', '/en/components/button/', '/ru/docs/theming/'];
 
 /**
  * @param {{ name: string, settings: object }} profile
@@ -34,7 +38,19 @@ module.exports = function config(profile) {
          */
         numberOfRuns: 3,
 
-        settings: profile.settings,
+        /*
+         * The GitHub runner disallows unprivileged user namespaces, so Chrome aborts at startup
+         * with "No usable sandbox" before Lighthouse ever navigates. The browser here only ever
+         * loads this repository's own static export from localhost, so dropping the sandbox costs
+         * nothing that matters and is the only way the measurement runs at all on CI.
+         *
+         * The flags belong to `settings`, as a space-separated string: lhci reads
+         * `collect.settings.chromeFlags` and ignores a `chromeFlags` sitting next to it.
+         */
+        settings: {
+          ...profile.settings,
+          chromeFlags: '--no-sandbox --disable-dev-shm-usage',
+        },
       },
 
       assert: {
