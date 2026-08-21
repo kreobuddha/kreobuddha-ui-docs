@@ -3,21 +3,12 @@
 import { useCallback, useLayoutEffect, useRef } from 'react';
 
 import { NavTree, type NavGroupData } from './NavTree';
-import type { Locale } from '@/lib/i18n';
 
 const SCROLL_KEY = 'kb-docs-sidebar-scroll';
 
 export type SidebarGroup = NavGroupData;
 
-export function Sidebar({
-  locale,
-  groups,
-  label,
-}: {
-  locale: Locale;
-  groups: NavGroupData[];
-  label: string;
-}) {
+export function Sidebar({ groups, label }: { groups: NavGroupData[]; label: string }) {
   const scroller = useRef<HTMLElement>(null);
 
   /*
@@ -55,7 +46,7 @@ export function Sidebar({
 
   return (
     <nav className="sidebar nav-tree" aria-label={label} ref={scroller} onScroll={rememberScroll}>
-      <NavTree locale={locale} groups={groups} />
+      <NavTree groups={groups} />
     </nav>
   );
 }

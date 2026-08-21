@@ -6,11 +6,11 @@ import { Breadcrumbs } from '@/components/docs/Breadcrumbs';
 import { PrevNext } from '@/components/docs/PrevNext';
 import { Toc } from '@/components/docs/Toc';
 import { TokenTable } from '@/components/docs/TokenTable';
-import { allGuideParams, getGuide } from '@/lib/content';
+import { allGuideParams, getDoc, getDocs } from '@/lib/content';
 import { dictionary, isLocale, type Locale } from '@/lib/i18n';
 import { route } from '@/lib/links';
 import { renderGuide } from '@/lib/mdx';
-import { getNavTree, getNeighbours } from '@/lib/nav';
+import { getNeighbours } from '@/lib/nav';
 
 export const dynamicParams = false;
 
@@ -38,7 +38,7 @@ export async function generateMetadata({
   const single = slugOf(slug);
   if (single === null) return { title: t.docsTitle, description: t.guidesIndexLead };
 
-  const guide = await getGuide(locale, single);
+  const guide = await getDoc('guides', locale, single);
   if (!guide) return {};
 
   return { title: guide.title, description: guide.description };
@@ -56,7 +56,7 @@ export default async function DocsPage({
   const single = slugOf(slug);
 
   if (single === null) {
-    const tree = await getNavTree(locale);
+    const guides = await getDocs('guides', locale);
 
     return (
       <article className="prose">
@@ -64,28 +64,35 @@ export default async function DocsPage({
         <h1>{t.docsTitle}</h1>
         <p className="lead">{t.guidesIndexLead}</p>
 
-        {tree.map((group) => (
-          <section key={group.id}>
-            <h2>{t.groups[group.id]}</h2>
-            <ul className="guide-index">
-              {group.items.map((guide) => (
-                <li key={guide.slug}>
-                  <Link href={route(locale, `/docs/${guide.slug}`)}>{guide.title}</Link>
-                  <p>{guide.description}</p>
-                </li>
-              ))}
-            </ul>
-          </section>
-        ))}
+        {(['getting-started', 'foundations', 'patterns'] as const).map((group) => {
+          const items = guides
+            .filter((guide) => guide.group === group)
+            .sort((a, b) => a.order - b.order);
+          if (items.length === 0) return null;
+
+          return (
+            <section key={group}>
+              <h2>{t.groups[group]}</h2>
+              <ul className="guide-index">
+                {items.map((guide) => (
+                  <li key={guide.slug}>
+                    <Link href={route(locale, `/docs/${guide.slug}`)}>{guide.title}</Link>
+                    <p>{guide.description}</p>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          );
+        })}
       </article>
     );
   }
 
-  const guide = await getGuide(locale, single);
+  const guide = await getDoc('guides', locale, single);
   if (!guide) notFound();
 
   const { content, headings } = await renderGuide(guide.source, mdxComponents);
-  const { previous, next } = await getNeighbours(locale, guide.slug);
+  const { previous, next } = await getNeighbours(locale, route(locale, `/docs/${guide.slug}`));
 
   return (
     <div className="guide">

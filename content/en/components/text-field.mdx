@@ -1,0 +1,75 @@
+---
+title: TextField
+description: One line of text with the label, hint and error that make it usable already wired up.
+order: 2
+---
+
+One line of text, with the label, hint and error that make it usable wired up.
+
+The component exists for the wiring rather than for the box. Associating a label, a hint and an
+error message with an input means generating ids and threading `aria-describedby` and
+`aria-invalid` — done by hand, per field, it is forgotten roughly as often as it is written. Here
+it is not optional.
+
+<Playground id="text-field" />
+
+## Props
+
+<PropsTable
+  rows={[
+    {
+      name: 'label',
+      type: 'string',
+      required: true,
+      description: 'The visible label. Required: a field without one is unusable by anybody not looking at it.',
+    },
+    {
+      name: 'size',
+      type: "'sm' | 'md' | 'lg'",
+      default: "'md'",
+      description:
+        'Control height — 32px, 40px, 48px — matching Button so a field and a button sit level. Not the type: every size is set in --kreo-type-body.',
+    },
+    {
+      name: 'hint',
+      type: 'ReactNode',
+      description: 'Guidance under the field. Announced with the field, not read as separate text.',
+    },
+    {
+      name: 'error',
+      type: 'ReactNode',
+      description:
+        'What is wrong with the value. Its presence is what makes the field invalid — there is no separate invalid prop.',
+    },
+    { name: 'prefix', type: 'ReactNode', description: 'Content inside the border, before the input.' },
+    { name: 'suffix', type: 'ReactNode', description: 'Content inside the border, after the input.' },
+    {
+      name: 'fullWidth',
+      type: 'boolean',
+      default: 'false',
+      description: 'Stretches to the container instead of sizing to the control scale.',
+    },
+    {
+      name: 'className',
+      type: 'string',
+      description: 'Class for the outer wrapper. Native props and ref go to the input itself.',
+    },
+  ]}
+/>
+
+## There is no `invalid` prop
+
+The error message is the invalid state. A field can be marked invalid without saying why — a red
+border and nothing else — and that is a dead end for the reader: they know something is wrong and
+have no way to find out what. Making the message the switch removes the option.
+
+Two native attributes are replaced rather than shadowed. `size` here is the control scale that
+matches `Button`, not the native width in characters; `prefix` is content inside the border, not
+the RDFa attribute nobody reaches for.
+
+## Keyboard and screen readers
+
+The input is a real `<input>`; `ref` and every native attribute go to it, not to the wrapper. The
+label is a real `<label>` bound by id. The hint and the error are announced with the field through
+`aria-describedby`, and the error also sets `aria-invalid`, so a screen reader user is told the
+field is wrong and told what is wrong in the same breath.

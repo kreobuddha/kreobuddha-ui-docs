@@ -4,15 +4,12 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 
-import type { GuideMeta } from '@/lib/content';
-import type { Locale } from '@/lib/i18n';
-import { route } from '@/lib/links';
-import type { GroupId } from '@/lib/nav';
+import type { GroupId, NavItem } from '@/lib/nav';
 
 export interface NavGroupData {
   id: GroupId;
   label: string;
-  items: Pick<GuideMeta, 'slug' | 'title'>[];
+  items: NavItem[];
 }
 
 const COLLAPSED_KEY = 'kb-docs-sidebar-collapsed';
@@ -32,15 +29,7 @@ function readCollapsed(): string[] {
  * two cannot drift apart — and collapsing a section on the phone is still collapsed on the desktop,
  * because both read the same stored list.
  */
-export function NavTree({
-  locale,
-  groups,
-  onNavigate,
-}: {
-  locale: Locale;
-  groups: NavGroupData[];
-  onNavigate?: () => void;
-}) {
+export function NavTree({ groups, onNavigate }: { groups: NavGroupData[]; onNavigate?: () => void }) {
   const pathname = usePathname();
 
   /*
@@ -95,13 +84,12 @@ export function NavTree({
             */}
             <ul id={listId} hidden={isCollapsed}>
               {group.items.map((item) => {
-                const href = route(locale, `/docs/${item.slug}`);
-                const isCurrent = pathname === href || pathname === `${href}/`;
+                const isCurrent = pathname === item.href || pathname === `${item.href}/`;
 
                 return (
                   <li key={item.slug}>
                     <Link
-                      href={href}
+                      href={item.href}
                       aria-current={isCurrent ? 'page' : undefined}
                       onClick={onNavigate}
                       /*

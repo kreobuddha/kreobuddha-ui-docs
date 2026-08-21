@@ -3,9 +3,9 @@
 The public documentation site for [`@kreobuddha/ui`](https://github.com/kreobuddha/kreobuddha-ui):
 guides, a component reference with a live playground, design tokens and a theme editor.
 
-**Status: early. Nine guides are on the site in English, with navigation, a table of contents, a
-language switcher and a full narrow-screen layout. The component reference, the theme editor and
-search are not built yet.**
+**Status: early. Nine guides and six component pages are on the site in English, with navigation, a
+table of contents, a language switcher and a full narrow-screen layout. The theme editor and search
+are not built yet.**
 
 ## Stack
 
@@ -66,6 +66,22 @@ index.
 
 Code is highlighted by Shiki at build time and token tables are read from the published stylesheet
 at build time, so neither ships a byte of JavaScript to the reader.
+
+### Adding a component page
+
+Three steps, and the third is optional:
+
+1. Write `content/en/components/<slug>.mdx` with `title`, `description` and `order` in the
+   frontmatter. It appears in the sidebar, in the reading order and in the prev/next links on its
+   own — the navigation is built from the files.
+2. Fill in `<PropsTable rows={…} />` by hand. The tables are written, not generated: see the
+   comment at the top of `components/docs/PropsTable.tsx` for why.
+3. To give it a live example, add an entry to `components/docs/playground/specs.tsx` and reference
+   it as `<Playground id="<slug>" />`. The code beside the example is written out of the current
+   values by `lib/jsx.ts` — there is no compiler in the browser.
+
+Re-export whatever the page renders from `components/ui.ts`, which is the site's client boundary
+for the library.
 
 ### The narrow layout
 

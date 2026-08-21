@@ -4,7 +4,6 @@ import { usePathname } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { NavTree, type NavGroupData } from './NavTree';
-import type { Locale } from '@/lib/i18n';
 
 /** How far a horizontal drag has to travel before it counts as a dismissal rather than a tap. */
 const SWIPE_THRESHOLD = 60;
@@ -19,13 +18,11 @@ const SWIPE_THRESHOLD = 60;
  * focus to the trigger, which `showModal` does for `Escape` but not for our own closes.
  */
 export function NavDrawer({
-  locale,
   groups,
   label,
   openLabel,
   closeLabel,
 }: {
-  locale: Locale;
   groups: NavGroupData[];
   label: string;
   openLabel: string;
@@ -168,7 +165,7 @@ export function NavDrawer({
           </button>
 
           <nav aria-label={label}>
-            <NavTree locale={locale} groups={groups} onNavigate={close} />
+            <NavTree groups={groups} onNavigate={close} />
           </nav>
         </div>
       </dialog>
