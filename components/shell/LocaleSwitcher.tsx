@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
-import { isLocale, locales, localeNames, type Locale } from '@/lib/i18n';
+import { isLocale, locales, localeNames, localeShortNames, type Locale } from '@/lib/i18n';
 
 /*
  * Switching language keeps the reader where they are. The path is rewritten segment by segment
@@ -40,7 +40,10 @@ export function LocaleSwitcher({ label }: { label: string }) {
                 // announced as the current one rather than looking identical to the other.
                 aria-current={isCurrent ? 'true' : undefined}
               >
-                {localeNames[locale]}
+                <span className="locale-switcher__full">{localeNames[locale]}</span>
+                <span className="locale-switcher__short" aria-hidden="true">
+                  {localeShortNames[locale]}
+                </span>
               </Link>
             </li>
           );

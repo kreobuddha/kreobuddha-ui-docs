@@ -57,11 +57,11 @@ export async function TokenTable({ include, exclude, preview = 'none' }: TokenTa
               <th scope="row">
                 <code>{name}</code>
               </th>
-              <td>
+              <td data-label="Value">
                 <code>{value}</code>
               </td>
               {showSample ? (
-                <td>
+                <td data-label="Sample">
                   {/* Decorative: the value is already in the previous cell. */}
                   <Sample name={name} preview={preview} />
                 </td>

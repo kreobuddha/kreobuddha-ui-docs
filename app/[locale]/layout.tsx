@@ -10,8 +10,11 @@ import '@/styles/library.css';
 import '@/styles/base.css';
 import '@/styles/shell.css';
 import '@/styles/docs.css';
+import '@/styles/mobile.css';
 
 import { Header } from '@/components/shell/Header';
+import type { NavGroupData } from '@/components/shell/NavTree';
+import { getNavTree } from '@/lib/nav';
 import { dictionary, isLocale, locales, type Locale } from '@/lib/i18n';
 
 /*
@@ -67,6 +70,18 @@ export default async function LocaleLayout({
 
   const t = dictionary[locale];
 
+  /*
+   * The tree is loaded here rather than in the documentation layout, because the drawer lives in
+   * the header and the header is on every page. On a phone that is the only navigation there is,
+   * so withholding it from the landing page would be withholding it from the whole site.
+   */
+  const tree = await getNavTree(locale);
+  const groups: NavGroupData[] = tree.map((group) => ({
+    id: group.id,
+    label: t.groups[group.id],
+    items: group.items.map(({ slug, title }) => ({ slug, title })),
+  }));
+
   return (
     <html lang={locale} className={mono.variable}>
       <body>
@@ -75,7 +90,7 @@ export default async function LocaleLayout({
           {t.skipToContent}
         </a>
 
-        <Header locale={locale} />
+        <Header locale={locale} groups={groups} />
 
         {/*
           One `main` for the whole site, so every page has the landmark and none of them has two.
