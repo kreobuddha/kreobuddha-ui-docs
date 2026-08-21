@@ -1,0 +1,85 @@
+---
+title: Tabs
+description: One panel visible at a time, with the WAI-ARIA tab pattern implemented in full.
+order: 4
+---
+
+One panel visible at a time, for views that belong together and are not read together.
+
+There is no native element for this, so the WAI-ARIA tab pattern is implemented in full: the whole
+tab list is a single tab stop, arrows move within it, `Home` and `End` jump to the ends, and only
+the selected panel is rendered.
+
+<Playground id="tabs" />
+
+## Props
+
+<PropsTable
+  rows={[
+    {
+      name: 'items',
+      type: 'TabItem[]',
+      required: true,
+      description: 'The tabs, in the order they are read and arrowed through.',
+    },
+    {
+      name: 'value',
+      type: 'string',
+      description: 'The selected tab’s id. Pass it with onChange to control the selection.',
+    },
+    {
+      name: 'defaultValue',
+      type: 'string',
+      description: 'The initially selected tab when the selection is not controlled.',
+    },
+    { name: 'onChange', type: '(id: string) => void', description: 'Called with the newly selected tab’s id.' },
+    {
+      name: 'activation',
+      type: "'automatic' | 'manual'",
+      default: "'automatic'",
+      description:
+        'automatic selects as the arrow moves; manual moves focus only and waits for Enter or Space.',
+    },
+  ]}
+/>
+
+### `TabItem`
+
+<PropsTable
+  rows={[
+    {
+      name: 'id',
+      type: 'string',
+      required: true,
+      description: 'Stable identity for the tab. Becomes part of the generated element ids.',
+    },
+    {
+      name: 'label',
+      type: 'ReactNode',
+      required: true,
+      description: 'What the tab reads as. A node, so a count or a Badge can sit beside the word.',
+    },
+    { name: 'content', type: 'ReactNode', required: true, description: 'Rendered only while this tab is selected.' },
+    {
+      name: 'disabled',
+      type: 'boolean',
+      default: 'false',
+      description:
+        'Reported through aria-disabled rather than removed from the sequence: arrows still reach it, so its existence is not a gap nobody can explain.',
+    },
+  ]}
+/>
+
+## `automatic` or `manual`
+
+This is the decision a consumer has to make, and it is about cost rather than taste.
+
+`automatic` selects as the arrow moves. It is fewer keystrokes and what WAI-ARIA recommends when
+panels are cheap. `manual` moves focus only and waits for Enter or Space — for a panel expensive
+enough that arrowing past four of them would fire four requests.
+
+## Not for navigation
+
+This switches views. It does not navigate routes: the library owns no routing, and a tab that
+changes the URL is a set of links wearing a tab's clothes. Keyboard behaviour, browser history and
+the meaning of a middle click all differ, and readers notice.

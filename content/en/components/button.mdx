@@ -1,0 +1,94 @@
+---
+title: Button
+description: The action a view is asking for, as a real button, with one variant hierarchy per view.
+order: 1
+---
+
+The action a view is asking for, as a real `<button>`. Everything about it exists to keep one
+promise: a button never becomes ambiguous about what it is doing.
+
+<Playground id="button" />
+
+## Props
+
+<PropsTable
+  rows={[
+    {
+      name: 'variant',
+      type: "'filled' | 'outlined' | 'ghost'",
+      default: "'filled'",
+      description:
+        'One filled action per view, outlined for secondary, ghost for tertiary. A convention the component cannot enforce, and the one worth keeping.',
+    },
+    {
+      name: 'size',
+      type: "'sm' | 'md' | 'lg'",
+      default: "'md'",
+      description: 'Control height: 32px, 40px or 48px. lg is meant for a full-width action on a phone.',
+    },
+    {
+      name: 'danger',
+      type: 'boolean',
+      default: 'false',
+      description: 'Swaps the accent for the danger hue. For destructive confirmations only.',
+    },
+    {
+      name: 'loading',
+      type: 'boolean',
+      default: 'false',
+      description:
+        'The action is in flight. The button dims, keeps its exact size, stays focusable, reports aria-busy and refuses activation.',
+    },
+    {
+      name: 'disabled',
+      type: 'boolean',
+      default: 'false',
+      description:
+        'Unavailable: dimmed, inert and out of the tab order. For something that cannot be done, not for something already under way.',
+    },
+    {
+      name: 'fullWidth',
+      type: 'boolean',
+      default: 'false',
+      description: 'Stretches to the container, for a form’s primary action or a narrow column.',
+    },
+    {
+      name: 'textWrap',
+      type: 'boolean',
+      default: 'false',
+      description:
+        'Lets a long label wrap. By default the label stays on one line, truncates, and exposes the full text as the browser’s own tooltip.',
+    },
+    { name: 'icon', type: 'ReactNode', description: 'Decorative element before the label.' },
+    { name: 'iconEnd', type: 'ReactNode', description: 'Decorative element after the label.' },
+    {
+      name: 'type',
+      type: "'button' | 'submit' | 'reset'",
+      default: "'button'",
+      description:
+        'Defaults to button rather than the platform’s submit, so a button dropped into a form never submits it by accident.',
+    },
+  ]}
+/>
+
+## `loading` or `disabled`
+
+Both dim the button and both refuse the click, which is why they are so often used
+interchangeably — and why choosing wrong is easy to miss.
+
+A disabled button cannot be focused. For an action that is already under way, that is exactly
+wrong: a keyboard user who pressed Enter loses focus mid-action and is left with no idea where they
+are. `loading` keeps the button in the tab order, keeps its box the same size so nothing shifts
+underneath the pointer, and reports `aria-busy`.
+
+Use `disabled` for an action that cannot be performed, and `loading` for one that is being
+performed.
+
+## Keyboard and screen readers
+
+It is a native `<button>`, so activation with Enter and Space, the tab order and the announced role
+all come from the platform. `loading` is announced through `aria-busy`; the label does not change,
+because a label that changes under a screen reader mid-action reads as a different button.
+
+Both dimmed states keep their contrast: `loading` is dimmed less than `disabled`, so the spinner
+stays above the contrast the library asks of a status mark.

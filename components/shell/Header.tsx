@@ -18,7 +18,6 @@ export function Header({ locale, groups }: { locale: Locale; groups: NavGroupDat
         then brand, then language.
       */}
       <NavDrawer
-        locale={locale}
         groups={groups}
         label={t.documentationNav}
         openLabel={t.openNavigation}
@@ -31,6 +30,7 @@ export function Header({ locale, groups }: { locale: Locale; groups: NavGroupDat
 
       <nav className="site-header__nav" aria-label={t.documentationNav}>
         <Link href={route(locale, '/docs')}>{t.docsTitle}</Link>
+        <Link href={route(locale, '/components')}>{t.componentsTitle}</Link>
       </nav>
 
       <LocaleSwitcher label={t.language} />

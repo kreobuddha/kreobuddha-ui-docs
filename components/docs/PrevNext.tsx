@@ -1,8 +1,7 @@
 import Link from 'next/link';
 
-import type { GuideMeta } from '@/lib/content';
 import { dictionary, type Locale } from '@/lib/i18n';
-import { route } from '@/lib/links';
+import type { NavItem } from '@/lib/nav';
 
 export function PrevNext({
   locale,
@@ -10,8 +9,8 @@ export function PrevNext({
   next,
 }: {
   locale: Locale;
-  previous: GuideMeta | null;
-  next: GuideMeta | null;
+  previous: NavItem | null;
+  next: NavItem | null;
 }) {
   const t = dictionary[locale];
   if (previous === null && next === null) return null;
@@ -19,7 +18,7 @@ export function PrevNext({
   return (
     <nav className="prev-next" aria-label={`${t.previous} / ${t.next}`}>
       {previous ? (
-        <Link className="prev-next__link" href={route(locale, `/docs/${previous.slug}`)} rel="prev">
+        <Link className="prev-next__link" href={previous.href} rel="prev">
           <span className="prev-next__label">{t.previous}</span>
           <span className="prev-next__title">{previous.title}</span>
         </Link>
@@ -30,7 +29,7 @@ export function PrevNext({
       {next ? (
         <Link
           className="prev-next__link prev-next__link--next"
-          href={route(locale, `/docs/${next.slug}`)}
+          href={next.href}
           rel="next"
         >
           <span className="prev-next__label">{t.next}</span>

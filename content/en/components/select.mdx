@@ -1,0 +1,61 @@
+---
+title: Select
+description: A choice from a list, as a real select — with the platform's picker rather than a custom listbox.
+order: 3
+---
+
+A choice from a list, as a real `<select>`.
+
+<Playground id="select" />
+
+## Props
+
+<PropsTable
+  rows={[
+    { name: 'label', type: 'string', required: true, description: 'The visible label.' },
+    {
+      name: 'size',
+      type: "'sm' | 'md' | 'lg'",
+      default: "'md'",
+      description: 'Control height — 32px, 40px, 48px — matching Button and TextField.',
+    },
+    { name: 'hint', type: 'ReactNode', description: 'Guidance under the field.' },
+    {
+      name: 'error',
+      type: 'ReactNode',
+      description: 'What is wrong with the value. Its presence is what makes the field invalid.',
+    },
+    {
+      name: 'placeholder',
+      type: 'string',
+      description:
+        'Shown while nothing has been chosen. Becomes a disabled first option, so it cannot be chosen afterwards. Leave it out when the first option is a real default.',
+    },
+    {
+      name: 'fullWidth',
+      type: 'boolean',
+      default: 'false',
+      description: 'Stretches to the container instead of sizing to its widest option.',
+    },
+    { name: 'children', type: 'ReactNode', description: 'The option and optgroup elements.' },
+  ]}
+/>
+
+## The trade this component makes
+
+The native element was chosen over a custom listbox deliberately, and it is worth knowing what that
+buys and what it costs.
+
+It brings the platform's keyboard behaviour, its type-ahead, form participation, and — on a phone —
+the operating system's own picker, which no custom widget matches. What it gives up is control over
+how the open list looks. Only the closed control is styled here. The chevron is drawn by the
+component, because the platform paints a different arrow on every OS.
+
+Use it when one answer comes from a list too long to show as radios. For a handful of options
+someone should be able to compare at a glance, `Radio` inside a `FieldGroup` is the better shape.
+
+## `placeholder` is not a value
+
+It becomes a disabled first `<option>` rather than a nullable value: visible until a choice is
+made, unselectable afterwards. That is what lets the native `required` attribute mean what it says,
+instead of a form accepting "Choose one" as an answer.

@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 import { DocsShell } from '@/components/shell/DocsShell';
 import { isLocale } from '@/lib/i18n';
 
-export default async function DocsLayout({
+export default async function ComponentsLayout({
   children,
   params,
 }: {

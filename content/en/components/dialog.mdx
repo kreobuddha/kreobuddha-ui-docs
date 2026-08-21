@@ -1,0 +1,86 @@
+---
+title: Dialog
+description: A modal on the native dialog element, for the question that has to be answered first.
+order: 5
+---
+
+A modal built on the native `<dialog>` element, for the one question that has to be answered before
+anything else continues.
+
+The element is the reason this component is small. The browser owns the top layer, the backdrop,
+the focus trap, the inertness of the page behind it and `Escape` — none of which is reimplemented
+here.
+
+<Playground id="dialog" />
+
+## Props
+
+<PropsTable
+  rows={[
+    {
+      name: 'open',
+      type: 'boolean',
+      required: true,
+      description: 'Whether the dialog is showing. The consumer owns this; the dialog never closes itself.',
+    },
+    {
+      name: 'onClose',
+      type: '() => void',
+      required: true,
+      description: 'Called whenever the dialog asks to close — Escape, the close button, or the backdrop.',
+    },
+    {
+      name: 'title',
+      type: 'string',
+      required: true,
+      description:
+        'The heading, and the accessible name through aria-labelledby. A dialog without one announces nothing but “dialog”.',
+    },
+    { name: 'size', type: "'sm' | 'md' | 'lg'", default: "'md'", description: 'How wide the panel may grow.' },
+    {
+      name: 'description',
+      type: 'ReactNode',
+      description: 'Supporting text under the heading, announced with the dialog through aria-describedby.',
+    },
+    {
+      name: 'children',
+      type: 'ReactNode',
+      description:
+        'The body. It scrolls on its own when it outgrows the panel, so the heading and the actions stay put.',
+    },
+    { name: 'footer', type: 'ReactNode', description: 'Actions along the bottom of the panel.' },
+    {
+      name: 'dismissible',
+      type: 'boolean',
+      default: 'false',
+      description: 'Renders a close button in the heading row.',
+    },
+    { name: 'dismissLabel', type: 'string', description: 'The close button’s accessible name.' },
+    {
+      name: 'dismissOnBackdrop',
+      type: 'boolean',
+      default: 'true',
+      description:
+        'Whether a click on the backdrop closes the dialog. Turn it off for anything holding typed input.',
+    },
+  ]}
+/>
+
+## Why the host owns `open`
+
+The dialog never closes itself. Every route out of it — `Escape`, the close button, the backdrop —
+calls `onClose` and stops there, so the decision to throw away what a reader typed always sits in
+application code where it can be reconsidered.
+
+`dismissOnBackdrop` exists for the same reason. It is on by default because that is what people
+expect from a modal on the web, and it should be turned off for a dialog holding a half-filled
+form: a stray click beside it otherwise discards the lot, and nothing warns first.
+
+## Keyboard and screen readers
+
+The focus trap, `Escape` and the inert background are the platform's. `title` is required because
+it becomes the accessible name, and `description` is announced with it.
+
+**One limitation, stated rather than patched:** on WebKit, closing does not return focus to the
+element that opened the dialog. It is recorded on the [Accessibility](../../docs/accessibility/)
+page rather than worked around here.

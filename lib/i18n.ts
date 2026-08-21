@@ -47,7 +47,17 @@ export interface Dictionary {
   fallbackTitle: string;
   fallbackBody: string;
   guidesIndexLead: string;
-  groups: Record<'getting-started' | 'foundations' | 'patterns', string>;
+  componentsTitle: string;
+  componentsIndexLead: string;
+  props: string;
+  propName: string;
+  propType: string;
+  propDefault: string;
+  propDescription: string;
+  required: string;
+  playground: string;
+  playgroundCode: string;
+  groups: Record<'getting-started' | 'foundations' | 'patterns' | 'components', string>;
 }
 
 export const dictionary: Record<Locale, Dictionary> = {
@@ -69,10 +79,22 @@ export const dictionary: Record<Locale, Dictionary> = {
     fallbackTitle: 'Not translated yet',
     fallbackBody: 'This page has no Russian translation yet and is shown in English.',
     guidesIndexLead: 'Guides to the library: what it is, how to install it, and what it is built on.',
+    componentsTitle: 'Components',
+    componentsIndexLead:
+      'The components this site documents, with their props, their keyboard behaviour and an example to drive.',
+    props: 'Props',
+    propName: 'Prop',
+    propType: 'Type',
+    propDefault: 'Default',
+    propDescription: 'Description',
+    required: 'Required',
+    playground: 'Example',
+    playgroundCode: 'Code',
     groups: {
       'getting-started': 'Getting started',
       foundations: 'Foundations',
       patterns: 'Patterns',
+      components: 'Components',
     },
   },
   ru: {
@@ -94,10 +116,22 @@ export const dictionary: Record<Locale, Dictionary> = {
     fallbackBody: 'Эта страница ещё не переведена на русский и показана на английском.',
     guidesIndexLead:
       'Руководства по библиотеке: что это такое, как её поставить и на чём она построена.',
+    componentsTitle: 'Компоненты',
+    componentsIndexLead:
+      'Компоненты, описанные на этом сайте: пропсы, поведение с клавиатуры и живой пример.',
+    props: 'Пропсы',
+    propName: 'Пропс',
+    propType: 'Тип',
+    propDefault: 'По умолчанию',
+    propDescription: 'Описание',
+    required: 'Обязательный',
+    playground: 'Пример',
+    playgroundCode: 'Код',
     groups: {
       'getting-started': 'Начало работы',
       foundations: 'Основы',
       patterns: 'Паттерны',
+      components: 'Компоненты',
     },
   },
 };

@@ -53,6 +53,8 @@
   }
 
   .site-header__nav {
+    display: flex;
+    gap: var(--kreo-space-4);
     margin-inline-end: auto;
     font: var(--kreo-type-label);
   }

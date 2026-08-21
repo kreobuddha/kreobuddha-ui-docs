@@ -10,6 +10,7 @@ import '@/styles/library.css';
 import '@/styles/base.css';
 import '@/styles/shell.css';
 import '@/styles/docs.css';
+import '@/styles/components-page.css';
 import '@/styles/mobile.css';
 
 import { Header } from '@/components/shell/Header';
@@ -79,7 +80,7 @@ export default async function LocaleLayout({
   const groups: NavGroupData[] = tree.map((group) => ({
     id: group.id,
     label: t.groups[group.id],
-    items: group.items.map(({ slug, title }) => ({ slug, title })),
+    items: group.items,
   }));
 
   return (

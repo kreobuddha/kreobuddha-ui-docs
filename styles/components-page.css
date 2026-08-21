@@ -1,0 +1,106 @@
+@layer site {
+  .playground {
+    margin-block: var(--kreo-space-6);
+    border: var(--kreo-border-w) solid var(--kreo-border-subtle);
+    border-radius: var(--kreo-radius-lg);
+    overflow: hidden;
+  }
+
+  /*
+   * The preview is a room of its own, not a paragraph. The sunken surface says so, and it is also
+   * the boundary the theme editor will paint inside — `.preview-scope` is already on this element,
+   * so nothing about the page has to change when it arrives.
+   */
+  .playground__preview {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--kreo-space-4);
+    align-items: center;
+    justify-content: center;
+    min-block-size: 140px;
+    padding: var(--kreo-space-8) var(--kreo-space-4);
+    background: var(--kreo-surface-sunken);
+  }
+
+  .playground__controls {
+    display: grid;
+    gap: var(--kreo-space-4);
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    align-items: end;
+    padding: var(--kreo-space-4);
+    border-block-start: var(--kreo-border-w) solid var(--kreo-border-subtle);
+  }
+
+  .playground__code {
+    margin: 0;
+    border-block-start: var(--kreo-border-w) solid var(--kreo-border-subtle);
+  }
+
+  .playground__code figcaption {
+    padding: var(--kreo-space-2) var(--kreo-space-4);
+    color: var(--kreo-text-muted);
+    font: var(--kreo-type-label);
+    text-transform: uppercase;
+    letter-spacing: var(--kreo-tracking-label);
+  }
+
+  /* The code here is generated, not highlighted: it has no Shiki markup and needs no border. */
+  .playground__code pre {
+    margin: 0;
+    border: 0;
+    border-radius: 0;
+    background: var(--kreo-surface-sunken);
+  }
+
+  /*
+   * A prop name is code, and code is case-sensitive. The uppercasing that suits a column heading
+   * would turn `fullWidth` into `FULLWIDTH`, which is not a prop that exists.
+   */
+  .props-table tbody th {
+    color: var(--kreo-text-body);
+    font: var(--kreo-type-body);
+    text-transform: none;
+    letter-spacing: normal;
+    white-space: nowrap;
+  }
+
+  .props-table__required {
+    color: var(--kreo-text-danger);
+    font: var(--kreo-type-label);
+    text-transform: uppercase;
+    letter-spacing: var(--kreo-tracking-label);
+  }
+
+  /*
+   * Four columns need room that a phone does not have, so below it the table becomes one card per
+   * prop — the prop name as the card's heading, the rest labelled. It is a container query because
+   * the question is about this column, not about the window.
+   */
+  @container (width < 560px) {
+    .props-table thead {
+      display: none;
+    }
+
+    .props-table tr {
+      display: block;
+      padding-block: var(--kreo-space-3);
+      border-block-end: var(--kreo-border-w) solid var(--kreo-border-subtle);
+    }
+
+    .props-table :is(th, td) {
+      display: block;
+      padding-inline: 0;
+      border: 0;
+      white-space: normal;
+    }
+
+    .props-table td::before {
+      content: attr(data-label);
+      display: block;
+      color: var(--kreo-text-muted);
+      font: var(--kreo-type-label);
+      text-transform: uppercase;
+      letter-spacing: var(--kreo-tracking-label);
+    }
+  }
+}
