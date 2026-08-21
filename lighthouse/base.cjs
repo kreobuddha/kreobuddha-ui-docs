@@ -13,7 +13,11 @@
 const BASE_PATH = '/kreobuddha-ui-docs';
 const PORT = 4174;
 
-const paths = ['/en/', '/en/docs/theming/', '/en/components/button/'];
+/*
+ * A Russian guide page joins them because the Cyrillic subset is a separate font file: the locale
+ * that loads different bytes is the one that can miss the budget while English keeps it.
+ */
+const paths = ['/en/', '/en/docs/theming/', '/en/components/button/', '/ru/docs/theming/'];
 
 /**
  * @param {{ name: string, settings: object }} profile

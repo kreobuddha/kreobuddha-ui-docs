@@ -15,7 +15,11 @@ async function pageOverflow(page: import('@playwright/test').Page) {
   }));
 }
 
-for (const path of ['en/', 'en/docs/', GUIDE, HEAVY]) {
+/*
+ * Russian is checked at the same widths as English rather than trusted to behave like it: the
+ * words are longer, and this test exists precisely to catch the one that does not fit.
+ */
+for (const path of ['en/', 'en/docs/', GUIDE, HEAVY, 'ru/', 'ru/docs/colour-tokens/']) {
   test(`no horizontal page scroll at ${path}`, async ({ page }) => {
     await page.goto(path);
     const { documentWidth, viewportWidth } = await pageOverflow(page);
