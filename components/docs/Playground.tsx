@@ -50,13 +50,6 @@ function Control({
   }
 }
 
-/*
- * A live component, the controls that drive it, and the code that would produce what is on screen.
- *
- * The code is written out of the current values by a serialiser — there is no compiler in the
- * browser, nothing is parsed, and nothing is evaluated. What the reader copies is what they would
- * have typed.
- */
 export function Playground({
   id,
   label,
@@ -92,10 +85,6 @@ export function Playground({
 
   return (
     <section className="playground" aria-label={label}>
-      {/*
-        The scope the theme editor will write into. Nothing overrides a token here yet; what
-        matters now is that the preview is already the only place that would be affected.
-      */}
       <div className="playground__preview preview-scope">
         <View {...props} />
       </div>

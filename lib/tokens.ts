@@ -1,32 +1,13 @@
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 
-/*
- * The stylesheet is read as a file rather than imported, because importing it would hand a CSS
- * asset to the bundler and it has nowhere to put one inside a server chunk.
- *
- * The path is built from the project root instead of resolved. `require.resolve` is not available
- * here in any usable form — the bundler rewrites it to its own module id and it comes back as a
- * number — and `import.meta.resolve` returns a specifier the bundler has already rewritten too.
- * The cost is that this assumes a flat `node_modules`, which npm gives us; the failure, if that
- * ever stops being true, is the loud one below rather than a silently empty table.
- */
+// Built from the project root: the bundler rewrites both require.resolve and import.meta.resolve.
 const STYLESHEET = join(process.cwd(), 'node_modules', '@kreobuddha', 'ui', 'dist', 'styles.css');
 
-/*
- * The stylesheet the package publishes is the only source of truth about which tokens exist. The
- * library's own docs read the token stylesheets one file at a time, but those files are not
- * published — `dist/styles.css` is the whole set concatenated — so pages here select with prefixes
- * instead of by file.
- *
- * A token redeclared by the dark theme is one token, kept where the light theme declares it, which
- * is also the first occurrence.
- */
 const DECLARATION = /(--kreo-[\w-]+)\s*:\s*([^;}]+)/g;
 
 export interface Token {
   name: string;
-  /** The value as declared for the light theme, verbatim — often `var(--kreo-…)`. */
   value: string;
 }
 
@@ -62,13 +43,6 @@ export async function allTokens(): Promise<Token[]> {
   return tokens;
 }
 
-/*
- * The same declarations, but split by theme.
- *
- * The dark theme is a block of overrides under `[data-kreo-theme=dark]`, so the dark map is the
- * light one with those written over it. Merging rather than keeping them separate is what lets a
- * reference resolve: a dark override often points at a token only the light block declares.
- */
 export async function tokenMaps(): Promise<{ light: Map<string, string>; dark: Map<string, string> }> {
   const css = await readStylesheet();
 
@@ -87,7 +61,6 @@ export async function tokenMaps(): Promise<{ light: Map<string, string>; dark: M
   return { light, dark };
 }
 
-/** The bodies of every `[data-kreo-theme=dark]` rule, braces excluded. */
 function darkBlocks(css: string): string[] {
   const blocks: string[] = [];
   const selector = /\[data-kreo-theme=["']?dark["']?\][^{]*\{/g;

@@ -22,11 +22,6 @@ export function Header({
 
   return (
     <AutoHideHeader>
-      {/*
-        The drawer trigger comes first in the source, and the CSS shows it only where the rail is
-        gone. Reading order and tab order then match what is on screen on a phone: navigation,
-        then brand, then language.
-      */}
       <NavDrawer
         groups={groups}
         label={t.documentationNav}

@@ -31,11 +31,6 @@ export default async function ThemePage({ params }: { params: Promise<{ locale: 
 
   const t = dictionary[locale];
 
-  /*
-   * The starting values come from the library's own light theme, read at build time and resolved
-   * through their `var()` references. Writing a copy of them here would be a second source of
-   * truth that goes stale the first time the library changes a colour.
-   */
   const { light } = await tokenMaps();
   const defaults = Object.fromEntries(
     editableTokens.map((token) => [token.name, resolveTokenValue(light, token.name) ?? '#000000']),

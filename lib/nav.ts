@@ -1,14 +1,6 @@
 import { docHref, getDocs, type DocMeta } from './content';
 import { dictionary, type Locale } from './i18n';
 
-/*
- * Group order is declared, not derived. Sorting groups alphabetically would put "Foundations"
- * before "Getting started", which is the wrong order to read them in, and deriving it from the
- * first page's `order` would make one file's number silently control a whole section.
- *
- * `components` is last and is not a guide group: it is the reference, and it comes after the prose
- * that explains what to reference.
- */
 export const groupOrder = [
   'getting-started',
   'foundations',
@@ -34,11 +26,6 @@ export interface NavGroup {
   items: NavItem[];
 }
 
-/*
- * Two pages that are not content: the token list and the theme editor are applications, not files
- * in `content/`. They are declared here so they appear in the rail and the drawer beside everything
- * else — a reader has no reason to care which of the two a page happens to be.
- */
 function designItems(locale: Locale): NavItem[] {
   const t = dictionary[locale];
   return [
@@ -51,7 +38,6 @@ function toItem(locale: Locale, doc: DocMeta): NavItem {
   return { slug: doc.slug, title: doc.title, href: docHref(doc.collection, locale, doc.slug) };
 }
 
-/** The sidebar tree: declared group order, and `order` from frontmatter inside each group. */
 export async function getNavTree(locale: Locale): Promise<NavGroup[]> {
   const [guides, components] = await Promise.all([
     getDocs('guides', locale),
@@ -84,10 +70,6 @@ export async function getNavTree(locale: Locale): Promise<NavGroup[]> {
     .filter((group) => group.items.length > 0);
 }
 
-/*
- * Reading order, flattened from the same tree the sidebar draws. Prev/next and the sidebar cannot
- * disagree, because there is only one ordering and both read it.
- */
 export async function getReadingOrder(locale: Locale): Promise<NavItem[]> {
   const tree = await getNavTree(locale);
   return tree.flatMap((group) => group.items);

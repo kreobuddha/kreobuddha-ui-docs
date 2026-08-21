@@ -37,11 +37,6 @@ export function ThemeEditor({
   const [values, setValues] = useState<Record<string, string>>(defaults);
   const [copied, setCopied] = useState<string | null>(null);
 
-  /*
-   * A theme arrives in the fragment, so a link is the whole sharing mechanism: a static site has no
-   * server to shorten one with, and the fragment never reaches a server anyway. Read once, after
-   * mount — the server has no way to know what it says.
-   */
   useEffect(() => {
     const shared = decodeTheme(window.location.hash);
     if (Object.keys(shared).length > 0) setValues((current) => ({ ...current, ...shared }));
@@ -68,7 +63,6 @@ export function ThemeEditor({
       await navigator.clipboard.writeText(text);
       setCopied(what);
     } catch {
-      // Clipboard access can be refused. The text is on the page either way.
       setCopied(null);
     }
   };
@@ -80,14 +74,6 @@ export function ThemeEditor({
     void copy('link', url);
   };
 
-  /*
-   * Every editable token is written onto the scope, not only the changed ones.
-   *
-   * Writing only the changes would leave the rest inherited from whatever theme the site happens
-   * to be in — so a reader in the dark theme would see a dark preview while the contrast figures
-   * beside it described the light values being edited. The editor edits one theme; the preview
-   * shows that theme; the numbers are about what is on screen.
-   */
   const scopeStyle = Object.fromEntries(Object.entries(values)) as React.CSSProperties;
 
   return (
@@ -139,12 +125,6 @@ export function ThemeEditor({
       </div>
 
       <div>
-        {/*
-          Everything the editor changes is written here and nowhere else. The library reads its
-          tokens as inherited custom properties, so a value set on this element reaches every
-          component inside it — and nothing outside it. That is what keeps an unreadable theme from
-          costing the reader the controls they need to undo it.
-        */}
         <div className="theme-preview preview-scope" style={scopeStyle}>
           <h2>{labels.previewHeading}</h2>
           <p>{labels.previewBody}</p>

@@ -18,8 +18,6 @@ export async function generateStaticParams(): Promise<{ locale: Locale; slug: st
   return allGuideParams();
 }
 
-// The components a guide may use. Anything not here is a build error rather than a blank space,
-// which is the behaviour worth having: a typo in a component name should stop the build.
 const mdxComponents = { TokenTable };
 
 function slugOf(slug: string[] | undefined): string | null {
@@ -116,15 +114,11 @@ export default async function DocsPage({
         <h1>{guide.title}</h1>
 
         {guide.isFallback ? (
-          // A guide with no translation yet is served in English rather than withheld, and says so
-          // in the reader's own language. The notice is part of the article, not a floating banner:
-          // it belongs to this page and scrolls away with it.
           <aside className="fallback-notice" lang={locale}>
             <strong>{t.fallbackTitle}</strong> {t.fallbackBody}
           </aside>
         ) : null}
 
-        {/* The guide's own language, which is not always the page's. */}
         <div className="prose__body" lang={guide.locale}>
           {content}
         </div>
@@ -132,10 +126,6 @@ export default async function DocsPage({
         <PrevNext locale={locale} previous={previous} next={next} />
       </article>
 
-      {/*
-        The page tells the layout whether there is a table of contents at all, and `:has` in the
-        stylesheet removes the column when there is not — no JavaScript and no second render.
-      */}
       <Toc headings={headings} label={t.onThisPage} />
     </div>
   );

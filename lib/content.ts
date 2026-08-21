@@ -7,11 +7,6 @@ import { defaultLocale, locales, type Locale } from './i18n';
 
 const CONTENT_ROOT = join(process.cwd(), 'content');
 
-/*
- * Two collections, because they are read differently: a guide is prose in a reading order, a
- * component page is a reference someone arrives at from a search or a link. They share the file
- * format, the frontmatter and the fallback rules, and nothing else.
- */
 export const collections = ['guides', 'components'] as const;
 
 export type Collection = (typeof collections)[number];
@@ -21,12 +16,10 @@ const ROUTE_PREFIX: Record<Collection, string> = {
   components: '/components',
 };
 
-/** Where a page lives, inside a locale. Prefixing with `basePath` is `<Link>`'s job. */
 export function docHref(collection: Collection, locale: Locale, slug: string): string {
   return `/${locale}${ROUTE_PREFIX[collection]}/${slug}`;
 }
 
-/** A page's place in the sidebar. Groups are ordered by `groupOrder` in `lib/nav.ts`. */
 export interface DocMeta {
   collection: Collection;
   slug: string;
@@ -34,9 +27,7 @@ export interface DocMeta {
   description: string;
   group: string;
   order: number;
-  /** The locale the file was actually read from — not necessarily the one that was asked for. */
   locale: Locale;
-  /** True when the requested locale had no file and English was served instead. */
   isFallback: boolean;
 }
 
@@ -48,11 +39,6 @@ function collectionDir(collection: Collection, locale: Locale): string {
   return join(CONTENT_ROOT, locale, collection);
 }
 
-/*
- * Frontmatter is validated on read rather than trusted, and the failure is a thrown error rather
- * than a default. A guide with no title is a mistake in the file, and a build that quietly renders
- * "Untitled" hides it until someone browses the page; a build that stops names the file.
- */
 function parseFrontmatter(
   raw: unknown,
   file: string,
@@ -71,10 +57,6 @@ function parseFrontmatter(
     problems.push('description must be a non-empty string');
   }
 
-  /*
-   * A guide declares which section it belongs to; a component page does not, because there is only
-   * one place a component can go. Requiring it anyway would be a field with one legal value.
-   */
   const group = collection === 'components' ? 'components' : data.group;
   if (typeof group !== 'string' || group.trim() === '') {
     problems.push('group must be a non-empty string');
@@ -125,12 +107,6 @@ async function slugsIn(collection: Collection, locale: Locale): Promise<string[]
   }
 }
 
-/*
- * The set of guides a locale routes to — its own files plus everything English has that it does
- * not. Every locale therefore has the same URLs, which is what lets the language switcher stay on
- * the current page instead of dropping the reader at an index. Until a translation exists the page
- * serves English and says so; see `isFallback`.
- */
 export async function docSlugs(collection: Collection, locale: Locale): Promise<string[]> {
   const own = await slugsIn(collection, locale);
   const fallback = locale === defaultLocale ? [] : await slugsIn(collection, defaultLocale);
@@ -151,7 +127,6 @@ export async function getDoc(
   return fallback ? { ...fallback, isFallback: true } : null;
 }
 
-/** Every guide a locale can serve, metadata only. Used to build the sidebar and prev/next. */
 export async function getDocs(collection: Collection, locale: Locale): Promise<DocMeta[]> {
   const slugs = await docSlugs(collection, locale);
   const docs = await Promise.all(slugs.map((slug) => getDoc(collection, locale, slug)));
@@ -161,7 +136,6 @@ export async function getDocs(collection: Collection, locale: Locale): Promise<D
     .map(({ source: _source, ...meta }) => meta);
 }
 
-/** Every (locale, slug) pair the export has to generate for the guides. */
 export async function allGuideParams(): Promise<{ locale: Locale; slug: string[] }[]> {
   const params: { locale: Locale; slug: string[] }[] = [];
   for (const locale of locales) {
@@ -171,7 +145,6 @@ export async function allGuideParams(): Promise<{ locale: Locale; slug: string[]
   return params;
 }
 
-/** Every (locale, component) pair. The component index is a page of its own, not a catch-all. */
 export async function allComponentParams(): Promise<{ locale: Locale; component: string }[]> {
   const params: { locale: Locale; component: string }[] = [];
   for (const locale of locales) {

@@ -5,18 +5,11 @@ import { useEffect, useId, useState } from 'react';
 import type { Heading } from '@/lib/mdx';
 import { activeHeading } from '@/lib/toc';
 
-/** Height of the sticky header, in pixels. Kept in step with `--shell-header-height`. */
 const HEADER_OFFSET = 60;
 
 export function Toc({ headings, label }: { headings: Heading[]; label: string }) {
   const [activeId, setActiveId] = useState<string | null>(headings[0]?.id ?? null);
 
-  /*
-   * Narrow screens have no room for a second rail, so the contents fold into a disclosure above the
-   * text. The state is kept whatever the width, and the stylesheet decides where it matters: on a
-   * wide screen the toggle is not rendered to the reader and the list is always shown, so a stale
-   * `false` here can never leave a desktop reader without contents.
-   */
   const [isOpen, setIsOpen] = useState(false);
   const panelId = useId();
 
@@ -29,9 +22,6 @@ export function Toc({ headings, label }: { headings: Heading[]; label: string })
 
     if (elements.length === 0) return;
 
-    // The rule itself lives in `lib/toc.ts`, with no DOM in it, so the cases that matter — the
-    // top, the bottom, and a jump that skips several headings — are covered by tests instead of
-    // by scrolling and looking.
     const recompute = () => {
       setActiveId(
         activeHeading(
@@ -45,18 +35,6 @@ export function Toc({ headings, label }: { headings: Heading[]; label: string })
       );
     };
 
-    /*
-     * Driven by the scroll event rather than by an IntersectionObserver, which is what the plan
-     * assumed. Two reasons, in order of weight.
-     *
-     * The observer would only ever have been a trigger — the answer is worked out from the rects
-     * either way — and a passive listener collapsed onto an animation frame does the same work at
-     * the same cost, once per painted frame at most.
-     *
-     * The second reason is that an observer delivers nothing while the document is hidden, which
-     * is exactly the state a headless browser leaves it in. A behaviour that cannot be measured
-     * cannot be claimed, and this one is the reason the table of contents exists.
-     */
     let frame = 0;
     const onScroll = () => {
       if (frame !== 0) return;

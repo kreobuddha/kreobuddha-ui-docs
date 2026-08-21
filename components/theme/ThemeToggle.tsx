@@ -4,12 +4,6 @@ import { useEffect, useState } from 'react';
 
 import { isThemeMode, THEME_STORAGE_KEY, themeModes, type ThemeMode } from '@/lib/theme';
 
-/*
- * Applies a mode to the document. It repeats what the blocking script in the head does, and the
- * repetition is deliberate: that script cannot be imported, because it has to run before any
- * module is evaluated. Keep the two in step — this one is the reason the page can change without
- * reloading, and that one is the reason it never flashes.
- */
 function applyMode(mode: ThemeMode, colours: { light: string; dark: string }): void {
   const dark =
     mode === 'dark' ||
@@ -26,9 +20,6 @@ function applyMode(mode: ThemeMode, colours: { light: string; dark: string }): v
     .querySelector('meta[name="theme-color"]')
     ?.setAttribute('content', dark ? colours.dark : colours.light);
 
-  // There is more than one of these on the page — the header has one and the drawer another,
-  // because neither place has room for it at every width. They stay in step through the document
-  // rather than through a store: the mode already lives on the root element.
   window.dispatchEvent(new CustomEvent(THEME_EVENT));
 }
 
@@ -41,18 +32,12 @@ export function ThemeToggle({
   labels,
   colours,
 }: {
-  /** Radio groups need distinct names, and there is one in the header and one in the drawer. */
   name: string;
   className?: string;
   label: string;
   labels: Record<ThemeMode, string>;
   colours: { light: string; dark: string };
 }) {
-  /*
-   * `system` on the server and on the first client render, then whatever was stored. Rendering the
-   * stored value directly would make the markup depend on the reader's machine, and the page it
-   * hydrates into would not match the one that was sent.
-   */
   const [mode, setMode] = useState<ThemeMode>('system');
 
   useEffect(() => {
@@ -66,7 +51,6 @@ export function ThemeToggle({
     return () => window.removeEventListener(THEME_EVENT, read);
   }, []);
 
-  // Following the system means following it as it changes, not as it was when the page loaded.
   useEffect(() => {
     if (mode !== 'system') return;
 
@@ -82,7 +66,6 @@ export function ThemeToggle({
     try {
       localStorage.setItem(THEME_STORAGE_KEY, next);
     } catch {
-      // A reader with storage blocked gets the theme they asked for, for this visit.
     }
   };
 

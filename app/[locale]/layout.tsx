@@ -2,9 +2,6 @@ import type { Metadata, Viewport } from 'next';
 import { JetBrains_Mono } from 'next/font/google';
 import { notFound } from 'next/navigation';
 
-// Order matters and is not alphabetical. `layers.css` declares the layer order and must come
-// first; `library.css` pulls the library into the `library` layer; the site's own sheets follow.
-// Anything imported ahead of `layers.css` would register its layers first and reorder the rest.
 import '@/styles/layers.css';
 import '@/styles/library.css';
 import '@/styles/base.css';
@@ -25,37 +22,18 @@ import { resolveTokenValue } from '@/lib/theme';
 import { tokenMaps } from '@/lib/tokens';
 import { dictionary, isLocale, locales, type Locale } from '@/lib/i18n';
 
-/*
- * The library bundles Inter and nothing else — it has no monospace family, deliberately, because a
- * component library has nothing to set in one. Code blocks do, so the site brings its own. This is
- * a decision of the site, not a token of the library.
- *
- * Loaded through `next/font`, which self-hosts the files and emits the `@font-face` rules with the
- * metrics already in them, so there is no layout shift when the face arrives and no request to a
- * third party.
- */
 const mono = JetBrains_Mono({
   subsets: ['latin', 'cyrillic'],
   display: 'swap',
   variable: '--site-font-mono',
 });
 
-// There is no `app/layout.tsx`: with every route under `[locale]`, this is the root layout, and it
-// is what lets `<html lang>` follow the locale instead of being frozen at build time.
-
 export function generateStaticParams(): { locale: Locale }[] {
   return locales.map((locale) => ({ locale }));
 }
 
-// `output: 'export'` cannot render a locale that was not generated, so anything outside the list
-// is a 404 rather than a runtime fallback.
 export const dynamicParams = false;
 
-/*
- * The two page colours, read from the library's own stylesheet rather than written here. They are
- * what the browser paints its own chrome with on a phone, and a hard-coded pair would drift away
- * from the page it frames the first time the library changed a surface.
- */
 async function pageColours(): Promise<{ light: string; dark: string }> {
   const { light, dark } = await tokenMaps();
   return {
@@ -66,8 +44,6 @@ async function pageColours(): Promise<{ light: string; dark: string }> {
 
 export async function generateViewport(): Promise<Viewport> {
   const { light } = await pageColours();
-  // The light value is what the document is sent with; the blocking script rewrites it before the
-  // first paint when the resolved theme turns out to be dark.
   return { themeColor: light };
 }
 
@@ -82,19 +58,10 @@ export async function generateMetadata({
   const t = dictionary[locale];
 
   return {
-    // Everything relative below is resolved against this. Without it, an Open Graph image is a
-    // path, and a crawler has no idea which host it belongs to.
     metadataBase: new URL(siteUrl),
     title: { default: t.siteTitle, template: `%s — ${t.siteTitle}` },
     description: t.siteTagline,
     alternates: { canonical: `${basePath}/${locale}/`, languages: localeAlternates() },
-    /*
-     * Declared rather than left to the browser's default. Without a declaration every browser asks
-     * the origin for `/favicon.ico` — the origin, not the sub-path — which under `basePath` is a
-     * guaranteed 404 on every page load. Lighthouse counts it as a console error, and it is one.
-     *
-     * Through `asset()`, because this is written by hand and Next prefixes nothing it did not write.
-     */
     icons: { icon: [{ url: asset('/icon.svg'), type: 'image/svg+xml' }] },
     openGraph: {
       type: 'website',
@@ -102,8 +69,6 @@ export async function generateMetadata({
       locale,
       title: t.siteTitle,
       description: t.siteTagline,
-      // Drawn at build time by `scripts/og.mjs`; a static export has no runtime to draw one on
-      // request.
       images: [{ url: asset(`/og/${locale}.png`), width: 1200, height: 630, alt: t.siteTitle }],
     },
     twitter: { card: 'summary_large_image' },
@@ -122,11 +87,6 @@ export default async function LocaleLayout({
 
   const t = dictionary[locale];
 
-  /*
-   * The tree is loaded here rather than in the documentation layout, because the drawer lives in
-   * the header and the header is on every page. On a phone that is the only navigation there is,
-   * so withholding it from the landing page would be withholding it from the whole site.
-   */
   const [tree, colours] = await Promise.all([getNavTree(locale), pageColours()]);
   const groups: NavGroupData[] = tree.map((group) => ({
     id: group.id,
@@ -137,25 +97,14 @@ export default async function LocaleLayout({
   return (
     <html lang={locale} className={mono.variable}>
       <body>
-        {/*
-          Before anything else in the document, because everything after it is what would flash.
-          Placed at the top of `body` rather than in `head`: it is parsed and executed before the
-          rest of the body exists, which is early enough, and the app router owns the head.
-        */}
         <ThemeScript light={colours.light} dark={colours.dark} />
 
-        {/* First in the tab order, visible on focus, and pointing at the landmark below. */}
         <a className="skip-link" href="#content">
           {t.skipToContent}
         </a>
 
         <Header locale={locale} groups={groups} colours={colours} />
 
-        {/*
-          One `main` for the whole site, so every page has the landmark and none of them has two.
-          `tabIndex={-1}` is what makes the skip link actually move focus rather than only move the
-          viewport: without it the anchor scrolls, and the next Tab carries on from the header.
-        */}
         <main id="content" tabIndex={-1}>
           {children}
         </main>

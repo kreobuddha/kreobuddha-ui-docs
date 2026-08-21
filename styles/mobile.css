@@ -1,16 +1,9 @@
 @layer site {
-  /*
-   * The narrow layer. It is not a set of corrections applied to the desktop: the rail becomes a
-   * drawer, the contents become a disclosure, and the header earns its space back by getting out
-   * of the way. Those are different components, not smaller ones.
-   */
 
   :root {
-    /* The smallest thing a finger should have to hit. */
     --shell-touch-target: 44px;
   }
 
-  /* Room for a notch or a rounded corner, and nothing extra on a device without one. */
   .site-header {
     padding-inline-start: max(var(--shell-page-padding), env(safe-area-inset-left));
     padding-inline-end: max(var(--shell-page-padding), env(safe-area-inset-right));
@@ -32,7 +25,6 @@
   }
 
   .nav-drawer {
-    /* The dialog is the backdrop's element too, so it fills the screen and the panel sits inside. */
     inline-size: 100%;
     max-inline-size: 100%;
     block-size: 100%;
@@ -47,12 +39,6 @@
     }
   }
 
-  /*
-   * Vertical gestures scroll the tree; horizontal ones belong to the drawer. Without this the
-   * browser claims the whole gesture the moment a finger moves sideways, and the swipe to dismiss
-   * never arrives. It has to reach the descendants too: the finger usually lands on a link, and
-   * `touch-action` is not inherited.
-   */
   .nav-drawer,
   .nav-drawer :where(*) {
     touch-action: pan-y;
@@ -72,11 +58,9 @@
     border-inline-end: var(--kreo-border-w) solid var(--kreo-border-default);
     background: var(--kreo-surface-page);
 
-    /* The one place a shadow is allowed: something floating above the page. */
     box-shadow: var(--kreo-shadow-overlay);
   }
 
-  /* A finger, not a cursor: the whole chip is the target inside the drawer. */
   .nav-drawer__settings :is(.theme-toggle label, .locale-switcher a) {
     display: inline-flex;
     align-items: center;
@@ -129,7 +113,6 @@
       cursor: pointer;
     }
 
-    /* A finger is not a cursor: every link in the drawer is a full target, not a line of text. */
     .nav-drawer .nav-tree li a,
     .nav-drawer .nav-tree__group h2 button {
       display: flex;
@@ -149,16 +132,10 @@
       padding-block-start: var(--kreo-space-4);
     }
 
-    /* One column, so the column gap is just a hole between the contents and the text. */
     .guide {
       gap: var(--kreo-space-4);
     }
 
-    /*
-     * The header has four things in it and room for three. The documentation link is the one that
-     * goes: the drawer beside it leads to the same place and further, so keeping the link would
-     * cost the language switcher its space to say the same thing twice.
-     */
     .site-header__nav {
       display: none;
     }
@@ -168,10 +145,6 @@
       padding-inline: max(var(--kreo-space-3), env(safe-area-inset-left));
     }
 
-    /*
-     * Three bars are a menu button everywhere, and the word beside them costs the brand its last
-     * few characters at 320. The name stays for anything not looking at the screen.
-     */
     .nav-drawer__trigger-label {
       position: absolute;
       inline-size: 1px;
@@ -186,33 +159,14 @@
       min-inline-size: var(--shell-touch-target);
     }
 
-    /*
-     * The language switch goes the same way as the theme control, and for the same reason: at 320
-     * the header has room for navigation, the name of the site, and search. Changing language is a
-     * thing done once, not a thing kept within reach.
-     */
     .locale-switcher--header {
       display: none;
     }
 
-    /*
-     * Three theme choices and a brand do not both fit at 320. The control moves into the drawer,
-     * which has the room, and the brand keeps its place — losing the link home to a preference
-     * toggle is the wrong trade.
-     */
     .theme-toggle--header {
       display: none;
     }
 
-    /*
-     * The names cost more width than the header has; the codes say the same thing to the eye and
-     * the full name is still what a screen reader reads.
-     *
-     * Which is why it is moved out of sight rather than set to `display: none`. Hidden that way it
-     * leaves the accessibility tree too, and since the code beside it is `aria-hidden`, the link is
-     * left with no accessible name at all. axe caught it in the drawer at 320 — a real defect, not
-     * a rule being pedantic, because the switcher moves into the drawer at exactly this width.
-     */
     .locale-switcher__full {
       position: absolute;
       inline-size: 1px;
@@ -234,20 +188,11 @@
     }
   }
 
-  /*
-   * The contents, folded into a disclosure and moved above the text.
-   *
-   * The wide layout is stated here rather than left to the base rules, because both states have to
-   * be explicit: the toggle is what a narrow reader sees, the panel is what a wide one sees, and
-   * neither should depend on the component's own open state at the wrong width.
-   */
   @media (width < 1200px) {
     .toc {
       display: block;
       position: static;
 
-      /* Contents belong before the text they describe, and the source order puts them after it
-         because that is where they belong on a wide screen. */
       order: -1;
       max-block-size: none;
       margin-block-end: var(--kreo-space-6);
@@ -297,18 +242,12 @@
     }
   }
 
-  /*
-   * The token table stops being a table when its own column is too narrow for one — a question
-   * about the container, not about the window, which is why it is a container query. The same
-   * table inside a wide panel on a narrow phone would keep its columns.
-   */
   .table-scroll {
     container-type: inline-size;
   }
 
   @container (width < 480px) {
     .token-table thead {
-      /* The column headings become the labels below; announcing them twice helps no one. */
       display: none;
     }
 

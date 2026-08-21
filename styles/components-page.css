@@ -6,11 +6,6 @@
     overflow: hidden;
   }
 
-  /*
-   * The preview is a room of its own, not a paragraph. The sunken surface says so, and it is also
-   * the boundary the theme editor will paint inside — `.preview-scope` is already on this element,
-   * so nothing about the page has to change when it arrives.
-   */
   .playground__preview {
     display: flex;
     flex-wrap: wrap;
@@ -44,7 +39,6 @@
     letter-spacing: var(--kreo-tracking-label);
   }
 
-  /* The code here is generated, not highlighted: it has no Shiki markup and needs no border. */
   .playground__code pre {
     margin: 0;
     border: 0;
@@ -52,10 +46,6 @@
     background: var(--kreo-surface-sunken);
   }
 
-  /*
-   * A prop name is code, and code is case-sensitive. The uppercasing that suits a column heading
-   * would turn `fullWidth` into `FULLWIDTH`, which is not a prop that exists.
-   */
   .props-table tbody th {
     color: var(--kreo-text-body);
     font: var(--kreo-type-body);
@@ -71,11 +61,6 @@
     letter-spacing: var(--kreo-tracking-label);
   }
 
-  /*
-   * Four columns need room that a phone does not have, so below it the table becomes one card per
-   * prop — the prop name as the card's heading, the rest labelled. It is a container query because
-   * the question is about this column, not about the window.
-   */
   @container (width < 560px) {
     .props-table thead {
       display: none;

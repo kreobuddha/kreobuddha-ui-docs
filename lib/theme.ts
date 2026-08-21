@@ -1,11 +1,3 @@
-/*
- * The theme editor's model: which tokens it edits, which pairs it judges, and how a theme travels
- * — into a URL, and out as CSS someone can paste.
- *
- * All of it is pure. The editor is a client component; this file is what makes its behaviour
- * testable without one.
- */
-
 export const themeModes = ['light', 'dark', 'system'] as const;
 
 export type ThemeMode = (typeof themeModes)[number];
@@ -14,7 +6,6 @@ export function isThemeMode(value: string): value is ThemeMode {
   return (themeModes as readonly string[]).includes(value);
 }
 
-/** Where the chosen mode is kept. Read by the blocking script in the document head. */
 export const THEME_STORAGE_KEY = 'kb-docs-theme';
 
 export interface EditableToken {
@@ -23,11 +14,6 @@ export interface EditableToken {
   description: string;
 }
 
-/*
- * A deliberately short list. The library publishes 135 custom properties, and an editor offering
- * all of them is a spreadsheet: these are the ones that decide what a theme looks like, and every
- * other token either follows from them or is structural.
- */
 export const editableTokens: EditableToken[] = [
   {
     name: '--kreo-surface-page',
@@ -50,7 +36,6 @@ export interface ContrastPair {
   foreground: string;
   background: string;
   label: string;
-  /** Non-text pairs are judged against 3:1, the threshold for a boundary rather than a word. */
   nonText?: boolean;
 }
 
@@ -113,13 +98,6 @@ export const presets: { id: string; label: string; values: Record<string, string
   },
 ];
 
-/*
- * A token's literal value, following `var(--x)` references until one is reached.
- *
- * The published stylesheet defines half its tokens in terms of others — `--kreo-surface-card` is
- * `var(--kreo-neutral-0)` — and a colour input needs a colour. A reference that goes nowhere, or
- * goes round in a circle, returns null rather than a guess.
- */
 export function resolveTokenValue(
   values: Map<string, string>,
   name: string,
@@ -137,7 +115,6 @@ export function resolveTokenValue(
   return value.trim();
 }
 
-/** The tokens that differ from where they started. A theme is what was changed, not everything. */
 export function changedTokens(
   values: Record<string, string>,
   defaults: Record<string, string>,
@@ -149,13 +126,6 @@ export function changedTokens(
   );
 }
 
-/*
- * A theme in a URL fragment: `#theme=surface-page:f7f8f9,accent-500:2f5d8c`.
- *
- * The fragment rather than a query string, and the `--kreo-` prefix dropped, because the whole
- * thing has to survive being pasted into a chat window. A static site has no server to shorten
- * links with, so the link is the storage.
- */
 export function encodeTheme(changed: Record<string, string>): string {
   const parts = Object.entries(changed).map(
     ([name, value]) => `${name.replace(/^--kreo-/, '')}:${value.replace(/^#/, '')}`,
@@ -175,8 +145,6 @@ export function decodeTheme(hash: string): Record<string, string> {
     if (name === undefined || value === undefined) continue;
 
     const full = `--kreo-${name}`;
-    // A link is something a stranger wrote. Anything not on the list, or not a colour, is dropped
-    // rather than written into a stylesheet.
     if (!known.has(full)) continue;
     if (!/^[0-9a-f]{3}$|^[0-9a-f]{6}$/i.test(value)) continue;
 
@@ -186,7 +154,6 @@ export function decodeTheme(hash: string): Record<string, string> {
   return values;
 }
 
-/** The theme as a stylesheet a consumer can paste into their own application. */
 export function exportCss(changed: Record<string, string>): string {
   const entries = Object.entries(changed);
   if (entries.length === 0) return '/* Nothing changed yet. */';
