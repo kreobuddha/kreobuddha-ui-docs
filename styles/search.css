@@ -52,13 +52,11 @@
     inline-size: min(560px, 92vw);
     max-block-size: min(70vh, 520px);
 
-    /* Below the header rather than centred: the palette is a tool of the page, not a takeover. */
     margin: max(10vh, var(--kreo-space-8)) auto 0;
     border: var(--kreo-border-w) solid var(--kreo-border-default);
     border-radius: var(--kreo-radius-lg);
     background: var(--kreo-surface-raised);
 
-    /* Floating above the page, which is the one thing allowed a shadow. */
     box-shadow: var(--kreo-shadow-overlay);
   }
 
@@ -94,10 +92,6 @@
     text-decoration: none;
   }
 
-  /*
-   * The current row is marked through the option's own state rather than a class the component has
-   * to remember to set — and `aria-selected` is what a screen reader is reading anyway.
-   */
   .palette__results a[aria-selected='true'] {
     background: var(--kreo-surface-active);
   }
@@ -123,7 +117,6 @@
     min-block-size: 2.4em;
   }
 
-  /* At 320 the label goes and the trigger becomes the icon it already looks like. */
   @media (width < 900px) {
     .palette-trigger {
       min-block-size: var(--shell-touch-target);
@@ -136,7 +129,6 @@
       display: none;
     }
 
-    /* Out of sight, still the accessible name — a magnifying glass on its own is a guess. */
     .palette-trigger__label {
       position: absolute;
       inline-size: 1px;

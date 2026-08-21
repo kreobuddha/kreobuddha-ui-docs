@@ -1,11 +1,3 @@
-/*
- * Serves `out/` the way GitHub Pages serves it, which is the point: under the project sub-path,
- * with `/x` redirecting to `/x/` and `/x/` resolving to `/x/index.html`.
- *
- * The end-to-end run needs the production shape rather than a convenient one. Serving the export
- * from the root would test a site that is never deployed, and `basePath` breaking links is exactly
- * the failure this is meant to catch.
- */
 import { createReadStream } from 'node:fs';
 import { stat } from 'node:fs/promises';
 import { createServer } from 'node:http';
@@ -29,8 +21,6 @@ const TYPES = new Map(
   }),
 );
 
-// What is worth compressing. `woff2` and `png` are already compressed; running them through gzip
-// costs CPU to make them very slightly larger.
 const COMPRESSIBLE = new Set([
   'text/html',
   'text/css',
@@ -62,7 +52,6 @@ const server = createServer(async (request, response) => {
     pathname = pathname.slice(BASE_PATH.length);
   }
 
-  // `..` in a request must never reach `join`.
   const relative = normalize(pathname).replace(/^(\.\.[/\\])+/, '');
   let file = join(ROOT, relative);
 
@@ -70,7 +59,6 @@ const server = createServer(async (request, response) => {
     const found = await stat(file);
     if (found.isDirectory()) file = join(file, 'index.html');
   } catch {
-    // A path with no file may still be a route the export wrote with a trailing slash.
     file = `${file}.html`;
   }
 
@@ -85,18 +73,8 @@ const server = createServer(async (request, response) => {
   const { size } = await stat(file);
   const type = TYPES.get(extname(file)) ?? 'application/octet-stream';
 
-  /*
-   * Compression and caching, because Pages does both and Lighthouse measures both.
-   *
-   * Without them this server does not imitate the deployment, it imitates a worse one: the same
-   * export scores tens of points lower purely because 425 KiB of text arrives uncompressed and
-   * every hashed asset is re-fetched. Neither is a property of the site, so measuring them as if
-   * they were would produce a number that says nothing about what a reader gets.
-   */
   const headers = {
     'content-type': type,
-    // Next puts a content hash in the name of everything under `_next/static`, so the file at a
-    // given URL never changes. Everything else is a page, which does.
     'cache-control': pathname.startsWith('/_next/static/')
       ? 'public, max-age=31536000, immutable'
       : 'public, max-age=0, must-revalidate',
@@ -117,7 +95,6 @@ const server = createServer(async (request, response) => {
     return;
   }
 
-  // No `content-length`: the compressed size is not known until the stream has finished.
   response.writeHead(200, { ...headers, 'content-encoding': encoding, vary: 'accept-encoding' });
   createReadStream(file)
     .pipe(encoding === 'br' ? createBrotliCompress() : createGzip())

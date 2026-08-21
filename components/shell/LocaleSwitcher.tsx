@@ -5,14 +5,6 @@ import { usePathname } from 'next/navigation';
 
 import { isLocale, locales, localeNames, localeShortNames, type Locale } from '@/lib/i18n';
 
-/*
- * Switching language keeps the reader where they are. The path is rewritten segment by segment
- * rather than sending everyone to the index, which is the whole difference between a language
- * switch and a language reset.
- *
- * `usePathname` reports the path without `basePath`, and `<Link>` puts it back, so nothing here
- * has to know where the site is mounted.
- */
 export function LocaleSwitcher({ label, className }: { label: string; className?: string }) {
   const pathname = usePathname();
 
@@ -39,8 +31,6 @@ export function LocaleSwitcher({ label, className }: { label: string; className?
                 href={swap(locale)}
                 hrefLang={locale}
                 lang={locale}
-                // The current language is still a link — it goes to this same page — but it is
-                // announced as the current one rather than looking identical to the other.
                 aria-current={isCurrent ? 'true' : undefined}
               >
                 <span className="locale-switcher__full">{localeNames[locale]}</span>

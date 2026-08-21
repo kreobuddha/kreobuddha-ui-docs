@@ -8,11 +8,6 @@ import { serializeJsx, type PropValue } from '@/lib/jsx';
 
 const sizes = ['sm', 'md', 'lg'];
 
-/*
- * One entry per component page. The MDX names an id and nothing else, so a guide cannot import a
- * component, cannot hold state, and cannot drift into being code — which is what keeps the content
- * layer content.
- */
 export const specs: Record<string, PlaygroundSpec> = {
   button: {
     element: 'Button',
@@ -51,7 +46,6 @@ export const specs: Record<string, PlaygroundSpec> = {
       <TextField
         {...props}
         label={String(props['label'] ?? '')}
-        // An empty string is a field with an empty message under it, not a field without one.
         hint={hint === '' ? undefined : hint}
         error={error === '' ? undefined : error}
       />
@@ -143,8 +137,6 @@ export const specs: Record<string, PlaygroundSpec> = {
       { prop: 'dismissOnBackdrop', label: 'Close on backdrop', kind: 'boolean' },
     ],
     render: (props) => {
-      // A dialog cannot be demonstrated without something to open it, so the example owns the one
-      // piece of state the component deliberately does not.
       const [open, setOpen] = useState(false);
 
       return (
@@ -199,8 +191,6 @@ export const specs: Record<string, PlaygroundSpec> = {
       { prop: 'title', label: 'Title', kind: 'text' },
     ],
     render: (props) => (
-      // The provider owns the queue, so the example brings its own rather than reaching for the
-      // site's — there is no site-wide provider, and a documentation page should not need one.
       <ToastProvider>
         <RaiseToast {...props} />
       </ToastProvider>

@@ -13,11 +13,6 @@
     padding: var(--kreo-space-8) var(--shell-page-padding) var(--kreo-space-16);
   }
 
-  /*
-   * A page whose contents are empty gets its column back instead of an empty rail. `:has` asks the
-   * layout a question about its own contents, which is otherwise a job for JavaScript and a second
-   * render.
-   */
   .guide:not(:has(.toc)) {
     grid-template-columns: minmax(0, var(--shell-prose-width));
   }
@@ -43,10 +38,6 @@
     color: var(--kreo-border-strong);
   }
 
-  /*
-   * Three heading levels, because the type scale has exactly four sizes and the fourth is body.
-   * A fourth level would have to invent a size the system does not have.
-   */
   .prose h1 {
     margin: 0 0 var(--kreo-space-4);
     font: var(--kreo-type-display);
@@ -82,7 +73,6 @@
     margin-block-start: var(--kreo-space-2);
   }
 
-  /* Visible on hover and on keyboard focus, and never announced — the heading already is. */
   .heading-anchor {
     margin-inline-start: var(--kreo-space-2);
     color: var(--kreo-text-muted);
@@ -109,7 +99,6 @@
     border: var(--kreo-border-w) solid var(--kreo-border-subtle);
     border-radius: var(--kreo-radius-md);
 
-    /* One of the two places a horizontal scrollbar is allowed. The page itself never scrolls. */
     overflow-x: auto;
 
     font-family: var(--site-font-mono);
@@ -118,7 +107,6 @@
     tab-size: 2;
   }
 
-  /* The other one. */
   .table-scroll,
   .prose :is(table) {
     overflow-x: auto;
@@ -274,7 +262,6 @@
     color: var(--kreo-text-body);
   }
 
-  /* No room for a second rail: the contents fold away and the prose takes the width. */
   @media (width < 1200px) {
     .guide {
       grid-template-columns: minmax(0, 1fr);

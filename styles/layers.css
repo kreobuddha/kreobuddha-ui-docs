@@ -1,10 +1,2 @@
-/*
- * The layer order, alone in its own file, and loaded before anything else.
- *
- * It cannot share a file with the library `@import`: the bundler inlines an imported stylesheet at
- * the top of the file that imports it, which lifts `@layer library { … }` above the order
- * statement. Layers are ordered by first appearance, so `library` would register itself first and
- * `reset` would land after it — a reset that loses to the library is not a reset. Split in two,
- * each file keeps its place in the output.
- */
+/* Declared alone and first: a bundler would otherwise register the library layer ahead of reset. */
 @layer reset, library, site, overrides;

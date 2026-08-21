@@ -41,10 +41,6 @@ export default async function ComponentsIndex({
       <h1>{t.componentsTitle}</h1>
       <p className="lead">{t.componentsIndexLead}</p>
 
-      {/*
-        Only the components this site actually documents are listed. A page that exists but says
-        nothing is worse than an absence: the absence is honest.
-      */}
       <ul className="guide-index">
         {components.map((component) => (
           <li key={component.slug}>

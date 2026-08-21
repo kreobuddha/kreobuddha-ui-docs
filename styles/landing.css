@@ -5,10 +5,6 @@
     padding: var(--kreo-space-12) var(--shell-page-padding) var(--kreo-space-16);
   }
 
-  /*
-   * Text left at a readable measure, the panel right. One column below 900, and the text is first
-   * in the source, so the narrow order needs no reordering.
-   */
   .hero {
     display: grid;
     gap: var(--shell-column-gap);
@@ -63,12 +59,10 @@
     border: var(--kreo-border-w) solid var(--kreo-border-default);
     border-radius: var(--kreo-radius-lg);
 
-    /* The panel is the one thing on the page that floats. */
     box-shadow: var(--kreo-shadow-overlay);
     background: var(--kreo-surface-card);
     overflow: hidden;
 
-    /* Repainting by preset is a colour change and nothing else; motion is not part of it. */
     @media (prefers-reduced-motion: no-preference) {
       transition: background-color var(--kreo-duration-base) var(--kreo-ease);
     }
@@ -84,7 +78,6 @@
     background: var(--kreo-surface-sunken);
   }
 
-  /* Three window dots, drawn rather than fetched. */
   .hero-panel__dots {
     inline-size: 8px;
     block-size: 8px;
@@ -163,7 +156,6 @@
     outline-offset: 1px;
   }
 
-  /* Covers its own label, so it is a real target as well as a real radio. */
   .hero-panel__presets input {
     position: absolute;
     inset: 0;

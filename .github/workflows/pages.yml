@@ -1,25 +1,15 @@
 name: Pages
 
-# A push to `master` publishes the site, so this workflow is the release mechanism, not a build
-# step. `workflow_dispatch` is kept so the site can be republished without an empty commit.
 on:
   workflow_dispatch:
   push:
     branches: [master]
 
-# Actions are pinned to a commit with the version beside it: a tag is a movable pointer and a
-# commit is not, so pinning by tag would let a compromised release run here without any change
-# landing in this repository.
-
 permissions:
   contents: read
-  # What Pages needs and nothing more: `pages` to publish the artifact, `id-token` for the OIDC
-  # token `deploy-pages` exchanges for the deployment.
   pages: write
   id-token: write
 
-# The site has one live version, so overlapping runs would race to be it. A run already in flight
-# is not cancelled — cancelling mid-deployment leaves the site serving half of an upload.
 concurrency:
   group: pages
   cancel-in-progress: false
@@ -42,9 +32,6 @@ jobs:
 
       - run: npm ci
 
-      # A project site lives at `https://<owner>.github.io/<repo>/`, not at the host root. This
-      # step reports that sub-path instead of the workflow hard-coding it, and `next.config.ts`
-      # reads it as `basePath`. Local builds leave the variable unset and run from the root.
       - uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6.0.0
         id: pages
 

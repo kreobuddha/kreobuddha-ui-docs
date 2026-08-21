@@ -21,11 +21,6 @@ export default async function LandingPage({ params }: { params: Promise<{ locale
 
   return (
     <div className="landing">
-      {/*
-        Text leads and the panel sits beside it. On a documentation site the job of the hero is to
-        explain rather than to impress, so the reading column comes first in the source as well as
-        on the screen — which is also what a narrow screen gets.
-      */}
       <section className="hero">
         <div className="hero__text">
           <h1>{t.heroLead}</h1>
@@ -51,7 +46,6 @@ export default async function LandingPage({ params }: { params: Promise<{ locale
             }}
           />
 
-          {/* The presets are a taste of the editor, so the way to the whole of it belongs here. */}
           <p className="hero__editor-link">
             <Link href={route(locale, '/theme')}>{t.heroEditorLink}</Link>
           </p>

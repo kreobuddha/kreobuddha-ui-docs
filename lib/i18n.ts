@@ -13,23 +13,11 @@ export const localeNames: Record<Locale, string> = {
   ru: 'Русский',
 };
 
-/*
- * Shown instead of the full name where there is no room for it. Only ever the visible half: the
- * accessible name stays the language's own name, because "EN" is not what anyone calls it.
- */
 export const localeShortNames: Record<Locale, string> = {
   en: 'EN',
   ru: 'RU',
 };
 
-/*
- * UI strings, one record per locale, with the same keys in both. No fallback chain: a missing key
- * is a type error rather than an English word appearing mid-sentence in Russian.
- *
- * Content is a different matter — see `lib/content.ts`. A guide with no translation yet is served
- * in English behind a notice, because half a translated site is worth more than a locale with
- * holes in it.
- */
 export interface Dictionary {
   siteTitle: string;
   siteTagline: string;

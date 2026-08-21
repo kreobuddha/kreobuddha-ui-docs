@@ -8,10 +8,6 @@ export interface Crumb {
   href?: string;
 }
 
-/*
- * Built from the same tree as the sidebar and prev/next, so the three cannot disagree about where
- * a page sits. The last crumb is the current page: it is text, not a link to itself.
- */
 export function Breadcrumbs({ locale, trail }: { locale: Locale; trail: Crumb[] }) {
   const t = dictionary[locale];
 

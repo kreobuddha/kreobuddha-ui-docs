@@ -1,21 +1,13 @@
 import { selectTokens } from '@/lib/tokens';
 
-/** The sample rendered beside the value. `none` leaves the column out. */
 export type TokenPreview = 'none' | 'swatch' | 'bar' | 'radius' | 'text';
 
 export interface TokenTableProps {
-  /** Keep tokens whose name starts with one of these prefixes, `--kreo-` included. */
   include?: string[];
-  /** Drop tokens whose name starts with one of these prefixes. Applied after `include`. */
   exclude?: string[];
   preview?: TokenPreview;
 }
 
-/*
- * A server component with no client JavaScript: the sample is drawn by handing the token straight
- * back to CSS as `var(--kreo-…)`, so the browser resolves it — including under a theme this table
- * knows nothing about. Nothing here reads a computed value.
- */
 function Sample({ name, preview }: { name: string; preview: TokenPreview }) {
   const token = `var(${name})`;
 
@@ -62,7 +54,6 @@ export async function TokenTable({ include, exclude, preview = 'none' }: TokenTa
               </td>
               {showSample ? (
                 <td data-label="Sample" data-pagefind-ignore>
-                  {/* Decorative: the value is already in the previous cell. */}
                   <Sample name={name} preview={preview} />
                 </td>
               ) : null}

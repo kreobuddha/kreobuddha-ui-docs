@@ -1,18 +1,9 @@
-/*
- * WCAG 2.1 contrast, from the definitions rather than from a table.
- *
- * The editor needs this to tell a reader that a combination they just built cannot be read, at the
- * moment they build it. Nothing else in the site depends on it, and nothing here touches the DOM,
- * so it is tested against the values the specification itself states.
- */
-
 export interface Rgb {
   r: number;
   g: number;
   b: number;
 }
 
-/** Accepts `#rgb` and `#rrggbb`. Returns null for anything else — including a colour we cannot read. */
 export function parseHex(value: string): Rgb | null {
   const hex = value.trim().replace(/^#/, '');
 
@@ -35,7 +26,6 @@ export function parseHex(value: string): Rgb | null {
   return null;
 }
 
-/** Relative luminance, WCAG 2.1 §relative luminance. */
 export function luminance({ r, g, b }: Rgb): number {
   const channel = (value: number): number => {
     const sRgb = value / 255;
@@ -45,7 +35,6 @@ export function luminance({ r, g, b }: Rgb): number {
   return 0.2126 * channel(r) + 0.7152 * channel(g) + 0.0722 * channel(b);
 }
 
-/** The ratio between two colours, from 1 to 21. Order does not matter. */
 export function contrastRatio(foreground: Rgb, background: Rgb): number {
   const a = luminance(foreground);
   const b = luminance(background);
@@ -57,10 +46,6 @@ export function contrastRatio(foreground: Rgb, background: Rgb): number {
 
 export type ContrastLevel = 'AAA' | 'AA' | 'AA Large' | 'fail';
 
-/**
- * The best level a ratio reaches for the given text size. `large` is 18.66px bold or 24px plain,
- * as the specification defines it — the caller decides which it is asking about.
- */
 export function contrastLevel(ratio: number, large = false): ContrastLevel {
   if (large) {
     if (ratio >= 4.5) return 'AAA';
@@ -70,7 +55,6 @@ export function contrastLevel(ratio: number, large = false): ContrastLevel {
 
   if (ratio >= 7) return 'AAA';
   if (ratio >= 4.5) return 'AA';
-  // Still enough for large text, which is worth saying rather than calling it a flat failure.
   if (ratio >= 3) return 'AA Large';
   return 'fail';
 }

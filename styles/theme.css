@@ -1,8 +1,4 @@
 @layer site {
-  /*
-   * The three-way theme control. A radio group, because that is what choosing one of three is —
-   * the segmented look is a matter of drawing it, not of what it is.
-   */
   .theme-toggle {
     display: flex;
     gap: 0;
@@ -13,7 +9,6 @@
   }
 
   .theme-toggle legend {
-    /* Names the group for a screen reader without taking a line of the header. */
     position: absolute;
     inline-size: 1px;
     block-size: 1px;
@@ -37,12 +32,6 @@
     color: var(--kreo-text-body);
   }
 
-  /*
-   * The radio is not drawn, but it is not moved out of the way either: it covers its own label
-   * exactly. That keeps it a real radio — focusable, arrow-key navigable, and the thing a pointer
-   * actually lands on — instead of a 1px target parked off screen that only a click on the label
-   * can ever reach.
-   */
   .theme-toggle input {
     position: absolute;
     inset: 0;
@@ -56,18 +45,12 @@
     outline-offset: 1px;
   }
 
-  /*
-   * Shiki writes both themes into every token: the light colour as the value, the dark one as a
-   * custom property beside it. Switching is then a stylesheet's job rather than a rebuild's, which
-   * is the only reason the highlighting can follow a theme the reader chooses at runtime.
-   */
   [data-kreo-theme='dark'] .shiki,
   [data-kreo-theme='dark'] .shiki span {
     color: var(--shiki-dark) !important;
     background-color: var(--shiki-dark-bg) !important;
   }
 
-  /* The editor's own surfaces. */
   .theme-editor {
     display: grid;
     gap: var(--kreo-space-6);
@@ -128,11 +111,6 @@
     border: var(--kreo-border-w) solid var(--kreo-border-default);
     border-radius: var(--kreo-radius-lg);
 
-    /*
-     * The editor writes its tokens onto this element and nowhere else. An unreadable theme costs
-     * the reader this panel and not their navigation — including the controls they would need to
-     * undo it.
-     */
     background: var(--kreo-surface-page);
     color: var(--kreo-text-body);
   }

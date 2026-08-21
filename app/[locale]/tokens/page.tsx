@@ -23,11 +23,6 @@ export async function generateMetadata({
   return { title: t.tokensTitle, description: t.tokensLead };
 }
 
-/*
- * Every `--kreo-*` custom property the package publishes, in one place, read from the stylesheet at
- * build time. The guides explain the groups; this page is the list, for when someone knows what
- * they are looking for and needs the exact name.
- */
 export default async function TokensPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   if (!isLocale(locale)) notFound();

@@ -1,16 +1,3 @@
-/*
- * Guards the one cascade fact the whole stylesheet architecture rests on, against the one way it
- * has already broken.
- *
- * The library declares no layers of its own, so it is imported into `library` from CSS. But a
- * bundler inlines an imported stylesheet at the top of the file that imports it, and layers are
- * ordered by first appearance — so an `@import` sharing a file with the order statement lifts
- * `@layer library { … }` above it, registers `library` first, and silently pushes `reset` behind
- * the library. Nothing fails, no rule looks wrong, and the reset simply stops resetting.
- *
- * The check reads the built CSS rather than the source, because the source is not where the
- * reordering happens.
- */
 import { readdir, readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 
@@ -18,10 +5,6 @@ const OUT = 'out';
 const ORDER = /@layer\s+reset\s*,\s*library\s*,\s*site\s*,\s*overrides\s*;/;
 const LIBRARY_BLOCK = /@layer\s+library\s*\{/;
 
-/*
- * The search index ships stylesheets of its own into the export. They are not the site's, they
- * declare no layers, and counting them would only make the report say a bigger number.
- */
 const NOT_OURS = new Set(['pagefind']);
 
 async function cssFiles(dir) {

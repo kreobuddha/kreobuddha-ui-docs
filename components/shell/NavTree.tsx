@@ -24,19 +24,9 @@ function readCollapsed(): string[] {
   }
 }
 
-/*
- * The tree itself, drawn the same way in the rail and in the mobile drawer. One component, so the
- * two cannot drift apart — and collapsing a section on the phone is still collapsed on the desktop,
- * because both read the same stored list.
- */
 export function NavTree({ groups, onNavigate }: { groups: NavGroupData[]; onNavigate?: () => void }) {
   const pathname = usePathname();
 
-  /*
-   * Collapsed sections start empty on the server and on the first client render, and only then
-   * take the stored value. Reading storage during render would make the markup depend on the
-   * reader's machine, which is the definition of a hydration mismatch.
-   */
   const [collapsed, setCollapsed] = useState<string[]>([]);
 
   useEffect(() => {
@@ -51,7 +41,6 @@ export function NavTree({ groups, onNavigate }: { groups: NavGroupData[]; onNavi
       try {
         localStorage.setItem(COLLAPSED_KEY, JSON.stringify(next));
       } catch {
-        // A reader with storage blocked loses the memory, not the navigation.
       }
       return next;
     });
@@ -77,11 +66,6 @@ export function NavTree({ groups, onNavigate }: { groups: NavGroupData[]; onNavi
               </button>
             </h2>
 
-            {/*
-              Hidden rather than unmounted: `hidden` keeps the list out of the accessibility tree
-              and out of the tab order, and `aria-controls` above stays pointing at something that
-              exists.
-            */}
             <ul id={listId} hidden={isCollapsed}>
               {group.items.map((item) => {
                 const isCurrent = pathname === item.href || pathname === `${item.href}/`;
@@ -92,12 +76,6 @@ export function NavTree({ groups, onNavigate }: { groups: NavGroupData[]; onNavi
                       href={item.href}
                       aria-current={isCurrent ? 'page' : undefined}
                       onClick={onNavigate}
-                      /*
-                       * Dragging a navigation link is never the intent, and letting the browser
-                       * start its own drag cancels the pointer stream — which is how the drawer's
-                       * swipe to dismiss dies the moment a finger lands on a link rather than on
-                       * the gap between two.
-                       */
                       draggable={false}
                     >
                       {item.title}

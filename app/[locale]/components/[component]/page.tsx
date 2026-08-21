@@ -52,11 +52,6 @@ export default async function ComponentPage({
   const doc = await getDoc('components', locale, component);
   if (!doc) notFound();
 
-  /*
-   * The components a component page may use. `PropsTable` is bound to the locale here rather than
-   * in the MDX, so a page written in Russian gets Russian column headings without every table in
-   * the file having to say so.
-   */
   const mdxComponents = {
     PropsTable: (props: { rows: PropRow[] }) => <PropsTable {...props} locale={locale} />,
     Playground: (props: { id: string }) => (

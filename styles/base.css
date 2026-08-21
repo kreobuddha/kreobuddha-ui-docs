@@ -1,25 +1,3 @@
-/*
- * A stand-in for Inter carrying Inter's metrics, so the page does not move when the real face
- * arrives.
- *
- * The library ships Inter with `font-display: swap` and no metric-matched fallback, so the first
- * paint uses whatever the next family in the stack is and every line re-sets when the woff2 lands.
- * Lighthouse measured the result as a 0.206 cumulative layout shift on the landing page — the hero
- * panel dropping down the screen as the text above it re-flowed.
- *
- * The numbers were measured rather than copied: Inter and Helvetica were rendered at 1000px in the
- * browser and read back. Inter sits 0.969em above the baseline and 0.241em below it with no line
- * gap, and its average advance over a full alphabet is 1.0432× Helvetica's. So the fallback is
- * scaled by that ratio and the overrides are Inter's metrics divided by it — 0.969 / 1.0432 and
- * 0.241 / 1.0432 — because the overrides are applied after `size-adjust`.
- *
- * The three `local()` names are one metric-compatible family under three names: Helvetica on macOS,
- * Arial on Windows, Liberation Sans on the Linux CI runs. Naming only one would leave the other two
- * platforms unmatched, which is the original defect again.
- *
- * Outside a layer on purpose: `@font-face` takes part in no cascade, so wrapping it in one would
- * imply something about it that is not true.
- */
 @font-face {
   font-family: 'Inter fallback';
   src: local('Helvetica'), local('Arial'), local('Liberation Sans');
@@ -29,18 +7,6 @@
   line-gap-override: 0%;
 }
 
-/*
- * The same stand-in for Cyrillic, with its own scale.
- *
- * Inter ships Latin and Cyrillic as two files with two `unicode-range`s, and the two scripts do
- * not sit at the same width against Helvetica: measured against the loaded faces, one `size-adjust`
- * tuned on the alphabet leaves Cyrillic text 4.4% too wide, and Lighthouse read that back as a
- * layout shift on the Russian pages that the English ones did not have.
- *
- * The range is the library's own Cyrillic subset range, copied so the stand-in covers exactly the
- * characters the real face will later cover — a wider range here would take glyphs away from the
- * Latin face that it, not this, is metric-matched to.
- */
 @font-face {
   font-family: 'Inter fallback';
   src: local('Helvetica'), local('Arial'), local('Liberation Sans');
@@ -52,21 +18,11 @@
 }
 
 @layer site {
-  /*
-   * The library's own sans stack with the metric-matched stand-in slotted in behind Inter. The
-   * token is the library's, and this is the site overriding it rather than the library being
-   * edited — the fallback is the site's file, so naming it is the site's business.
-   */
   :root {
     --kreo-font-sans:
       Inter, 'Inter fallback', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, sans-serif;
   }
 
-  /*
-   * Page layout is the site's job. The library publishes no layout tokens on purpose — gutters,
-   * rails and column widths belong to the application — so the measurements from the design pass
-   * live here, in one place, named.
-   */
   :root {
     --shell-header-height: 60px;
     --shell-sidebar-width: 264px;
@@ -87,10 +43,6 @@
     font: var(--kreo-type-body);
   }
 
-  /*
-   * Reserved whether or not the page scrolls, so opening a dialog — or moving from a short page to
-   * a long one — does not shift the layout sideways by the width of a scrollbar.
-   */
   html {
     scrollbar-gutter: stable;
   }
@@ -108,7 +60,6 @@
     outline-offset: 2px;
   }
 
-  /* Anchor targets clear the sticky header instead of hiding behind it. */
   :target,
   [id] {
     scroll-margin-block-start: calc(var(--shell-header-height) + var(--kreo-space-4));

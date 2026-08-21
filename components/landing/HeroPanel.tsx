@@ -12,13 +12,6 @@ export interface HeroPanelLabels {
   presetDefault: string;
 }
 
-/*
- * The hero's right-hand column: a panel out of a real tool rather than a card showing off widgets.
- *
- * It is the argument the page is making — a library for developer tools and data-dense interfaces —
- * so it is dense on purpose: tabs, a form, a status, a progress bar and two actions in the space a
- * marketing card would give to one button.
- */
 export function HeroPanel({ labels }: { labels: HeroPanelLabels }) {
   const [preset, setPreset] = useState<string>('default');
 
@@ -45,11 +38,6 @@ export function HeroPanel({ labels }: { labels: HeroPanelLabels }) {
 
   return (
     <div className="hero-panel">
-      {/*
-        The presets write onto this element, which carries `.preview-scope` — the same boundary the
-        theme editor uses. One click repaints the panel and touches nothing else on the page, which
-        is the feature demonstrating itself before anyone has read about it.
-      */}
       <div className="hero-panel__frame preview-scope" style={values} aria-label={labels.panel}>
         <div className="hero-panel__bar">
           <span className="hero-panel__dots" aria-hidden="true" />

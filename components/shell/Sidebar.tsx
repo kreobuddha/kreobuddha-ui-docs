@@ -11,17 +11,6 @@ export type SidebarGroup = NavGroupData;
 export function Sidebar({ groups, label }: { groups: NavGroupData[]; label: string }) {
   const scroller = useRef<HTMLElement>(null);
 
-  /*
-   * Scroll position survives navigation.
-   *
-   * This is the detail that gives a documentation sidebar away. The reader scrolls to a link near
-   * the bottom of a long tree, clicks it, and the new page re-mounts the rail at the top — so every
-   * step through a section costs them the scroll they already did. Restoring it in a layout effect
-   * puts it back before the browser paints, so there is no visible jump.
-   *
-   * It is written to `sessionStorage`, not `localStorage`: it belongs to this visit. Coming back
-   * tomorrow should start at the top of the tree.
-   */
   useLayoutEffect(() => {
     const element = scroller.current;
     if (!element) return;
@@ -30,7 +19,6 @@ export function Sidebar({ groups, label }: { groups: NavGroupData[]; label: stri
       const stored = sessionStorage.getItem(SCROLL_KEY);
       if (stored !== null) element.scrollTop = Number(stored);
     } catch {
-      // A reader with storage blocked loses the memory, not the sidebar.
     }
   }, []);
 
@@ -40,7 +28,6 @@ export function Sidebar({ groups, label }: { groups: NavGroupData[]; label: stri
     try {
       sessionStorage.setItem(SCROLL_KEY, String(element.scrollTop));
     } catch {
-      // Ignored deliberately.
     }
   }, []);
 
