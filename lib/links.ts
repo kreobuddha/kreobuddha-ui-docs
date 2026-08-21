@@ -20,3 +20,8 @@ export function localeAlternates(path = ''): Record<string, string> {
     ['en', 'ru'].map((locale) => [locale, `${siteUrl}${basePath}/${locale}${normalised}/`]),
   );
 }
+
+export function samePath(a: string, b: string): boolean {
+  const trim = (path: string) => path.replace(/\/+$/, '');
+  return trim(a) === trim(b);
+}
