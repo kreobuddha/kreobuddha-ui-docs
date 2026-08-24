@@ -26,6 +26,7 @@ export function Meta({
       <meta name="description" content={description} />
       <meta property="og:title" content={full} />
       <meta property="og:description" content={description} />
+      <meta property="og:url" content={`${siteUrl}${basePath}/${locale}${path}/`} />
       <link rel="canonical" href={`${siteUrl}${basePath}/${locale}${path}/`} />
       <link rel="alternate" hrefLang="en" href={alternates['en']} />
       <link rel="alternate" hrefLang="ru" href={alternates['ru']} />
