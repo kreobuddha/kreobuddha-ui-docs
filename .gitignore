@@ -2,7 +2,7 @@ node_modules/
 
 *.tsbuildinfo
 
-dist/
+build/
 .vite-react-ssg-temp/
 
 coverage/

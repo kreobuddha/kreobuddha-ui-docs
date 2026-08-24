@@ -1,0 +1,4 @@
+/* Declared alone and first: a bundler would otherwise register the library layer ahead of reset. */
+/* 'responsive' sits above 'site' so co-located component styles cannot outrank the adaptive rules,
+   whatever order the module graph loads them in. */
+@layer reset, library, site, responsive, overrides;

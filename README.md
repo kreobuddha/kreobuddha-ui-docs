@@ -15,18 +15,20 @@ library it documents, installed from npm.
 
 ```bash
 npm install
-npm run dev
+npm run start
 ```
 
 ## Build
 
 ```bash
-npm run build     # static site into dist/, then the search index
-npm run preview   # serve dist/
+npm run build     # static site into build/, then the search index
+npm run preview   # serve build/
+npm run typecheck # tsc --noEmit, which the build does not do
 ```
 
 The site is served from a sub-path today and from a bare domain later, so the prefix lives in
-`VITE_BASE_PATH`. Links written by hand go through `lib/links.ts`; Vite prefixes its own assets.
+`VITE_BASE_PATH`. Links written by hand go through `src/app/utils/links.ts`; Vite prefixes
+its own assets.
 
 ```bash
 VITE_BASE_PATH=/kreobuddha-ui-docs npm run build

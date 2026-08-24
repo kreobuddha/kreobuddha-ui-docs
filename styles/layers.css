@@ -1,2 +1,0 @@
-/* Declared alone and first: a bundler would otherwise register the library layer ahead of reset. */
-@layer reset, library, site, overrides;

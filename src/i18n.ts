@@ -1,10 +1,10 @@
 import { createInstance, type i18n } from 'i18next';
 import { initReactI18next } from 'react-i18next';
 
-import en from './locales/en.json';
-import ru from './locales/ru.json';
+import en from '@locales/en.json';
+import ru from '@locales/ru.json';
 
-import type { Locale } from '@/lib/i18n';
+import type { Locale } from '@utils/i18n';
 
 const resources = { en, ru };
 

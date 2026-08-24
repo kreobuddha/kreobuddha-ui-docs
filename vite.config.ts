@@ -1,5 +1,4 @@
 import { copyFileSync, readFileSync } from 'node:fs';
-import { fileURLToPath } from 'node:url';
 
 import mdx from '@mdx-js/rollup';
 import react from '@vitejs/plugin-react';
@@ -11,10 +10,10 @@ import remarkGfm from 'remark-gfm';
 import remarkMdxFrontmatter from 'remark-mdx-frontmatter';
 import { defineConfig } from 'vite';
 
-import { rehypeHeadings } from './plugins/rehype-headings.ts';
-import { content } from './plugins/content.ts';
-import { sitemap } from './plugins/sitemap.ts';
-import { tokens } from './plugins/tokens.ts';
+import { rehypeHeadings } from './script/rehype-headings.ts';
+import { content } from './script/content.ts';
+import { sitemap } from './script/sitemap.ts';
+import { tokens } from './script/tokens.ts';
 
 const BASE = `${(process.env.VITE_BASE_PATH ?? '/').replace(/\/+$/, '')}/`;
 const ORIGIN = process.env.VITE_SITE_URL ?? 'https://kreobuddha.github.io';
@@ -22,7 +21,7 @@ const ORIGIN = process.env.VITE_SITE_URL ?? 'https://kreobuddha.github.io';
 let manifest: Record<string, { file: string }> | null = null;
 
 function readManifest(): Record<string, { file: string }> {
-  manifest ??= JSON.parse(readFileSync('dist/.vite/manifest.json', 'utf8')) as Record<
+  manifest ??= JSON.parse(readFileSync('build/.vite/manifest.json', 'utf8')) as Record<
     string,
     { file: string }
   >;
@@ -47,10 +46,10 @@ export default defineConfig({
   ssgOptions: {
     dirStyle: 'nested',
     formatting: 'none',
-    // Pages serves dist/404.html for anything it cannot find, and only from the root.
+    // Pages serves build/404.html for anything it cannot find, and only from the root.
     onFinished: () => {
-      copyFileSync('dist/404/index.html', 'dist/404.html');
-      sitemap(ORIGIN, BASE).write('dist');
+      copyFileSync('build/404/index.html', 'build/404.html');
+      sitemap(ORIGIN, BASE).write('build');
     },
 
     // Without this the browser runs the app chunk, discovers the page's own chunk, and only then
@@ -67,11 +66,9 @@ export default defineConfig({
 
   base: BASE,
 
-  resolve: {
-    alias: { '@': fileURLToPath(new URL('.', import.meta.url)) },
-  },
+  resolve: { tsconfigPaths: true },
 
-  build: { manifest: true },
+  build: { manifest: true, outDir: 'build' },
 
   plugins: [
     {
