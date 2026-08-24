@@ -1,7 +1,7 @@
 import { docHref, getDocs, type DocMeta } from './content';
 import type { Locale } from './i18n';
 
-export const groupOrder = [
+const groupOrder = [
   'getting-started',
   'foundations',
   'patterns',
@@ -11,7 +11,7 @@ export const groupOrder = [
 
 export type GroupId = (typeof groupOrder)[number];
 
-export function isGroupId(value: string): value is GroupId {
+function isGroupId(value: string): value is GroupId {
   return (groupOrder as readonly string[]).includes(value);
 }
 
@@ -21,7 +21,7 @@ export interface NavItem {
   href: string;
 }
 
-export interface NavGroup {
+interface NavGroup {
   id: GroupId;
   items: NavItem[];
 }
@@ -57,7 +57,7 @@ export function getNavTree(locale: Locale, tokensTitle: string): NavGroup[] {
     .filter((group) => group.items.length > 0);
 }
 
-export function getReadingOrder(locale: Locale, tokensTitle: string): NavItem[] {
+function getReadingOrder(locale: Locale, tokensTitle: string): NavItem[] {
   return getNavTree(locale, tokensTitle).flatMap((group) => group.items);
 }
 

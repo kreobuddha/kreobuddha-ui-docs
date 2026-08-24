@@ -4,7 +4,7 @@ import { entries } from 'virtual:content';
 
 import { defaultLocale, isLocale, type Locale } from './i18n';
 
-export const collections = ['guides', 'components'] as const;
+const collections = ['guides', 'components'] as const;
 
 export type Collection = (typeof collections)[number];
 
@@ -78,14 +78,6 @@ export function getDocs(collection: Collection, locale: Locale): DocMeta[] {
   }
 
   return [...own.values()].sort((a, b) => a.order - b.order || a.title.localeCompare(b.title));
-}
-
-export function getDoc(collection: Collection, locale: Locale, slug: string): DocMeta | null {
-  const own = catalogue.get(pathOf(collection, locale, slug));
-  if (own) return own;
-
-  const fallback = catalogue.get(pathOf(collection, defaultLocale, slug));
-  return fallback ? { ...fallback, isFallback: true } : null;
 }
 
 export function loadDoc(meta: DocMeta): Promise<DocModule> {

@@ -11,11 +11,13 @@ import remarkGfm from 'remark-gfm';
 import remarkMdxFrontmatter from 'remark-mdx-frontmatter';
 import { defineConfig } from 'vite';
 
-import { rehypeHeadings } from './plugins/rehype-headings';
-import { content } from './plugins/content';
-import { tokens } from './plugins/tokens';
+import { rehypeHeadings } from './plugins/rehype-headings.ts';
+import { content } from './plugins/content.ts';
+import { sitemap } from './plugins/sitemap.ts';
+import { tokens } from './plugins/tokens.ts';
 
 const BASE = `${(process.env.VITE_BASE_PATH ?? '/').replace(/\/+$/, '')}/`;
+const ORIGIN = process.env.VITE_SITE_URL ?? 'https://kreobuddha.github.io';
 
 let manifest: Record<string, { file: string }> | null = null;
 
@@ -46,7 +48,10 @@ export default defineConfig({
     dirStyle: 'nested',
     formatting: 'none',
     // Pages serves dist/404.html for anything it cannot find, and only from the root.
-    onFinished: () => copyFileSync('dist/404/index.html', 'dist/404.html'),
+    onFinished: () => {
+      copyFileSync('dist/404/index.html', 'dist/404.html');
+      sitemap(ORIGIN, BASE).write('dist');
+    },
 
     // Without this the browser runs the app chunk, discovers the page's own chunk, and only then
     // hydrates - long enough for a click on a freshly loaded page to be lost.

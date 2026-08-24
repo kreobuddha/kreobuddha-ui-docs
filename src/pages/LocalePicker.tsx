@@ -1,10 +1,12 @@
 import { Head } from 'vite-react-ssg';
 
+import { LOCALE_STORAGE_KEY, locales } from '@/lib/i18n';
+
 const SCRIPT = `(function () {
-  var supported = ['en', 'ru'];
+  var supported = ${JSON.stringify(locales)};
   var stored = null;
   try {
-    stored = localStorage.getItem('kb-docs-locale');
+    stored = localStorage.getItem(${JSON.stringify(LOCALE_STORAGE_KEY)});
   } catch (error) {}
 
   var chosen =

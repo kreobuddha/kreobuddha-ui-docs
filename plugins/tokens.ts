@@ -41,7 +41,7 @@ function darkBlocks(css: string): string[] {
   return blocks;
 }
 
-export function readTokens(): { tokens: Token[]; light: [string, string][]; dark: [string, string][] } {
+function readTokens(): { tokens: Token[]; light: [string, string][]; dark: [string, string][] } {
   const css = readStylesheet();
 
   const light = new Map<string, string>();
