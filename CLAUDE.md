@@ -20,14 +20,16 @@ as the content.
 ## Guardrails
 
 - The library's stylesheet is imported through a CSS `@import` with `layer(library)`, never from
-  JavaScript. Layer order: `reset, library, site, overrides` — nothing checks this any more.
-- Internal links written by hand go through the `basePath` helper in `lib/links.ts`.
+  JavaScript. Layer order: `reset, library, site, responsive, overrides` — nothing checks this
+  any more. `responsive` exists so a co-located component stylesheet cannot outrank the
+  adaptive rules, whatever order the module graph loads it in.
+- Internal links written by hand go through the `basePath` helper in `src/app/utils/links.ts`.
 - No styling engine, no CSS-in-JS, no component library besides `@kreobuddha/ui`.
 - The library is an npm dependency, never a local path or a link. It is never edited from here.
 
 ## Comments
 
-The repository carries four comments and one bundler directive, listed in the pull request that
+The repository carries five comments and one bundler directive, listed in the pull request that
 removed the rest. Each marks a place where the obvious fix is wrong. Do not add another without
 saying why in the pull request.
 
@@ -44,7 +46,8 @@ source. General knowledge applies only through an original implementation.
 
 ## Verification
 
-There is no test suite. `npm run build` is the only automatic check, and it catches types and
-broken imports, nothing else. Everything past that is looked at in a browser: claim only what was
-run and observed. Accessibility is semantics, names, keyboard, focus, visible state, contrast and
-reduced motion. Check 320 px before calling a layout done.
+There is no test suite. `npm run build` and `npm run typecheck` are the only automatic checks:
+the build catches broken imports, `typecheck` catches types — the build strips them without
+looking. Everything past that is looked at in a browser: claim only what was run and observed.
+Accessibility is semantics, names, keyboard, focus, visible state, contrast and reduced motion.
+Check 320 px before calling a layout done.
