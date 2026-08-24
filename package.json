@@ -21,7 +21,6 @@
   "dependencies": {
     "@fontsource/jetbrains-mono": "^5.3.0",
     "@kreobuddha/ui": "^1.0.0",
-    "@mdx-js/react": "^3.1.1",
     "@mdx-js/rollup": "^3.1.1",
     "@shikijs/rehype": "^4.4.3",
     "@vitejs/plugin-react": "^6.1.0",
@@ -35,12 +34,10 @@
     "remark-frontmatter": "^5.0.0",
     "remark-gfm": "^4.0.1",
     "remark-mdx-frontmatter": "^5.2.0",
-    "shiki": "^4.4.3",
     "vite": "^8.2.2",
     "vite-react-ssg": "^0.9.2"
   },
   "devDependencies": {
-    "@fontsource/inter": "^5.3.0",
     "@types/node": "^24.0.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",

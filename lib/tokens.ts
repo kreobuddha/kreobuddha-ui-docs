@@ -5,10 +5,6 @@ export interface Token {
   value: string;
 }
 
-export function tokenMaps(): { light: Map<string, string>; dark: Map<string, string> } {
-  return { light, dark };
-}
-
 export function resolveTokenValue(
   map: Map<string, string>,
   name: string,
