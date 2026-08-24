@@ -26,7 +26,11 @@ export function LocaleLayout({ locale }: { locale: Locale }) {
         <meta property="og:type" content="website" />
         <meta property="og:site_name" content={t('siteTitle')} />
         <meta property="og:locale" content={locale} />
-        <meta name="twitter:card" content="summary" />
+        <meta property="og:image" content={`${siteUrl}${basePath}/og.png`} />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:image:alt" content={t('siteTitle')} />
+        <meta name="twitter:card" content="summary_large_image" />
         <link rel="alternate" hrefLang="en" href={`${siteUrl}${basePath}/en/`} />
         <link rel="alternate" hrefLang="ru" href={`${siteUrl}${basePath}/ru/`} />
       </Head>
