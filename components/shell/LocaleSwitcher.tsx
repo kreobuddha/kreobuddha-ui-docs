@@ -1,7 +1,13 @@
-import { Link } from 'react-router-dom';
-import { useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
-import { isLocale, locales, localeNames, localeShortNames, type Locale } from '@/lib/i18n';
+import {
+  LOCALE_STORAGE_KEY,
+  isLocale,
+  locales,
+  localeNames,
+  localeShortNames,
+  type Locale,
+} from '@/lib/i18n';
 
 export function LocaleSwitcher({ label, className }: { label: string; className?: string }) {
   const pathname = useLocation().pathname;
@@ -13,6 +19,14 @@ export function LocaleSwitcher({ label, className }: { label: string; className?
       return `/${segments.join('/')}/`;
     }
     return `/${target}/`;
+  };
+
+  const remember = (target: Locale) => {
+    try {
+      localStorage.setItem(LOCALE_STORAGE_KEY, target);
+    } catch {
+      // Storage can be blocked outright. The switch still works; the site root just guesses again.
+    }
   };
 
   return (
@@ -30,6 +44,7 @@ export function LocaleSwitcher({ label, className }: { label: string; className?
                 hrefLang={locale}
                 lang={locale}
                 aria-current={isCurrent ? 'true' : undefined}
+                onClick={() => remember(locale)}
               >
                 <span className="locale-switcher__full">{localeNames[locale]}</span>
                 <span className="locale-switcher__short" aria-hidden="true">

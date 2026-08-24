@@ -123,7 +123,7 @@ export function NavDrawer({
             {closeLabel}
           </button>
 
-          <nav aria-label={label}>
+          <nav>
             <NavTree groups={groups} onNavigate={close} />
           </nav>
 
