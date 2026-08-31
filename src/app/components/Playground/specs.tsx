@@ -9,12 +9,14 @@ import {
   Checkbox,
   Dialog,
   FieldGroup,
+  IconButton,
   Progress,
   Radio,
   Select,
   Spinner,
   Switch,
   Tabs,
+  Textarea,
   TextField,
   ToastProvider,
   Toggletip,
@@ -26,6 +28,12 @@ import { serializeJsx, type PropValue } from '@utils/jsx';
 const sizes = ['sm', 'md', 'lg'];
 
 const PLACEMENTS = ['top', 'bottom', 'left', 'right'];
+
+const TrashIcon = () => (
+  <svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+    <path d="M3 4.5h10M6.5 4.5V3h3v1.5M4.5 4.5l.5 8h6l.5-8" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
 
 function placementOf(value: unknown): 'top' | 'bottom' | 'left' | 'right' {
   return value === 'bottom' || value === 'left' || value === 'right' ? value : 'top';
@@ -400,6 +408,91 @@ export const specs: Record<string, PlaygroundSpec> = {
         '\n  <Radio name="target" value="production" label="Production" defaultChecked />\n' +
           '  <Radio name="target" value="staging" label="Staging" />\n' +
           '  <Radio name="target" value="preview" label="Preview" />\n',
+      ),
+  },
+
+  'icon-button': {
+    element: 'IconButton',
+    defaults: {
+      label: 'Remove member',
+      variant: 'ghost',
+      size: 'md',
+      danger: false,
+      loading: false,
+      disabled: false,
+    },
+    always: ['label'],
+    controls: [
+      { prop: 'label', label: 'Label', kind: 'text' },
+      { prop: 'variant', label: 'Variant', kind: 'choice', choices: ['filled', 'outlined', 'ghost'] },
+      { prop: 'size', label: 'Size', kind: 'choice', choices: ['xs', 'sm', 'md', 'lg'] },
+      { prop: 'danger', label: 'Danger', kind: 'boolean' },
+      { prop: 'loading', label: 'Loading', kind: 'boolean' },
+      { prop: 'disabled', label: 'Disabled', kind: 'boolean' },
+    ],
+    render: (props) => (
+      <IconButton {...props} label={String(props['label'] ?? '')} icon={<TrashIcon />} />
+    ),
+    code: (props) =>
+      serializeJsx('IconButton', props, {
+        defaults: {
+          variant: 'ghost',
+          size: 'md',
+          danger: false,
+          loading: false,
+          disabled: false,
+        },
+        always: ['label'],
+      }).replace('<IconButton', '<IconButton icon={<TrashIcon />}'),
+  },
+
+  textarea: {
+    element: 'Textarea',
+    defaults: {
+      label: 'Release notes',
+      size: 'md',
+      rows: '4',
+      hint: 'Markdown is supported.',
+      error: '',
+      resize: 'vertical',
+      disabled: false,
+    },
+    always: ['label'],
+    controls: [
+      { prop: 'label', label: 'Label', kind: 'text' },
+      { prop: 'size', label: 'Size', kind: 'choice', choices: sizes },
+      { prop: 'rows', label: 'Rows', kind: 'choice', choices: ['2', '4', '8'] },
+      { prop: 'hint', label: 'Hint', kind: 'text' },
+      { prop: 'error', label: 'Error', kind: 'text' },
+      { prop: 'resize', label: 'Resize', kind: 'choice', choices: ['vertical', 'none'] },
+      { prop: 'disabled', label: 'Disabled', kind: 'boolean' },
+    ],
+    render: ({ error, hint, rows, ...props }) => (
+      <Textarea
+        {...props}
+        label={String(props['label'] ?? '')}
+        rows={Number(rows)}
+        resize={props['resize'] === 'none' ? 'none' : 'vertical'}
+        hint={hint === '' ? undefined : hint}
+        error={error === '' ? undefined : error}
+        fullWidth
+      />
+    ),
+    code: ({ rows, ...props }) =>
+      serializeJsx(
+        'Textarea',
+        { ...props, rows: Number(rows), fullWidth: true },
+        {
+          defaults: {
+            size: 'md',
+            hint: 'Markdown is supported.',
+            error: '',
+            resize: 'vertical',
+            disabled: false,
+            rows: 4,
+          },
+          always: ['label'],
+        },
       ),
   },
 

@@ -1,0 +1,87 @@
+---
+title: IconButton
+description: A button whose whole content is a mark, where a word would not fit.
+order: 19
+---
+
+A button whose whole content is a mark — close, remove, expand — where a word would not fit.
+
+<Playground id="icon-button" />
+
+## Props
+
+<PropsTable
+  rows={[
+    {
+      name: 'label',
+      type: 'string',
+      required: true,
+      description:
+        'What the button does, as a screen reader will hear it. Required and checked by the compiler: an icon carries no text, so there is nowhere else a name could come from. It is also the hover tooltip.',
+    },
+    {
+      name: 'icon',
+      type: 'ReactNode',
+      required: true,
+      description: 'The mark to draw. Hidden from assistive technology — label is what gets announced.',
+    },
+    {
+      name: 'variant',
+      type: "'filled' | 'outlined' | 'ghost'",
+      default: "'ghost'",
+      description: 'filled = the single primary action in a view, outlined = secondary, ghost = tertiary.',
+    },
+    {
+      name: 'size',
+      type: "'xs' | 'sm' | 'md' | 'lg'",
+      default: "'md'",
+      description: 'Square control: 24px, 32px, 40px or 48px. xs is for marks inside another control.',
+    },
+    { name: 'danger', type: 'boolean', default: 'false', description: 'Swaps the accent for the danger hue. For destructive confirmations only.' },
+    {
+      name: 'loading',
+      type: 'boolean',
+      default: 'false',
+      description:
+        'Marks the action as in flight. The button dims, stays focusable, reports aria-busy, keeps its exact size, and shows a spinner in place of the icon.',
+    },
+    {
+      name: 'type',
+      type: "'button' | 'submit' | 'reset'",
+      default: "'button'",
+      description: 'Defaults to button so one inside a form never submits it by accident.',
+    },
+  ]}
+/>
+
+Everything a `<button>` accepts is accepted too, except `children`.
+
+## Why it is not `Button` without a label
+
+The thing that makes an icon button dangerous is exactly the thing a shared component could not
+enforce. An icon carries no text, so there is nowhere for an accessible name to come from — and a
+`Button` that merely *allows* an empty label will eventually ship with one.
+
+<Callout tone="info" title="label is required and the compiler checks it.">
+  It is also used as the hover tooltip, because a symbol without a name is a guess for sighted
+  readers too.
+</Callout>
+
+## `loading` keeps the size
+
+The spinner replaces the icon inside the same square. Nothing reflows, so a row of controls does not
+jump while one of them is working, and a reader's pointer stays over the thing they were aiming at.
+
+The button stays focusable while loading and reports `aria-busy`. Removing it from the tab order
+would move focus somewhere else mid-action, which is the one thing a reader cannot undo.
+
+## `disabled` or `loading`
+
+`disabled` for an action that is unavailable. `loading` for one that is already under way. They look
+similar and mean opposite things: the first says "not now", the second says "already".
+
+## `xs` is for marks inside another control
+
+24px, small enough to sit inside something else. It is how `Alert` and `Dialog` get their close
+buttons, and it is the size to reach for when the button is part of another component rather than a
+control in its own right.

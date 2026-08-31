@@ -1,0 +1,79 @@
+---
+title: Textarea
+description: Text that runs to several lines — a description, a note, a pasted log.
+order: 20
+---
+
+Text that runs to several lines — a description, a note, a pasted log.
+
+It is `TextField`'s counterpart and shares its whole field contract.
+
+<Playground id="textarea" />
+
+## Props
+
+<PropsTable
+  rows={[
+    {
+      name: 'label',
+      type: 'string',
+      required: true,
+      description: "The field's visible label. Required: a field without one is unusable by anybody not looking at it.",
+    },
+    {
+      name: 'rows',
+      type: 'number',
+      description:
+        'How many lines tall the field starts, which is what sets its height. With resize="none" this is also its final height.',
+    },
+    {
+      name: 'size',
+      type: "'sm' | 'md' | 'lg'",
+      default: "'md'",
+      description: 'The padding around the text, matching TextField at the same name. It does not set the height.',
+    },
+    { name: 'hint', type: 'ReactNode', description: 'Guidance under the field. Announced with the field, not read as separate text.' },
+    {
+      name: 'error',
+      type: 'ReactNode',
+      description:
+        'What is wrong with the current value. Its presence is what makes the field invalid — there is no separate invalid prop.',
+    },
+    {
+      name: 'resize',
+      type: "'vertical' | 'none'",
+      default: "'vertical'",
+      description: "Whether the reader may drag the field taller. 'none' pins it to exactly rows lines.",
+    },
+    { name: 'fullWidth', type: 'boolean', default: 'false', description: 'Stretches to the width of its container instead of the browser default.' },
+    { name: 'className', type: 'string', description: 'Class for the outer wrapper. Native props and ref go to the textarea itself.' },
+  ]}
+/>
+
+Everything a `<textarea>` accepts is accepted too, except `prefix`.
+
+## Height is `rows`, not `size`
+
+`size` sets the padding, and the type is `--kreo-type-body` at every size — so height had to come
+from somewhere, and `rows` is where the platform already puts it. A field can then be as tall as the
+answer deserves rather than as tall as its padding scale allows.
+
+## Horizontal dragging is never offered
+
+`resize` chooses between vertical and none. There is no horizontal option, and that is a decision
+rather than an omission: dragging a field wider breaks the form's grid, and a wider box is not
+easier to read — line length has an upper bound past which the eye loses the start of the next line.
+
+## `Textarea` or `TextField`
+
+Reach for this when the answer has no reason to fit on one line, and for `TextField` when it does.
+
+<Callout tone="warning">
+  A one-line answer in a three-line box invites a paragraph nobody wanted, and then somebody has to
+  decide what to do with it.
+</Callout>
+
+## The field contract is shared
+
+Same required `label`, same `hint`, same rule that `error` *is* the invalid state, same body type.
+That is deliberate: a form built from both should not read as a form built from two libraries.
