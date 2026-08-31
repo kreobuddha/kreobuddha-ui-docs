@@ -99,7 +99,7 @@ const Playground = ({
       </div>
 
       <figure className="playground__code">
-        <figcaption>{codeLabel}</figcaption>
+        <figcaption data-pagefind-ignore>{codeLabel}</figcaption>
         <pre>
           <code>{code}</code>
         </pre>

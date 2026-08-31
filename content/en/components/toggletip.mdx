@@ -1,0 +1,69 @@
+---
+title: Toggletip
+description: A bubble of extra information, opened by clicking a button.
+order: 12
+---
+
+A bubble of extra information, opened by clicking a button.
+
+It exists because a tooltip cannot carry anything that matters.
+
+<Playground id="toggletip" />
+
+## Props
+
+<PropsTable
+  rows={[
+    {
+      name: 'content',
+      type: 'ReactNode',
+      required: true,
+      description:
+        'What the toggletip says. Unlike a tooltip, this may carry something the reader needs: it is opened deliberately, and it is reachable by keyboard and by touch.',
+    },
+    {
+      name: 'children',
+      type: 'ReactElement',
+      required: true,
+      description:
+        'The control that opens it. Exactly one element, and it has to be a button — aria-expanded is added to it, and focus returns to it when the bubble closes.',
+    },
+    {
+      name: 'placement',
+      type: "'top' | 'bottom' | 'left' | 'right'",
+      default: "'top'",
+      description: 'Which side to prefer. The browser flips it when there is no room.',
+    },
+    {
+      name: 'className',
+      type: 'string',
+      description: 'Class for the bubble, not the trigger.',
+    },
+  ]}
+/>
+
+## Why this exists
+
+A tooltip opens on hover, and there is no hover on a touchscreen. The library accepted that as a
+property of the pattern rather than a defect — which leaves everything a reader actually needs
+without a home. This is that home.
+
+Same top layer, same CSS anchor positioning. The difference is that it is opened on purpose, which
+is what makes it safe to put something load-bearing inside.
+
+## The trigger has to be a button
+
+Not a span with a click handler, not an icon. `aria-expanded` is added to whatever is passed, and
+that attribute is a lie on anything that is not announced as a control and reachable by keyboard.
+
+Focus returns to the trigger when the bubble closes, so a keyboard reader ends up where they
+started rather than at the top of the document.
+
+## The content is mounted only while open
+
+It sits in a `role="status"` region, and the region is empty until the button is pressed.
+
+That ordering is the whole trick. A live region announces what *changes* inside it, so content that
+was always there and merely revealed is announced by nothing at all — the reader presses the button
+and hears silence. Mounting on open makes the appearance a change, and the change is what gets
+read.

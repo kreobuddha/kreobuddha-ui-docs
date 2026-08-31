@@ -14,6 +14,7 @@ const ComponentsIndex = ({ locale }: { locale: Locale }) => {
 
   return (
     <article className="prose" data-pagefind-body data-pagefind-filter={`locale:${locale}`}>
+      <span data-pagefind-filter="section:components" />
       <Meta
         title={t('componentsTitle')}
         description={t('componentsIndexLead')}

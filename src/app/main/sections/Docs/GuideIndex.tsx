@@ -13,6 +13,7 @@ const GuideIndex = ({ locale }: { locale: Locale }) => {
 
   return (
     <article className="prose" data-pagefind-body data-pagefind-filter={`locale:${locale}`}>
+      <span data-pagefind-filter="section:guides" />
       <Meta
         title={t('docsTitle')}
         description={t('guidesIndexLead')}

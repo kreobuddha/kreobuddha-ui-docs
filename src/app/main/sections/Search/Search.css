@@ -1,0 +1,122 @@
+@layer site {
+  .search__form {
+    margin-block: var(--kreo-space-6);
+  }
+
+  .search__label {
+    display: block;
+    margin-block-end: var(--kreo-space-2);
+    font: var(--kreo-type-label);
+    color: var(--kreo-text-muted);
+  }
+
+  .search__input {
+    inline-size: 100%;
+    min-block-size: 40px;
+    padding: var(--kreo-space-2) var(--kreo-space-3);
+    border: var(--kreo-border-w) solid var(--kreo-border-default);
+    border-radius: var(--kreo-radius-md);
+    background: var(--kreo-surface-page);
+    color: var(--kreo-text-body);
+    font: var(--kreo-type-body);
+  }
+
+  .search__facets {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--kreo-space-2);
+    margin-block: var(--kreo-space-4);
+  }
+
+  .search__facet {
+    display: inline-flex;
+    gap: var(--kreo-space-2);
+    align-items: center;
+    min-block-size: 32px;
+    padding-inline: var(--kreo-space-3);
+    border: var(--kreo-border-w) solid var(--kreo-border-default);
+    border-radius: var(--kreo-radius-md);
+    background: var(--kreo-surface-page);
+    color: var(--kreo-text-body);
+    font: var(--kreo-type-label);
+    cursor: pointer;
+  }
+
+  .search__facet:hover {
+    background: var(--kreo-surface-sunken);
+  }
+
+  .search__facet[aria-pressed='true'] {
+    border-color: var(--kreo-border-focus);
+    background: var(--kreo-surface-sunken);
+  }
+
+  .search__count {
+    color: var(--kreo-text-muted);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .search__status {
+    margin-block: var(--kreo-space-4);
+    color: var(--kreo-text-muted);
+    font: var(--kreo-type-label);
+  }
+
+  .search__results {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .search__result {
+    padding-block: var(--kreo-space-4);
+    border-block-start: var(--kreo-border-w) solid var(--kreo-border-subtle);
+  }
+
+  .search__result-title {
+    margin: 0 0 var(--kreo-space-2);
+    font: var(--kreo-type-heading);
+  }
+
+  .search__excerpt {
+    margin: 0;
+    color: var(--kreo-text-muted);
+  }
+
+  .search__excerpt mark {
+    background: transparent;
+    color: var(--kreo-text-body);
+    font-weight: var(--kreo-weight-semibold);
+  }
+
+  .search__pages {
+    display: flex;
+    gap: var(--kreo-space-3);
+    align-items: center;
+    justify-content: center;
+    margin-block: var(--kreo-space-6);
+  }
+
+  .search__page {
+    min-block-size: 32px;
+    padding-inline: var(--kreo-space-3);
+    border: var(--kreo-border-w) solid var(--kreo-border-default);
+    border-radius: var(--kreo-radius-md);
+    background: var(--kreo-surface-page);
+    color: var(--kreo-text-body);
+    font: var(--kreo-type-label);
+    cursor: pointer;
+  }
+
+  .search__page:disabled {
+    color: var(--kreo-text-muted);
+    cursor: default;
+    opacity: 0.5;
+  }
+
+  .search__page-of {
+    font: var(--kreo-type-label);
+    color: var(--kreo-text-muted);
+    font-variant-numeric: tabular-nums;
+  }
+}

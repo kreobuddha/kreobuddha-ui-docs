@@ -138,4 +138,12 @@
       white-space: nowrap;
     }
   }
+
+  .palette__all {
+    display: block;
+    padding: var(--kreo-space-3);
+    border-block-start: var(--kreo-border-w) solid var(--kreo-border-subtle);
+    font: var(--kreo-type-label);
+    text-align: center;
+  }
 }

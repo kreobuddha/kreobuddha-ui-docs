@@ -3,7 +3,7 @@ import './CommandPalette.css';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 import type { Locale } from '@utils/i18n';
-import { asset } from '@utils/links';
+import { asset, route } from '@utils/links';
 
 interface PaletteLabels {
   open: string;
@@ -12,6 +12,7 @@ interface PaletteLabels {
   empty: string;
   searching: string;
   results: string;
+  allResults: string;
   shortcutHint: string;
   close: string;
 }
@@ -214,6 +215,12 @@ const CommandPalette = ({ locale, labels }: { locale: Locale; labels: PaletteLab
               </li>
             ))}
           </ul>
+
+          {state === 'ready' && hits.length > 0 ? (
+            <a className="palette__all" href={`${asset(route(locale, '/search'))}?q=${encodeURIComponent(query.trim())}`}>
+              {labels.allResults}
+            </a>
+          ) : null}
 
           <p className="palette__status" role="status">
             {state === 'searching'

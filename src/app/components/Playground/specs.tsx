@@ -2,6 +2,7 @@ import { useState } from 'react';
 
 import type { PlaygroundSpec } from './types';
 import {
+  Alert,
   Badge,
   Button,
   Dialog,
@@ -11,11 +12,19 @@ import {
   Tabs,
   TextField,
   ToastProvider,
+  Toggletip,
+  Tooltip,
   useToast,
 } from '@components/ui';
 import { serializeJsx, type PropValue } from '@utils/jsx';
 
 const sizes = ['sm', 'md', 'lg'];
+
+const PLACEMENTS = ['top', 'bottom', 'left', 'right'];
+
+function placementOf(value: unknown): 'top' | 'bottom' | 'left' | 'right' {
+  return value === 'bottom' || value === 'left' || value === 'right' ? value : 'top';
+}
 
 export const specs: Record<string, PlaygroundSpec> = {
   button: {
@@ -30,6 +39,92 @@ export const specs: Record<string, PlaygroundSpec> = {
       { prop: 'disabled', label: 'Disabled', kind: 'boolean' },
     ],
     render: (props) => <Button {...props}>Save changes</Button>,
+  },
+
+  alert: {
+    element: 'Alert',
+    children: 'The last deploy did not finish. Nothing was published.',
+    defaults: { tone: 'info', title: '', live: false, dismissible: false },
+    controls: [
+      {
+        prop: 'tone',
+        label: 'Tone',
+        kind: 'choice',
+        choices: ['info', 'success', 'warning', 'danger'],
+      },
+      { prop: 'title', label: 'Title', kind: 'text' },
+      { prop: 'live', label: 'Announce', kind: 'boolean' },
+      { prop: 'dismissible', label: 'Dismissible', kind: 'boolean' },
+    ],
+    render: ({ dismissible, title, ...props }) => (
+      <Alert
+        {...props}
+        title={title === '' ? undefined : String(title)}
+        {...(dismissible === true ? { onDismiss: () => undefined, dismissLabel: 'Dismiss' } : {})}
+      >
+        The last deploy did not finish. Nothing was published.
+      </Alert>
+    ),
+    code: ({ dismissible, title, ...props }) =>
+      serializeJsx(
+        'Alert',
+        { ...props, title: title === '' ? undefined : title },
+        {
+          defaults: { tone: 'info', live: false },
+          children: 'The last deploy did not finish. Nothing was published.',
+        },
+      ).replace('<Alert', dismissible === true ? '<Alert onDismiss={dismiss}' : '<Alert'),
+  },
+
+  tooltip: {
+    element: 'Tooltip',
+    defaults: { content: 'Rebuild without the cache', placement: 'top' },
+    always: ['content'],
+    controls: [
+      { prop: 'content', label: 'Content', kind: 'text' },
+      { prop: 'placement', label: 'Placement', kind: 'choice', choices: PLACEMENTS },
+    ],
+    render: (props) => (
+      <Tooltip
+        content={String(props['content'] ?? '')}
+        placement={placementOf(props['placement'])}
+      >
+        <Button variant="outlined">Rebuild</Button>
+      </Tooltip>
+    ),
+    code: (props) =>
+      serializeJsx('Tooltip', props, {
+        defaults: { placement: 'top' },
+        always: ['content'],
+        children: '<Button variant="outlined">Rebuild</Button>',
+      }),
+  },
+
+  toggletip: {
+    element: 'Toggletip',
+    defaults: {
+      content: 'Runs the migrations before the new build takes traffic.',
+      placement: 'top',
+    },
+    always: ['content'],
+    controls: [
+      { prop: 'content', label: 'Content', kind: 'text' },
+      { prop: 'placement', label: 'Placement', kind: 'choice', choices: PLACEMENTS },
+    ],
+    render: (props) => (
+      <Toggletip
+        content={String(props['content'] ?? '')}
+        placement={placementOf(props['placement'])}
+      >
+        <Button variant="ghost">What is this?</Button>
+      </Toggletip>
+    ),
+    code: (props) =>
+      serializeJsx('Toggletip', props, {
+        defaults: { placement: 'top' },
+        always: ['content'],
+        children: '<Button variant="ghost">What is this?</Button>',
+      }),
   },
 
   badge: {

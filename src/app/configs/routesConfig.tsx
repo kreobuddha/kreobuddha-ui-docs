@@ -7,6 +7,7 @@ import GuideIndex from '@sections/Docs/GuideIndex';
 import Landing from '@sections/Landing/Landing';
 import LocaleLayout from '@components/LocaleLayout/LocaleLayout';
 import LocalePicker from '@sections/LocalePicker/LocalePicker';
+import Search from '@sections/Search/Search';
 import NotFound from '../main/errors/NotFound';
 import Tokens from '@sections/Tokens/Tokens';
 import { getDocs, loadDoc, type Collection } from '@utils/content';
@@ -51,6 +52,11 @@ export const routes: RouteRecord[] = [
         path: 'tokens',
         element: <DocsLayout locale={locale} />,
         children: [{ index: true, element: <Tokens locale={locale} /> }],
+      },
+      {
+        path: 'search',
+        element: <DocsLayout locale={locale} />,
+        children: [{ index: true, element: <Search locale={locale} /> }],
       },
     ],
   })),
