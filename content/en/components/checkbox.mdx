@@ -1,0 +1,76 @@
+---
+title: Checkbox
+description: An independent yes or no — one setting that is on or off, with no bearing on the box beside it.
+order: 13
+---
+
+An independent yes or no: one setting that is on or off, with no bearing on the box beside it.
+
+<Playground id="checkbox" />
+
+## Props
+
+<PropsTable
+  rows={[
+    {
+      name: 'label',
+      type: 'ReactNode',
+      required: true,
+      description: 'The text beside the box. Required: a box with no label asks a question nobody can hear.',
+    },
+    {
+      name: 'hint',
+      type: 'ReactNode',
+      description: 'Guidance under the label. Announced with the checkbox, not read as separate text.',
+    },
+    {
+      name: 'error',
+      type: 'ReactNode',
+      description:
+        'What is wrong. Its presence is what makes the checkbox invalid — a single required box, such as accepting terms, is exactly the case that needs somewhere to say so.',
+    },
+    {
+      name: 'indeterminate',
+      type: 'boolean',
+      default: 'false',
+      description:
+        'Neither checked nor unchecked: some of what this box stands for is selected. There is no HTML attribute for it, only a DOM property.',
+    },
+    {
+      name: 'className',
+      type: 'string',
+      description: 'Class for the outer wrapper. Native props and ref go to the input itself.',
+    },
+  ]}
+/>
+
+Everything an `<input>` accepts is accepted too, except `type` and `size`.
+
+## Independence is the whole distinction
+
+Three components sit next to each other, and picking between them is one question each:
+
+- `Checkbox` — is this one setting independent of the others? Then a box.
+- `Radio` — is exactly one of several answers allowed? Then a group of options.
+- `Switch` — does flipping it take effect now, rather than on submit? Then a switch.
+
+A column of checkboxes with only one allowed is a radio group that lets readers break it. A checkbox
+that saves the moment it is ticked is a switch that lied about when it acts.
+
+## `indeterminate` still submits as unchecked
+
+There is no third value. The box shows a mixed state, announces one, and submits as unchecked —
+because that is what the platform does, and inventing a third value would break every form that
+reads the box.
+
+It is a DOM property with no matching attribute, which is why it is a prop here at all: a consumer
+cannot set it from JSX without a ref of their own.
+
+Use it for the parent of a list where some children are ticked. Do not use it to mean "unknown" —
+the reader will submit the form and find out the box meant no.
+
+## The question lives on `FieldGroup`
+
+A lone checkbox carries its own label and that is enough. A set of them answering one question needs
+that question said out loud, and a checkbox does not say it. Wrap them in `FieldGroup`, which
+renders a real `<fieldset>` and `<legend>` and announces the question once instead of once per box.

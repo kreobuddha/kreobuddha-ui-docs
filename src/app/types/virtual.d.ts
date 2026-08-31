@@ -14,6 +14,8 @@ declare module '*.mdx' {
   export default MDXComponent;
 }
 
+declare const __LIBRARY_VERSION__: string;
+
 declare module 'virtual:content' {
   export const entries: {
     locale: string;
@@ -23,5 +25,6 @@ declare module 'virtual:content' {
     description: string;
     group: string;
     order: number;
+    updated: string | null;
   }[];
 }

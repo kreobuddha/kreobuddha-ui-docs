@@ -1,3 +1,4 @@
+import { execFileSync } from 'node:child_process';
 import { readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 
@@ -16,6 +17,7 @@ export interface Entry {
   description: string;
   group: string;
   order: number;
+  updated: string | null;
 }
 
 function frontmatter(source: string, file: string): Record<string, string | number> {
@@ -39,6 +41,21 @@ function frontmatter(source: string, file: string): Record<string, string | numb
   }
 
   return data;
+}
+
+// A shallow clone has no history to read, so this is null far more often than it looks — on any
+// checkout without fetch-depth: 0, and on a file that is not committed yet.
+function lastChanged(path: string): string | null {
+  try {
+    const stamp = execFileSync('git', ['log', '-1', '--format=%cI', '--', path], {
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'ignore'],
+    }).trim();
+
+    return stamp === '' ? null : stamp;
+  } catch {
+    return null;
+  }
 }
 
 function require_(value: unknown, kind: 'string' | 'number', field: string, file: string): void {
@@ -74,6 +91,7 @@ export function readEntries(): Entry[] {
           description: data['description'] as string,
           group: group as string,
           order: data['order'] as number,
+          updated: lastChanged(path),
         });
       }
     }

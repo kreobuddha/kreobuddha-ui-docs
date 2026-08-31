@@ -5,8 +5,11 @@ import {
   Alert,
   Badge,
   Button,
+  Checkbox,
   Dialog,
+  FieldGroup,
   Progress,
+  Radio,
   Select,
   Switch,
   Tabs,
@@ -226,6 +229,123 @@ export const specs: Record<string, PlaygroundSpec> = {
         error={error === '' ? undefined : error}
       />
     ),
+  },
+
+  checkbox: {
+    element: 'Checkbox',
+    defaults: {
+      label: 'Email me when a build fails',
+      hint: '',
+      error: '',
+      indeterminate: false,
+      disabled: false,
+    },
+    always: ['label'],
+    controls: [
+      { prop: 'label', label: 'Label', kind: 'text' },
+      { prop: 'hint', label: 'Hint', kind: 'text' },
+      { prop: 'error', label: 'Error', kind: 'text' },
+      { prop: 'indeterminate', label: 'Indeterminate', kind: 'boolean' },
+      { prop: 'disabled', label: 'Disabled', kind: 'boolean' },
+    ],
+    render: ({ error, hint, ...props }) => (
+      <Checkbox
+        {...props}
+        label={String(props['label'] ?? '')}
+        hint={hint === '' ? undefined : hint}
+        error={error === '' ? undefined : error}
+      />
+    ),
+  },
+
+  'field-group': {
+    element: 'FieldGroup',
+    defaults: {
+      legend: 'What should the deploy notify?',
+      hint: 'Choose at least one.',
+      error: '',
+      orientation: 'vertical',
+      disabled: false,
+    },
+    always: ['legend'],
+    controls: [
+      { prop: 'legend', label: 'Legend', kind: 'text' },
+      { prop: 'hint', label: 'Group hint', kind: 'text' },
+      { prop: 'error', label: 'Group error', kind: 'text' },
+      {
+        prop: 'orientation',
+        label: 'Orientation',
+        kind: 'choice',
+        choices: ['vertical', 'horizontal'],
+      },
+      { prop: 'disabled', label: 'Disabled', kind: 'boolean' },
+    ],
+    render: ({ error, hint, ...props }) => (
+      <FieldGroup
+        {...props}
+        legend={String(props['legend'] ?? '')}
+        hint={hint === '' ? undefined : hint}
+        error={error === '' ? undefined : error}
+        orientation={props['orientation'] === 'horizontal' ? 'horizontal' : 'vertical'}
+      >
+        <Checkbox name="notify" value="email" label="Email" defaultChecked />
+        <Checkbox name="notify" value="chat" label="Chat" />
+        <Checkbox name="notify" value="webhook" label="Webhook" />
+      </FieldGroup>
+    ),
+    code: (props) =>
+      serializeJsx(
+        'FieldGroup',
+        { ...props, error: props['error'] === '' ? undefined : props['error'] },
+        {
+          defaults: { orientation: 'vertical', disabled: false },
+          always: ['legend'],
+          children: '…',
+        },
+      ).replace(
+        '…',
+        '\n  <Checkbox name="notify" value="email" label="Email" defaultChecked />\n' +
+          '  <Checkbox name="notify" value="chat" label="Chat" />\n' +
+          '  <Checkbox name="notify" value="webhook" label="Webhook" />\n',
+      ),
+  },
+
+  radio: {
+    element: 'FieldGroup',
+    defaults: { legend: 'Deploy target', orientation: 'vertical', disabled: false },
+    always: ['legend'],
+    controls: [
+      { prop: 'legend', label: 'Legend', kind: 'text' },
+      {
+        prop: 'orientation',
+        label: 'Orientation',
+        kind: 'choice',
+        choices: ['vertical', 'horizontal'],
+      },
+      { prop: 'disabled', label: 'Disabled', kind: 'boolean' },
+    ],
+    render: (props) => (
+      <FieldGroup
+        {...props}
+        legend={String(props['legend'] ?? '')}
+        orientation={props['orientation'] === 'horizontal' ? 'horizontal' : 'vertical'}
+      >
+        <Radio name="target" value="production" label="Production" defaultChecked />
+        <Radio name="target" value="staging" label="Staging" />
+        <Radio name="target" value="preview" label="Preview" />
+      </FieldGroup>
+    ),
+    code: (props) =>
+      serializeJsx('FieldGroup', props, {
+        defaults: { orientation: 'vertical', disabled: false },
+        always: ['legend'],
+        children: '…',
+      }).replace(
+        '…',
+        '\n  <Radio name="target" value="production" label="Production" defaultChecked />\n' +
+          '  <Radio name="target" value="staging" label="Staging" />\n' +
+          '  <Radio name="target" value="preview" label="Preview" />\n',
+      ),
   },
 
   select: {
