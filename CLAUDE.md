@@ -29,8 +29,8 @@ as the content.
 
 ## Comments
 
-The repository carries nineteen comments and one bundler directive, listed in the pull requests that
-removed the rest. Each marks a place where the obvious fix is wrong. Do not add another without
+The repository carries twenty-three comments and one bundler directive, listed in the pull
+requests that removed the rest. Each marks a place where the obvious fix is wrong. Do not add another without
 saying why in the pull request.
 
 ## Confidentiality

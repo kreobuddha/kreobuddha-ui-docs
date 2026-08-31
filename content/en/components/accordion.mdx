@@ -1,0 +1,74 @@
+---
+title: Accordion
+description: Sections that open and close, built on details and summary.
+order: 16
+---
+
+Sections that open and close, built on `<details>` and `<summary>`.
+
+<Playground id="accordion" />
+
+## Props
+
+<PropsTable
+  rows={[
+    { name: 'items', type: 'AccordionItem[]', required: true, description: 'The sections, in the order they are read.' },
+    {
+      name: 'exclusive',
+      type: 'boolean',
+      default: 'false',
+      description:
+        'Only one section open at a time. Done by the browser through the name attribute the sections share — no state, no effect, no click handler.',
+    },
+  ]}
+/>
+
+Everything a `<div>` accepts is accepted too, except `children`.
+
+### `AccordionItem`
+
+<PropsTable
+  rows={[
+    { name: 'id', type: 'string', required: true, description: 'Stable identity for the section. Used as the React key, not rendered.' },
+    {
+      name: 'label',
+      type: 'ReactNode',
+      required: true,
+      description: 'The heading that opens the section. A node, so a count or a Badge can sit beside it.',
+    },
+    {
+      name: 'content',
+      type: 'ReactNode',
+      required: true,
+      description: 'Rendered inside the section. It stays in the DOM while the section is closed.',
+    },
+    {
+      name: 'defaultOpen',
+      type: 'boolean',
+      description:
+        'Open on first render. Under exclusive the browser opens only the first section marked this way, which is the platform’s rule rather than this component’s.',
+    },
+  ]}
+/>
+
+## Nothing here manages open state
+
+The platform supplies all of it: the disclosure button, `Enter` and `Space`, the
+expanded/collapsed announcement, and — through the shared `name` — the exclusive behaviour.
+
+Where `name` is not implemented, the sections simply open independently. That is a weaker version of
+the same component rather than a broken one, which is the test worth applying to any platform
+feature before depending on it.
+
+## There is deliberately no height animation
+
+A `<details>` cannot be animated without taking its state back from the browser, and that state is
+the whole thing worth having. The trade is stated rather than hidden: sections snap open, and in
+exchange the keyboard behaviour, the announcement and the exclusive grouping are the platform's and
+cannot drift from it.
+
+## Content stays in the DOM while closed
+
+Which means find-in-page can reach it, and anything expensive inside it is paid for whether the
+reader opens the section or not. If the content is expensive, that is an argument for not putting
+it here — not for unmounting it, which would take the state back again.

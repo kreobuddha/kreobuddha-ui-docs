@@ -5,9 +5,7 @@ group: getting-started
 order: 2
 ---
 
-```bash
-npm install @kreobuddha/ui
-```
+<PackageManager name="@kreobuddha/ui" />
 
 ## Требования
 
@@ -58,7 +56,9 @@ export const Example = () => (
 
 ## TypeScript
 
-Чтобы импортировать `@kreobuddha/ui/styles.css` из TypeScript, в проекте уже должны быть объявлены
-типы для сайд-эффектных импортов CSS. В проекте на Vite это `"types": ["vite/client"]`
-в `tsconfig.json`. Без этого TypeScript 6 сообщает `TS2882` на импорт стилей. Это свойство сборки
-хоста, а не пакета.
+<Details id="ts2882" label="TS2882 на импорте стилей">
+  Чтобы импортировать `@kreobuddha/ui/styles.css` из TypeScript, в проекте уже должны быть
+  объявлены типы для сайд-эффектных импортов CSS. В проекте на Vite это
+  `"types": ["vite/client"]` в `tsconfig.json`. Без этого TypeScript 6 сообщает `TS2882` на
+  импорт стилей. Это свойство сборки хоста, а не пакета.
+</Details>

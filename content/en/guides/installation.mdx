@@ -5,9 +5,7 @@ group: getting-started
 order: 2
 ---
 
-```bash
-npm install @kreobuddha/ui
-```
+<PackageManager name="@kreobuddha/ui" />
 
 ## Requirements
 
@@ -59,7 +57,9 @@ There is no bundled monospace family. Figures that must line up in columns use
 
 ## TypeScript
 
-Importing `@kreobuddha/ui/styles.css` from TypeScript requires that the project already declares
-types for CSS side-effect imports. In a Vite project that is `"types": ["vite/client"]` in
-`tsconfig.json`. Without it, TypeScript 6 reports `TS2882` for the stylesheet import. This is a
-property of the host's build setup, not of the package.
+<Details id="ts2882" label="TS2882 on the stylesheet import">
+  Importing `@kreobuddha/ui/styles.css` from TypeScript requires that the project already declares
+  types for CSS side-effect imports. In a Vite project that is `"types": ["vite/client"]` in
+  `tsconfig.json`. Without it, TypeScript 6 reports `TS2882` for the stylesheet import. This is a
+  property of the host's build setup, not of the package.
+</Details>

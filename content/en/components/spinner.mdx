@@ -1,0 +1,54 @@
+---
+title: Spinner
+description: Work is happening, with no claim about how much is left.
+order: 17
+---
+
+Work is happening, with no claim about how much is left.
+
+<Playground id="spinner" />
+
+## Props
+
+<PropsTable
+  rows={[
+    {
+      name: 'size',
+      type: "'sm' | 'md' | 'lg'",
+      default: "'md'",
+      description: 'Diameter: 16px, 20px or 24px.',
+    },
+    {
+      name: 'label',
+      type: 'string',
+      description:
+        'What the spinner is waiting for, announced by assistive technology. Leaving it out is a real choice — see below.',
+    },
+  ]}
+/>
+
+Everything a `<span>` accepts is accepted too, except `children`.
+
+## `label` decides whether it is announced
+
+Leaving it out is a decision rather than an omission. Unlabelled, the spinner is decorative and
+hidden from assistive technology entirely — which is correct whenever something nearby already says
+that work is in progress: visible text, or a container carrying `aria-busy`.
+
+```tsx
+<Spinner label="Checking the licence" />
+
+<p>Checking the licence… <Spinner /></p>
+```
+
+Both are right. The second would be wrong with a label, because the sentence and the spinner would
+announce the same thing one after the other. `Button` uses the unlabelled form for exactly this
+reason: its own text is already the announcement.
+
+## `Spinner` or `Progress`
+
+A spinner says only that something is under way. `Progress` says how much of it has happened, and a
+bar is worth its space only when that number is real.
+
+So the question is not which looks better — it is whether an honest number exists. If it has to be
+invented to fill the bar, this is the component.

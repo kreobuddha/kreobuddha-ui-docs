@@ -2,6 +2,7 @@ import { useState } from 'react';
 
 import type { PlaygroundSpec } from './types';
 import {
+  Accordion,
   Alert,
   Badge,
   Button,
@@ -11,6 +12,7 @@ import {
   Progress,
   Radio,
   Select,
+  Spinner,
   Switch,
   Tabs,
   TextField,
@@ -42,6 +44,59 @@ export const specs: Record<string, PlaygroundSpec> = {
       { prop: 'disabled', label: 'Disabled', kind: 'boolean' },
     ],
     render: (props) => <Button {...props}>Save changes</Button>,
+  },
+
+  accordion: {
+    element: 'Accordion',
+    defaults: { exclusive: false },
+    controls: [{ prop: 'exclusive', label: 'One at a time', kind: 'boolean' }],
+    render: (props) => (
+      <Accordion
+        {...props}
+        exclusive={props['exclusive'] === true}
+        items={[
+          {
+            id: 'build',
+            label: 'Build',
+            content: <p>Compiled the package and ran the type check.</p>,
+            defaultOpen: true,
+          },
+          { id: 'test', label: 'Test', content: <p>Ran the suite in a real browser.</p> },
+          { id: 'deploy', label: 'Deploy', content: <p>Published the static output.</p> },
+        ]}
+      />
+    ),
+    code: (props) =>
+      [
+        'const items = [',
+        "  { id: 'build', label: 'Build', content: <Build />, defaultOpen: true },",
+        "  { id: 'test', label: 'Test', content: <Test /> },",
+        "  { id: 'deploy', label: 'Deploy', content: <Deploy /> },",
+        '];',
+        '',
+        serializeJsx('Accordion', props, { defaults: { exclusive: false } }).replace(
+          '<Accordion',
+          '<Accordion items={items}',
+        ),
+      ].join('\n'),
+  },
+
+  spinner: {
+    element: 'Spinner',
+    defaults: { size: 'md', label: '' },
+    controls: [
+      { prop: 'size', label: 'Size', kind: 'choice', choices: sizes },
+      { prop: 'label', label: 'Label', kind: 'text' },
+    ],
+    render: ({ label, ...props }) => (
+      <Spinner {...props} {...(label === '' ? {} : { label: String(label) })} />
+    ),
+    code: ({ label, ...props }) =>
+      serializeJsx(
+        'Spinner',
+        { ...props, label: label === '' ? undefined : label },
+        { defaults: { size: 'md' } },
+      ),
   },
 
   alert: {

@@ -1,0 +1,48 @@
+---
+title: Skeleton
+description: A placeholder block, for the shape of content that has been asked for and has not arrived.
+order: 18
+---
+
+A placeholder block, for the shape of content that has been asked for and has not arrived.
+
+There is no playground on this page, and that is the component's own argument: it has no props to
+try. Its size is its only variable, and size is CSS.
+
+```tsx
+<div className="card">
+  <Skeleton style={{ blockSize: 24, inlineSize: '60%' }} />
+  <Skeleton style={{ blockSize: 16 }} />
+  <Skeleton style={{ blockSize: 16, inlineSize: '80%' }} />
+</div>
+```
+
+## Props
+
+<PropsTable
+  rows={[
+    {
+      name: 'className',
+      type: 'string',
+      description: 'Everything a span accepts is accepted, except children.',
+    },
+  ]}
+/>
+
+## Why it has no `width` and `height`
+
+A consumer already has two ways to set a size — `style` and `className` — and both work inside a
+grid or a flex row, where a `width`/`height` pair does not. Adding the pair would be a second,
+narrower spelling of what CSS already does better.
+
+## `children` is removed rather than forwarded
+
+The block stands in for content that is not there yet, and it is hidden from assistive technology.
+Anything placed inside it would be text nobody can reach — so the type refuses it instead of
+letting it be written and silently lost.
+
+<Callout tone="warning" title="A placeholder that appears on a schedule is a placeholder that lies.">
+  It belongs behind a real load. Showing it for a fixed 300 ms because a request *might* be slow
+  tells the reader that something is loading when nothing is, and hides content that had already
+  arrived.
+</Callout>
