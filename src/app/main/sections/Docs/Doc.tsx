@@ -4,6 +4,7 @@ import Meta from '@components/Meta/Meta';
 import Breadcrumbs from '@components/Breadcrumbs/Breadcrumbs';
 import CodeBlock from '@components/CodeBlock/CodeBlock';
 import Playground from '@components/Playground/Playground';
+import PageActions from '@components/PageActions/PageActions';
 import PrevNext from '@components/PrevNext/PrevNext';
 import ProseLink from '@components/ProseLink/ProseLink';
 import PropsTable, { type PropRow } from '@components/PropsTable/PropsTable';
@@ -76,6 +77,16 @@ const Doc = ({
         </div>
 
         <PrevNext locale={locale} previous={previous} next={next} />
+
+        <PageActions
+          page={{
+            locale: meta.locale,
+            collection: meta.collection,
+            slug: meta.slug,
+            title: meta.title,
+          }}
+          updated={meta.updated}
+        />
       </article>
 
       <Toc headings={module.headings} label={t('onThisPage')} />

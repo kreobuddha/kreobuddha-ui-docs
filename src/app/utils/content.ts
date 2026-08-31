@@ -32,6 +32,7 @@ export interface DocMeta {
   order: number;
   locale: Locale;
   isFallback: boolean;
+  updated: string | null;
 }
 
 export interface DocModule {
@@ -55,6 +56,7 @@ for (const entry of entries) {
     order: entry.order,
     locale: entry.locale,
     isFallback: false,
+    updated: entry.updated,
   });
 }
 

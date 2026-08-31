@@ -1,0 +1,27 @@
+@layer site {
+  .page-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--kreo-space-3) var(--kreo-space-6);
+    align-items: baseline;
+    justify-content: space-between;
+    margin-block-start: var(--kreo-space-8);
+    padding-block-start: var(--kreo-space-4);
+    border-block-start: var(--kreo-border-w) solid var(--kreo-border-subtle);
+  }
+
+  .page-actions__updated {
+    margin: 0;
+    color: var(--kreo-text-muted);
+    font: var(--kreo-type-label);
+  }
+
+  .page-actions__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--kreo-space-4);
+    margin: 0;
+    margin-inline-start: auto;
+    font: var(--kreo-type-label);
+  }
+}

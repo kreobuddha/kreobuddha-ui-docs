@@ -1,0 +1,77 @@
+---
+title: Radio
+description: One option in a choice where exactly one answer is possible.
+order: 14
+---
+
+One option in a choice where exactly one answer is possible.
+
+**A radio never brings its own question.** It renders no fieldset and no legend, so the playground
+below shows what it is always used inside.
+
+<Playground id="radio" />
+
+## Props
+
+<PropsTable
+  rows={[
+    {
+      name: 'label',
+      type: 'ReactNode',
+      required: true,
+      description: 'The text beside the control. Required: an unlabelled option asks a question nobody can hear.',
+    },
+    {
+      name: 'name',
+      type: 'string',
+      required: true,
+      description:
+        'The group this option belongs to. Required, unlike the native attribute: a radio without a name belongs to no group, so it can be turned on and never off again.',
+    },
+    {
+      name: 'hint',
+      type: 'ReactNode',
+      description: 'Guidance under the label. Announced with the option, not read as separate text.',
+    },
+    {
+      name: 'error',
+      type: 'ReactNode',
+      description:
+        'What is wrong with this option. Most faults belong to the choice rather than to one option — put those on the surrounding FieldGroup.',
+    },
+    {
+      name: 'className',
+      type: 'string',
+      description: 'Class for the outer wrapper. Native props and ref go to the input itself.',
+    },
+  ]}
+/>
+
+Everything an `<input>` accepts is accepted too, except `type` and `size`.
+
+## `name` is required here and optional in HTML
+
+That difference is deliberate. The shared `name` is what makes options one group, and the group is
+where all the behaviour worth having lives: arrows move through it and select as they go, `Tab`
+treats the whole thing as one stop, and the chosen option is what the form submits.
+
+A radio without a name is not a smaller radio — it is a control that can be turned on and never off
+again. The compiler refuses it rather than letting that reach a reader.
+
+## A lone radio is almost always wrong
+
+One option, on its own, that cannot be unset. Interfaces rarely mean that. When one thing is on or
+off, the component is `Checkbox`, or `Switch` if it takes effect immediately.
+
+## Where the fault goes
+
+A fault in one option belongs to that option. A fault in the *choice* — "pick one to continue" —
+belongs to the group, and putting it on each option means the reader hears it three times for one
+mistake.
+
+```tsx
+<FieldGroup legend="Deploy target" error="Pick a target before deploying.">
+  <Radio name="target" value="production" label="Production" />
+  <Radio name="target" value="staging" label="Staging" />
+</FieldGroup>
+```

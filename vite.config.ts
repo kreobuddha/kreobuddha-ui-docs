@@ -1,4 +1,5 @@
 import { copyFileSync, readFileSync } from 'node:fs';
+import { join } from 'node:path';
 
 import mdx from '@mdx-js/rollup';
 import react from '@vitejs/plugin-react';
@@ -19,6 +20,10 @@ import { tokens } from './script/tokens.ts';
 
 const BASE = `${(process.env.VITE_BASE_PATH ?? '/').replace(/\/+$/, '')}/`;
 const ORIGIN = process.env.VITE_SITE_URL ?? 'https://kreobuddha.github.io';
+
+const LIBRARY_VERSION = JSON.parse(
+  readFileSync(join(process.cwd(), 'node_modules', '@kreobuddha', 'ui', 'package.json'), 'utf8'),
+).version as string;
 
 const SYMBOLS = readSymbols();
 
@@ -78,6 +83,8 @@ export default defineConfig({
   },
 
   base: BASE,
+
+  define: { __LIBRARY_VERSION__: JSON.stringify(LIBRARY_VERSION) },
 
   resolve: { tsconfigPaths: true },
 

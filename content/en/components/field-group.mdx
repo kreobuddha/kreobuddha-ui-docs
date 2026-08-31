@@ -1,0 +1,65 @@
+---
+title: FieldGroup
+description: The question a set of controls answers together, as a real fieldset and legend.
+order: 15
+---
+
+The question a set of controls answers together, as a real `<fieldset>` and `<legend>`.
+
+Without it, a screen reader reaching a column of checkboxes hears the options and never the
+question.
+
+<Playground id="field-group" />
+
+## Props
+
+<PropsTable
+  rows={[
+    {
+      name: 'legend',
+      type: 'string',
+      required: true,
+      description: 'What the whole group is asking. Becomes the legend.',
+    },
+    { name: 'hint', type: 'ReactNode', description: 'Guidance for the group as a whole.' },
+    {
+      name: 'error',
+      type: 'ReactNode',
+      description: 'What is wrong with the group as a whole — "choose at least one", not a fault of any one box.',
+    },
+    {
+      name: 'orientation',
+      type: "'vertical' | 'horizontal'",
+      default: "'vertical'",
+      description: 'Lays the controls out side by side instead of stacked.',
+    },
+    { name: 'children', type: 'ReactNode', description: 'The controls.' },
+  ]}
+/>
+
+Everything a `<fieldset>` accepts is accepted too, `ref` included.
+
+## The decision it forces
+
+Where a message belongs, and that is the useful part.
+
+Guidance and faults about the **set** go on the group: "choose at least one", "pick a target before
+deploying". A fault in one control stays on that control: "this address is not valid".
+
+`aria-describedby` sits on the fieldset rather than on each child, so group guidance is read once
+instead of once per option. Put it on every child instead and a reader arrowing through five
+options hears the same sentence five times.
+
+## It is what makes `Radio` usable
+
+A radio deliberately renders no question of its own. Every group of radios therefore needs this
+component, and that is not an accident of the API — it is the reason both exist in this shape.
+
+Checkboxes are different: one on its own is complete, and it needs a group only when several of
+them answer one question together.
+
+## `disabled` is the platform's
+
+A disabled fieldset disables every control inside it. That is native behaviour, inherited rather
+than reimplemented per child — which means it also works for controls this library does not own,
+including anything an application drops in.
