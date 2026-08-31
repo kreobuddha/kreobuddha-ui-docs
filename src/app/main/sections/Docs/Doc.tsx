@@ -60,6 +60,7 @@ const Doc = ({
       />
 
       <article className="prose" data-pagefind-body data-pagefind-filter={`locale:${locale}`}>
+        <span data-pagefind-filter={`section:${meta.collection}`} />
         <Breadcrumbs locale={locale} trail={[parent, { label: meta.title }]} />
 
         <h1>{meta.title}</h1>

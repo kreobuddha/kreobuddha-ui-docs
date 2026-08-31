@@ -57,6 +57,7 @@ const Header = ({
           shortcutHint: t('searchShortcut'),
           close: t('searchClose'),
           results: t('searchResults'),
+          allResults: t('searchAllResults'),
         }}
       />
 

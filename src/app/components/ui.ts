@@ -1,4 +1,5 @@
 export {
+  Alert,
   Badge,
   Button,
   Dialog,
@@ -8,5 +9,7 @@ export {
   Tabs,
   TextField,
   ToastProvider,
+  Toggletip,
+  Tooltip,
   useToast,
 } from '@kreobuddha/ui';

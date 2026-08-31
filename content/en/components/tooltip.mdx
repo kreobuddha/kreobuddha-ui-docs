@@ -1,0 +1,67 @@
+---
+title: Tooltip
+description: A short label for a control whose purpose is not written on it, shown on hover and on focus.
+order: 11
+---
+
+A short label for a control whose purpose is not written on it, shown on hover and on focus.
+
+**It may only carry what the reader can do without.**
+
+<Playground id="tooltip" />
+
+## Props
+
+<PropsTable
+  rows={[
+    {
+      name: 'content',
+      type: 'ReactNode',
+      required: true,
+      description:
+        'What the tooltip says. It may only carry what the reader can do without — see below.',
+    },
+    {
+      name: 'children',
+      type: 'ReactElement',
+      required: true,
+      description:
+        'The element the tooltip describes. Exactly one, and it must accept a ref and DOM props.',
+    },
+    {
+      name: 'placement',
+      type: "'top' | 'bottom' | 'left' | 'right'",
+      default: "'top'",
+      description: 'Which side to prefer. The browser flips it when there is no room.',
+    },
+    {
+      name: 'className',
+      type: 'string',
+      description: 'Class for the tooltip itself, not the trigger.',
+    },
+  ]}
+/>
+
+## There is no hover on a phone
+
+A tooltip opens on hover and on focus. A touchscreen has neither in the way this pattern needs, so
+on a phone this component effectively does not exist.
+
+The library treats that as a property of the pattern rather than a defect to work around, and the
+rule that follows is short: **anything a reader actually needs belongs in a label, a hint, or
+visible text.** A tooltip is for the icon button whose meaning is already obvious to nine readers
+in ten.
+
+When the content matters, the component is `Toggletip` — a button the reader presses, which works
+by keyboard and by touch.
+
+## The delay is asymmetric
+
+Opening is delayed; closing is not.
+
+A pointer crossing a row of icon buttons would otherwise set off a chain of tooltips behind it, and
+one that lingers after the pointer has moved on is in the way of whatever it covers. Waiting to
+open costs a reader who paused nothing; waiting to close costs everyone else.
+
+Positioning uses CSS anchor positioning, so the browser flips the placement when there is no room
+rather than the library measuring the viewport and guessing.

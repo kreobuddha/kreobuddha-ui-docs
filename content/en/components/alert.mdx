@@ -1,0 +1,83 @@
+---
+title: Alert
+description: A message that stays where it is put, beside the thing it is about.
+order: 10
+---
+
+A message that stays where it is put, beside the thing it is about.
+
+This is the counterpart to `Toast`, and the choice between them is the whole point of having both.
+
+<Playground id="alert" />
+
+## Props
+
+<PropsTable
+  rows={[
+    {
+      name: 'tone',
+      type: "'success' | 'warning' | 'danger' | 'info'",
+      default: "'info'",
+      description: 'What kind of message this is. Never the meaning on its own — the wording carries it.',
+    },
+    { name: 'title', type: 'string', description: 'An optional heading above the message.' },
+    {
+      name: 'icon',
+      type: 'ReactNode',
+      description:
+        'Replaces the mark the tone supplies. The built-in marks exist so the component can keep its promise not to rely on colour alone; pass your own to match the rest of the interface.',
+    },
+    {
+      name: 'live',
+      type: 'boolean',
+      default: 'false',
+      description:
+        'Announce the message when it appears. A danger alert then interrupts; the quieter tones wait for a pause.',
+    },
+    {
+      name: 'onDismiss',
+      type: '() => void',
+      description: 'Renders a close button. Without it the alert cannot be dismissed.',
+    },
+    {
+      name: 'dismissLabel',
+      type: 'string',
+      description: "The close button's accessible name.",
+    },
+  ]}
+/>
+
+Everything a `<div>` accepts is accepted too, `ref` included.
+
+## `Alert` or `Toast`
+
+A toast confirms something that already worked and then leaves. An alert is for something the
+reader has to read, act on, or come back to.
+
+That splits cleanly on one question: can this be missed? Anything that must not be cannot be
+allowed to disappear on a timer, and a reader who looked away for two seconds has missed a toast
+with no way to get it back.
+
+## `live` is off on purpose
+
+A banner already on screen when the page loads has nothing to announce. Turning it on anyway means
+a screen reader interrupts to read something that was simply there, which is noise the reader did
+not ask for.
+
+Turn it on for a message that appears in answer to something the reader did:
+
+```tsx
+<Alert tone="danger" live>
+  The changes were not saved. The connection dropped part way through.
+</Alert>
+```
+
+The role follows the tone, and that is deliberate: `danger` interrupts, and the quieter tones wait
+for a pause. Interrupting for a success message spends the reader's attention on news that could
+have waited.
+
+## The tone is not the message
+
+Each tone supplies a mark as well as a colour, so the meaning survives monochrome and survives a
+reader who does not see the hue. Both are backstops. The wording still has to carry it alone: an
+alert reading "Deployment" tells no one whether it went well.
