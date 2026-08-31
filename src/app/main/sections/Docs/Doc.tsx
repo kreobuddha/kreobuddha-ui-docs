@@ -2,8 +2,11 @@ import { useTranslation } from 'react-i18next';
 
 import Meta from '@components/Meta/Meta';
 import Breadcrumbs from '@components/Breadcrumbs/Breadcrumbs';
+import Callout from '@components/Callout/Callout';
 import CodeBlock from '@components/CodeBlock/CodeBlock';
+import Details from '@components/Details/Details';
 import Playground from '@components/Playground/Playground';
+import PackageManager from '@components/PackageManager/PackageManager';
 import PageActions from '@components/PageActions/PageActions';
 import PrevNext from '@components/PrevNext/PrevNext';
 import ProseLink from '@components/ProseLink/ProseLink';
@@ -33,6 +36,9 @@ const Doc = ({
   const components = {
     a: ProseLink,
     pre: CodeBlock,
+    Callout,
+    Details,
+    PackageManager,
     TokenTable,
     PropsTable: (props: { rows: PropRow[] }) => <PropsTable {...props} locale={locale} />,
     Playground: (props: { id: string }) => (
