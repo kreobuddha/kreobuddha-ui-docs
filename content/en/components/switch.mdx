@@ -1,0 +1,63 @@
+---
+title: Switch
+description: A setting that takes effect when it is flipped, rather than when a form is submitted.
+order: 9
+---
+
+A setting that takes effect when it is flipped.
+
+That timing is the only thing separating it from a checkbox, and it is a promise to the reader: if
+flipping this does nothing until a Save button is pressed, this is the wrong component.
+
+<Playground id="switch" />
+
+## Props
+
+<PropsTable
+  rows={[
+    {
+      name: 'label',
+      type: 'ReactNode',
+      required: true,
+      description:
+        'The text beside the switch. Required: an unlabelled switch says nothing about what it turns on.',
+    },
+    {
+      name: 'hint',
+      type: 'ReactNode',
+      description: 'Guidance under the label. Announced with the switch, not read as separate text.',
+    },
+    {
+      name: 'error',
+      type: 'ReactNode',
+      description: 'What is wrong. Its presence is what makes the switch invalid.',
+    },
+    {
+      name: 'className',
+      type: 'string',
+      description: 'Class for the outer wrapper. Native props and ref go to the input itself.',
+    },
+  ]}
+/>
+
+Everything an `<input>` accepts is accepted too, except `type` and `size`.
+
+## `Switch` or `Checkbox`
+
+Not a matter of taste. Ask when the change lands.
+
+Flipping a switch does the thing — the setting is saved, the feature turns on, the request goes
+out. Ticking a checkbox records an intention that a submit button will act on later. Readers have
+learned both, and a switch that waits for a Save button breaks a promise they did not know they
+were relying on.
+
+If the change can fail, the switch has to survive that: it flips back, and something says why.
+
+## Underneath it is a checkbox
+
+An `<input type="checkbox">` carrying `role="switch"`. What is announced becomes "on" and "off"
+rather than "checked", while native keyboard handling and form participation stay exactly where
+they were.
+
+There is deliberately no `required`. A switch is always in one of its two states, so demanding one
+of them is a rule about the value, not about the control — and that rule belongs to the form.

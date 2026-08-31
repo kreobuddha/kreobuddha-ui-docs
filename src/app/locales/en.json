@@ -66,6 +66,8 @@
   "required": "Required",
   "playground": "Example",
   "playgroundCode": "Code",
+  "codeCopy": "Copy",
+  "codeCopied": "Copied",
   "groups": {
     "getting-started": "Getting started",
     "foundations": "Foundations",

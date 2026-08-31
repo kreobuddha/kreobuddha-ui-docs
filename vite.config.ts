@@ -11,12 +11,25 @@ import remarkMdxFrontmatter from 'remark-mdx-frontmatter';
 import { defineConfig } from 'vite';
 
 import { rehypeHeadings } from './script/rehype-headings.ts';
+import { rehypeSymbolLinks } from './script/rehype-symbol-links.ts';
 import { content } from './script/content.ts';
 import { sitemap } from './script/sitemap.ts';
+import { readSymbols } from './script/symbols.ts';
 import { tokens } from './script/tokens.ts';
 
 const BASE = `${(process.env.VITE_BASE_PATH ?? '/').replace(/\/+$/, '')}/`;
 const ORIGIN = process.env.VITE_SITE_URL ?? 'https://kreobuddha.github.io';
+
+const SYMBOLS = readSymbols();
+
+// Shiki drops the fence's language once it has coloured the tokens, and the label above the block
+// is the last place it could come from.
+const languageAttribute = {
+  name: 'language-attribute',
+  pre(this: { options: { lang: string } }, node: { properties: Record<string, unknown> }) {
+    node.properties['data-language'] = this.options.lang;
+  },
+};
 
 let manifest: Record<string, { file: string }> | null = null;
 
@@ -95,8 +108,10 @@ export default defineConfig({
             {
               themes: { light: 'github-light-high-contrast', dark: 'github-dark-high-contrast' },
               defaultColor: 'light',
+              transformers: [languageAttribute],
             },
           ],
+          rehypeSymbolLinks(SYMBOLS),
           rehypeHeadings,
         ],
       }),

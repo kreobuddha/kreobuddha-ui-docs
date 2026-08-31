@@ -1,7 +1,18 @@
 import { useState } from 'react';
 
 import type { PlaygroundSpec } from './types';
-import { Button, Dialog, Select, Tabs, TextField, ToastProvider, useToast } from '@components/ui';
+import {
+  Badge,
+  Button,
+  Dialog,
+  Progress,
+  Select,
+  Switch,
+  Tabs,
+  TextField,
+  ToastProvider,
+  useToast,
+} from '@components/ui';
 import { serializeJsx, type PropValue } from '@utils/jsx';
 
 const sizes = ['sm', 'md', 'lg'];
@@ -19,6 +30,78 @@ export const specs: Record<string, PlaygroundSpec> = {
       { prop: 'disabled', label: 'Disabled', kind: 'boolean' },
     ],
     render: (props) => <Button {...props}>Save changes</Button>,
+  },
+
+  badge: {
+    element: 'Badge',
+    children: 'Staging',
+    defaults: { tone: 'neutral', dot: false },
+    controls: [
+      {
+        prop: 'tone',
+        label: 'Tone',
+        kind: 'choice',
+        choices: ['neutral', 'accent', 'success', 'warning', 'danger', 'info'],
+      },
+      { prop: 'dot', label: 'Dot', kind: 'boolean' },
+    ],
+    render: (props) => <Badge {...props}>Staging</Badge>,
+  },
+
+  progress: {
+    element: 'Progress',
+    defaults: { label: 'Uploading files', value: '40' },
+    always: ['label'],
+    controls: [
+      { prop: 'label', label: 'Label', kind: 'text' },
+      {
+        prop: 'value',
+        label: 'Value',
+        kind: 'choice',
+        choices: ['0', '25', '40', '75', '100', 'indeterminate'],
+      },
+    ],
+    render: ({ value, ...props }) => (
+      <Progress
+        {...props}
+        label={String(props['label'] ?? '')}
+        value={value === 'indeterminate' ? undefined : Number(value)}
+      />
+    ),
+    code: (props) =>
+      serializeJsx(
+        'Progress',
+        {
+          ...props,
+          value: props['value'] === 'indeterminate' ? undefined : Number(props['value']),
+        },
+        { always: ['label', 'value'] },
+      ),
+  },
+
+  switch: {
+    element: 'Switch',
+    defaults: {
+      label: 'Run migrations first',
+      hint: 'Applied before the new build starts.',
+      error: '',
+      disabled: false,
+    },
+    always: ['label'],
+    controls: [
+      { prop: 'label', label: 'Label', kind: 'text' },
+      { prop: 'hint', label: 'Hint', kind: 'text' },
+      { prop: 'error', label: 'Error', kind: 'text' },
+      { prop: 'disabled', label: 'Disabled', kind: 'boolean' },
+    ],
+    render: ({ error, hint, ...props }) => (
+      <Switch
+        {...props}
+        label={String(props['label'] ?? '')}
+        hint={hint === '' ? undefined : hint}
+        error={error === '' ? undefined : error}
+      />
+    ),
   },
 
   'text-field': {

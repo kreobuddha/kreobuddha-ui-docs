@@ -1,0 +1,50 @@
+---
+title: Badge
+description: A short label for a status or a category, where the word carries the meaning and the colour only agrees with it.
+order: 7
+---
+
+A short, non-interactive label for a status or a category.
+
+It renders a plain `<span>` with no ARIA role, because that is what it is: text. Nothing announces
+it as a widget, nothing puts it in the tab order, and nothing implies it can be pressed.
+
+<Playground id="badge" />
+
+## Props
+
+<PropsTable
+  rows={[
+    {
+      name: 'tone',
+      type: "'neutral' | 'accent' | 'success' | 'warning' | 'danger' | 'info'",
+      default: "'neutral'",
+      description: 'Semantic colour. It agrees with the label; it never replaces it.',
+    },
+    {
+      name: 'dot',
+      type: 'boolean',
+      default: 'false',
+      description:
+        'A decorative dot before the label, for a status that is scanned down a column rather than read.',
+    },
+  ]}
+/>
+
+Everything a `<span>` accepts is accepted too, `ref` included.
+
+## Colour is never the message
+
+`tone` is the one prop worth being careful with. A red badge reading "Failed" survives being
+printed in black and white, being read aloud, and being looked at by the eight percent of men who
+will not see it as red. A red badge reading "Build" does not.
+
+The rule this component asks for is short: write the word first, then choose the tone that agrees
+with it. If the tone is doing work the word is not, the word is wrong.
+
+## Not a button, not a filter
+
+A badge that can be clicked is a button wearing a badge's clothes, and readers find out the hard
+way — by tabbing past it, or by clicking and getting nothing. If it removes a filter, it is a
+`Button` with a badge's styling. If it selects one, it is a control with a pressed state. Both are
+worth building on purpose; neither is this.

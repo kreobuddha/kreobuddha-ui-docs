@@ -66,6 +66,8 @@
   "required": "Обязательный",
   "playground": "Пример",
   "playgroundCode": "Код",
+  "codeCopy": "Копировать",
+  "codeCopied": "Скопировано",
   "groups": {
     "getting-started": "Начало работы",
     "foundations": "Основы",
