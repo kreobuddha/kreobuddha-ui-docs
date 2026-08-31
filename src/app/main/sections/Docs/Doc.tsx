@@ -2,8 +2,10 @@ import { useTranslation } from 'react-i18next';
 
 import Meta from '@components/Meta/Meta';
 import Breadcrumbs from '@components/Breadcrumbs/Breadcrumbs';
+import CodeBlock from '@components/CodeBlock/CodeBlock';
 import Playground from '@components/Playground/Playground';
 import PrevNext from '@components/PrevNext/PrevNext';
+import ProseLink from '@components/ProseLink/ProseLink';
 import PropsTable, { type PropRow } from '@components/PropsTable/PropsTable';
 import Toc from '@components/Toc/Toc';
 import TokenTable from '@components/TokenTable/TokenTable';
@@ -28,6 +30,8 @@ const Doc = ({
   const path = isGuide ? `/docs/${meta.slug}` : `/components/${meta.slug}`;
 
   const components = {
+    a: ProseLink,
+    pre: CodeBlock,
     TokenTable,
     PropsTable: (props: { rows: PropRow[] }) => <PropsTable {...props} locale={locale} />,
     Playground: (props: { id: string }) => (

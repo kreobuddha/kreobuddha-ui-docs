@@ -1,0 +1,67 @@
+---
+title: Progress
+description: A bar for work whose extent is known, and for work whose extent is not.
+order: 8
+---
+
+A bar for work whose extent is known, and — with `value` left out — for work whose extent is not.
+
+<Playground id="progress" />
+
+## Props
+
+<PropsTable
+  rows={[
+    {
+      name: 'label',
+      type: 'string',
+      required: true,
+      description:
+        'What is progressing, as a screen reader will hear it. Required and checked by the compiler: a progress bar has no content of its own, so there is nowhere else a name could come from.',
+    },
+    {
+      name: 'value',
+      type: 'number | undefined',
+      description:
+        'How far along, between 0 and max. Out-of-range numbers are clamped. Leave it out for the indeterminate state.',
+    },
+    {
+      name: 'max',
+      type: 'number',
+      default: '100',
+      description: 'The value that counts as complete, so value reads as a percentage by default.',
+    },
+  ]}
+/>
+
+Everything a `<div>` accepts is accepted too, except `children` and `role`.
+
+## Leaving `value` out is a decision
+
+Indeterminate is not a fallback for a number you have not fetched yet. It reports no
+`aria-valuenow` at all, which is exactly what stops a screen reader announcing a percentage nobody
+measured.
+
+```tsx
+<Progress label="Uploading files" value={uploaded} max={total} />
+
+<Progress label="Checking the licence" />
+```
+
+The second one says work is under way and admits it cannot say how much is left. That admission is
+the feature. A bar that crawls to 90% and waits there has told the reader something false.
+
+## Why this is a `div` and not `<progress>`
+
+The project's usual rule is platform semantics before ARIA, and this is the documented exception.
+
+A native `<progress>` costs three vendor pseudo-element sets — `::-webkit-progress-bar`,
+`::-webkit-progress-value`, `::-moz-progress-bar` — to reach the same bar in every engine. A `div`
+with `role="progressbar"` costs one styling model. What it buys in CSS it owes in semantics, so
+every attribute is asserted in the library's own tests rather than inherited from the element.
+
+## Not a spinner
+
+A spinner says something is happening. This says how much of it has happened, and it is worth its
+space only when that number is real. If the number is invented to fill the bar, a spinner is the
+honest component.
